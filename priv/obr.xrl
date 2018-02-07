@@ -4,6 +4,12 @@
 
 Definitions.
 
+DELIM      = [\s\t\n\r]
+
+WS         = {DELIM}+
+
+Tabs        = \t+
+
 LETTER     = [A-Za-z]
 DIGIT      = [0-9]
 IDENT      = {LETTER}({LETTER}|{DIGIT})*
@@ -23,11 +29,14 @@ LBRACK     = \[
 ARROW      = \^
 LPAR       = \(
 
-DELIM      = [\s\t\n\r]
-WS         = {DELIM}+
+COMMENTS   = \(\*+(.|\n|\r)+\*\)
+
+
 
 
 Rules.
+
+{WS}        : skip_token.
 
 {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 {INTEGER}   : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
@@ -41,7 +50,8 @@ Rules.
 {ARROW}     : {token, {arrow, TokenLine, TokenChars}}.
 {LPAR}      : {token, {lpar, TokenLine, TokenChars}}.
 
-{WS}        : skip_token.
+{COMMENTS}  : {token, {comments, TokenLine, TokenChars}}.
+
 
 Erlang code.
 

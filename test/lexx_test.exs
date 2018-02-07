@@ -161,5 +161,15 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:lpar, 1, str}], 1} == res
 
+    str = '(* some comment *)'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:comments, 1, str}], 1} == res
+
+    str = '(* some (*  \r\n  comment2 *)\r\n comment *)'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:comments, 1, str}], _} = res
+
   end
 end
