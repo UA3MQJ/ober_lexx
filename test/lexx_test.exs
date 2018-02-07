@@ -146,6 +146,10 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:dot, 1, str}], 1} == res
 
+    str = '['
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:lbrack, 1, str}], 1} == res
 
   end
 end

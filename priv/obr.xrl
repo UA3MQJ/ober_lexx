@@ -17,7 +17,9 @@ STRING1    = "([^"|^\n|^\r])*"
 STRING2    = '([^'|^\n|^\r])*'
 STRING     = {STRING1}|{STRING2}
 CHARACTER  = ([0-9A-F]+X)
+
 DOT        = \.
+LBRACK     = \[
 
 DELIM      = [\s\t\n\r]
 WS         = {DELIM}+
@@ -31,7 +33,10 @@ Rules.
 {REAL}      : {token, {real, TokenLine, TokenChars}}.
 {STRING}    : {token, {string, TokenLine, str_validate(TokenChars, TokenLine)}}.
 {CHARACTER} : {token, {character, TokenLine, TokenChars}}.
+
 {DOT}       : {token, {dot, TokenLine, TokenChars}}.
+{LBRACK}    : {token, {lbrack, TokenLine, TokenChars}}.
+
 {WS}        : skip_token.
 
 Erlang code.
