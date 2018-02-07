@@ -98,10 +98,22 @@ defmodule OberLexxTest do
     str = '\'  \''
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:string, 1, str}], 1} == res
 
     str = '\'русские буквы\''
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:string, 1, str}], 1} == res
+
+    str = '\' \n \''
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:error, _, _} = res
+
+    str = '\' \r \''
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:error, _, _} = res
 
   end
 end

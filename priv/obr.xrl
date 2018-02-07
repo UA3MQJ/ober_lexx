@@ -13,8 +13,8 @@ INTDEC     = {DIGIT}+
 INTEGER    = {INTHEX}|{INTDEC}
 INTEGER2   = {INTHEXWR}+
 REAL       = [0-9]+\.[0-9]+([E|D][-+]?[0-9]+)?
-STRING1    = "([^"])*"
-STRING2    = '([^'])*'
+STRING1    = "([^"|^\n|^\r])*"
+STRING2    = '([^'|^\n|^\r])*'
 STRING    = {STRING1}|{STRING2}
 
 DELIM      = [\s\t\n\r]
