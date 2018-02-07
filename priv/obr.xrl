@@ -21,6 +21,7 @@ CHARACTER  = ([0-9A-F]+X)
 DOT        = \.
 LBRACK     = \[
 ARROW      = \^
+LPAR       = \(
 
 DELIM      = [\s\t\n\r]
 WS         = {DELIM}+
@@ -38,6 +39,7 @@ Rules.
 {DOT}       : {token, {dot, TokenLine, TokenChars}}.
 {LBRACK}    : {token, {lbrack, TokenLine, TokenChars}}.
 {ARROW}     : {token, {arrow, TokenLine, TokenChars}}.
+{LPAR}      : {token, {lpar, TokenLine, TokenChars}}.
 
 {WS}        : skip_token.
 
