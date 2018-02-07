@@ -36,8 +36,6 @@ COMMENTS   = \(\*+(.|\n|\r)+\*\)
 
 Rules.
 
-{WS}        : skip_token.
-
 {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 {INTEGER}   : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
 {INTEGER2}  : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
@@ -52,6 +50,7 @@ Rules.
 
 {COMMENTS}  : {token, {comments, TokenLine, TokenChars}}.
 
+{WS}        : skip_token.
 
 Erlang code.
 

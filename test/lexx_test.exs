@@ -171,5 +171,49 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:comments, 1, str}], _} = res
 
+    # TODO должно быть невалидно
+    # str =  '(*DEFINITION Abc;\n'
+    #     ++ '\n'
+    #     ++ 'PROCEDURE A1; (* Эта процедура делает тото1 *)\n'
+    #     ++ 'PROCEDURE A2; (* Эта процедура делает тото1 *)\n'
+    #     ++ '123\n'
+    # res = :obr.string(str)
+    # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    # assert {:ok, [{:comments, 1, str}], _} = res
+    # Logger.debug ">>>>>> str=#{str}"
+
+    # TODO должно быть валидно
+    # Oleg N. Cher, [08.02.18 02:19]
+    # Вот в этом кейсе:
+
+    # (* ляляля
+
+    # Print("    *)       ");
+
+    # *)
+
+    # Коммент вот:
+
+    # (* ляляля
+
+    # Print("    *)
+
+    # Oleg N. Cher, [08.02.18 02:20]
+    # А это:
+
+    #        ");
+
+    # *)
+    # уже не коммент
+
+
+    # Oleg N. Cher, [08.02.18 02:20]
+    # притом это то же самое что и:
+
+    # (*
+    # "
+    # *)
+
+
   end
 end
