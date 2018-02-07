@@ -15,32 +15,22 @@ INTEGER2   = {INTHEXWR}+
 REAL       = [0-9]+\.[0-9]+([E|D][-+]?[0-9]+)?
 STRING1    = "([^"|^\n|^\r])*"
 STRING2    = '([^'|^\n|^\r])*'
-STRING    = {STRING1}|{STRING2}
+STRING     = {STRING1}|{STRING2}
+CHARACTER  = ([0-9A-F]+X)
 
 DELIM      = [\s\t\n\r]
 WS         = {DELIM}+
 
 
-% DELIM     = [\s\t\n\r]
-% WS        = {DELIM}+
-% LETTER    = [A-Za-z]
-% DIGIT     = [0-9]
-% INTHEXWR  = ([0-9A-F])
-% INTHEX		= ([0-9A-F]+H)
-% INTDEC    = {DIGIT}+
-% INT       = {INTHEX}|{INTDEC}
-% INT2      = {INTHEXWR}+
-% STR       = \'([^'\n]|\'\')+\'
-% ID        = {LETTER}({LETTER}|{DIGIT}|_)*
-
 Rules.
 
-{IDENT}    : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
-{INTEGER}  : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
-{INTEGER2} : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
-{REAL}     : {token, {real, TokenLine, TokenChars}}.
-{STRING}   : {token, {string, TokenLine, str_validate(TokenChars, TokenLine)}}.
-{WS}       : skip_token.
+{IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
+{INTEGER}   : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
+{INTEGER2}  : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
+{REAL}      : {token, {real, TokenLine, TokenChars}}.
+{STRING}    : {token, {string, TokenLine, str_validate(TokenChars, TokenLine)}}.
+{CHARACTER} : {token, {character, TokenLine, TokenChars}}.
+{WS}        : skip_token.
 
 Erlang code.
 

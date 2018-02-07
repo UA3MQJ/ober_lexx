@@ -115,5 +115,32 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:error, _, _} = res
 
+    str = '0X'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:character, 1, str}], 1} == res
+
+    str = '01X'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:character, 1, str}], 1} == res
+
+    str = '0AX'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:character, 1, str}], 1} == res
+
+    str = '01AX'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:character, 1, str}], 1} == res
+
+    str = '0A1X'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:character, 1, str}], 1} == res
+
+
+
   end
 end
