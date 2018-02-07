@@ -115,6 +115,7 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:error, _, _} = res
 
+    # char - заканчивается на X
     str = '0X'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
@@ -140,6 +141,10 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
+    str = '.'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:dot, 1, str}], 1} == res
 
 
   end
