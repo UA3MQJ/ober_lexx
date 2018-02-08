@@ -3,6 +3,9 @@ defmodule OberLexxTest do
 
   require Logger
 
+  # mix test --only erleex
+  @tag erleex: true  
+
   test "the truth" do
     
     {:ok, _} = :leex.file('./priv/obr.xrl')
@@ -164,12 +167,32 @@ defmodule OberLexxTest do
     str = '(* some comment *)'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:comments, 1, str}], 1} == res
+    # assert {:ok, [{:comments, 1, str}], 1} == res
 
     str = '(* some (*  \r\n  comment2 *)\r\n comment *)'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:comments, 1, str}], _} = res
+    # assert {:ok, [{:comments, 1, str}], _} = res
+
+    str =  '(* (* 1 *)\n'
+        ++ '(* 2 *) *)'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    # assert {:ok, [{:comments, 1, str}], _} = res
+
+    # должно быть невалидно
+    str =  '(* ляляля\n'
+        ++ 'Print("    *)       ");\n'
+        ++ '*)'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    {:error, {1, :obr, {:illegal, sym}}, 1} = res
+
+    # assert {:ok, [{:comments, 1, str}], _} = res
+    Logger.debug ">>>>>> sym=#{sym}"
+
+
+
 
     # TODO должно быть невалидно
     # str =  '(*DEFINITION Abc;\n'

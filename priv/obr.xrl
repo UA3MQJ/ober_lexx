@@ -4,11 +4,12 @@
 
 Definitions.
 
+LCOMM      = \(\*
+RCOMM      = \*\)
+
 DELIM      = [\s\t\n\r]
 
 WS         = {DELIM}+
-
-Tabs        = \t+
 
 LETTER     = [A-Za-z]
 DIGIT      = [0-9]
@@ -29,12 +30,14 @@ LBRACK     = \[
 ARROW      = \^
 LPAR       = \(
 
-COMMENTS   = \(\*+(.|\n|\r)+\*\)
-
+% COMMENTS   = \(\*+(.|\n|\r)+\*\)
 
 
 
 Rules.
+
+{LCOMM}     : {token, {lcomm, TokenLine, TokenChars}}.
+{RCOMM}     : {token, {rcomm, TokenLine, TokenChars}}.
 
 {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 {INTEGER}   : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
@@ -48,7 +51,7 @@ Rules.
 {ARROW}     : {token, {arrow, TokenLine, TokenChars}}.
 {LPAR}      : {token, {lpar, TokenLine, TokenChars}}.
 
-{COMMENTS}  : {token, {comments, TokenLine, TokenChars}}.
+% {COMMENTS}  : {token, {comments, TokenLine, TokenChars}}.
 
 {WS}        : skip_token.
 
