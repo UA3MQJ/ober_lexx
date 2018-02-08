@@ -8,25 +8,31 @@ defmodule TokenizeTest do
 
   test "the tokenize" do
 
-    str =  '(* (* 1 *)\n'
-        ++ '(* 2 *) *)'
+    # str =  '(* (* 1 *)\n'
+    #     ++ '(* 2 *) *)'
 
-    res = OberLexx.tokenize(str)
-    Logger.debug ">>>>>> res=#{inspect res}"
-    assert [{:comments, "(* (* 1 *)\n(* 2 *) *)", 2}] == res
+    # res = OberLexx.tokenize(str)
+    # Logger.debug ">>>>>> res=#{inspect res}"
+    # assert [{:comments, "(* (* 1 *)\n(* 2 *) *)", 2}] == res
 
-    res = OberLexx.tokenize('(*\n"\n*)')
-    Logger.debug ">>>>>> res=#{inspect res}"
-    assert [{:comments, "(*\n\"\n*)", 3}] == res
+    # res = OberLexx.tokenize('(*\n"\n*)')
+    # Logger.debug ">>>>>> res=#{inspect res}"
+    # assert [{:comments, "(*\n\"\n*)", 3}] == res
 
-    res = OberLexx.tokenize('(**)*)')
-    Logger.debug ">>>>>> res=#{inspect res}"
-    assert [{:comments, "(**)", 1}, {:illegal, "*)", 1}] == res
+    # res = OberLexx.tokenize('(**)*)')
+    # Logger.debug ">>>>>> res=#{inspect res}"
+    # assert [{:comments, "(**)", 1}, {:illegal, "*)", 1}] == res
 
-    res = OberLexx.tokenize('(* (* comment *)')
-    Logger.debug ">>>>>> res=#{inspect res}"
-    assert [{:illegal, "*)", 1}] == res
+    # res = OberLexx.tokenize('(* (* comment *)')
+    # Logger.debug ">>>>>> res=#{inspect res}"
+    # assert [{:illegal, "*)", 1}] == res
     
+
+    res = OberLexx.tokenize("(*")
+    Logger.debug ">>>>>> res=#{inspect res}"
+
+
+
     # # число
     # res1 = :obr.string('123')
     # Logger.debug ">>>>>> res1=#{inspect res1}"
