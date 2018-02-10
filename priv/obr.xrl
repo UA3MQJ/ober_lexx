@@ -4,12 +4,70 @@
 
 Definitions.
 
-LCOMM      = \(\*
-RCOMM      = \*\)
-
 DELIM      = [\s\t\n\r]
-
 WS         = {DELIM}+
+
+ARRAY      = ARRAY
+BEGIN      = BEGIN
+BY         = BY
+CASE       = CASE
+CONST      = CONST
+DIV        = DIV
+DO         = DO
+ELSE       = ELSE
+ELSEIF     = ELSEIF
+END        = END
+FALSE      = FALSE
+FOR        = FOR
+IF         = IF
+IMPORT     = IMPORT
+IN         = IN
+IS         = IS
+MOD        = MOD
+MODULE     = MODULE
+NIL        = NIL
+OF         = OF
+OR         = OR
+POINTER    = POINTER
+PROCEDURE  = PROCEDURE
+RECORD     = RECORD
+REPEAT     = REPEAT
+RETURN     = RETURN
+TO         = TO
+TRUE       = TRUE
+TYPE       = TYPE
+VAR        = VAR
+WHILE      = WHILE
+THEN       = THEN
+UNTIL      = UNTIL
+
+PLUS       = \+
+MINUS      = \-
+MUL        = \*
+DIVIDE     = /
+TILDA      = ~
+AND        = &
+DDOT       = \.\.
+DOT        = \.
+COMMA      = ,
+SEMICOLON  = ;
+VLINE      = \|
+LPAR       = \(
+RPAR       = \)
+LBRACK     = \[
+RBRACK     = \]
+LBRACE     = \{
+RBRACE     = \}
+ASSIGN     = \:\=
+COLON      = \:
+ARROW      = \^
+EQU        = \=
+SHARP      = \#
+LESSEQ     = \<\=
+MOREEQ     = \>\=
+LESS       = \<
+MORE       = \>
+
 
 LETTER     = [A-Za-z]
 DIGIT      = [0-9]
@@ -25,19 +83,70 @@ STRING2    = '([^'|^\n|^\r])*'
 STRING     = {STRING1}|{STRING2}
 CHARACTER  = ([0-9A-F]+X)
 
-DOT        = \.
-LBRACK     = \[
-ARROW      = \^
-LPAR       = \(
-
-% COMMENTS   = \(\*+(.|\n|\r)+\*\)
-
-
 
 Rules.
 
-{LCOMM}     : {token, {lcomm, TokenLine, TokenChars}}.
-{RCOMM}     : {token, {rcomm, TokenLine, TokenChars}}.
+{ARRAY}     : {token, {t_array, TokenLine, TokenChars}}.
+{BEGIN}     : {token, {t_begin, TokenLine, TokenChars}}.
+{BY}        : {token, {t_by, TokenLine, TokenChars}}.
+{CASE}      : {token, {t_case, TokenLine, TokenChars}}.
+{CONST}     : {token, {t_const, TokenLine, TokenChars}}.
+{DIV}       : {token, {t_div, TokenLine, TokenChars}}.
+{DO}        : {token, {t_do, TokenLine, TokenChars}}.
+{ELSE}      : {token, {t_else, TokenLine, TokenChars}}.
+{ELSEIF}    : {token, {t_elseif, TokenLine, TokenChars}}.
+{END}       : {token, {t_end, TokenLine, TokenChars}}.
+{FALSE}     : {token, {t_false, TokenLine, TokenChars}}.
+{FOR}       : {token, {t_for, TokenLine, TokenChars}}.
+{IF}        : {token, {t_if, TokenLine, TokenChars}}.
+{IMPORT}    : {token, {t_import, TokenLine, TokenChars}}.
+{IN}        : {token, {t_in, TokenLine, TokenChars}}.
+{IS}        : {token, {t_is, TokenLine, TokenChars}}.
+{MOD}       : {token, {t_mod, TokenLine, TokenChars}}.
+{MODULE}    : {token, {t_module, TokenLine, TokenChars}}.
+{NIL}       : {token, {t_nil, TokenLine, TokenChars}}.
+{OF}        : {token, {t_of, TokenLine, TokenChars}}.
+{OR}        : {token, {t_or, TokenLine, TokenChars}}.
+{POINTER}   : {token, {t_pointer, TokenLine, TokenChars}}.
+{PROCEDURE} : {token, {t_procedure, TokenLine, TokenChars}}.
+{RECORD}    : {token, {t_record, TokenLine, TokenChars}}.
+{REPEAT}    : {token, {t_repeat, TokenLine, TokenChars}}.
+{RETURN}    : {token, {t_return, TokenLine, TokenChars}}.
+{TO}        : {token, {t_to, TokenLine, TokenChars}}.
+{TRUE}      : {token, {t_true, TokenLine, TokenChars}}.
+{TYPE}      : {token, {t_type, TokenLine, TokenChars}}.
+{VAR}       : {token, {t_var, TokenLine, TokenChars}}.
+{WHILE}     : {token, {t_while, TokenLine, TokenChars}}.
+{THEN}      : {token, {t_then, TokenLine, TokenChars}}.
+{UNTIL}     : {token, {t_until, TokenLine, TokenChars}}.
+
+{PLUS}      : {token, {t_plus, TokenLine, TokenChars}}.
+{MINUS}     : {token, {t_minus, TokenLine, TokenChars}}.
+{MUL}       : {token, {t_mul, TokenLine, TokenChars}}.
+{DIVIDE}    : {token, {t_divide, TokenLine, TokenChars}}.
+{TILDA}     : {token, {t_tilda, TokenLine, TokenChars}}.
+{AND}       : {token, {t_and, TokenLine, TokenChars}}.
+{DDOT}      : {token, {t_ddot, TokenLine, TokenChars}}.
+{DOT}       : {token, {t_dot, TokenLine, TokenChars}}.
+{COMMA}     : {token, {t_comma, TokenLine, TokenChars}}.
+{SEMICOLON} : {token, {t_semicolon, TokenLine, TokenChars}}.
+{VLINE}     : {token, {t_vline, TokenLine, TokenChars}}.
+{LPAR}      : {token, {t_lpar, TokenLine, TokenChars}}.
+{RPAR}      : {token, {t_rpar, TokenLine, TokenChars}}.
+{LBRACK}    : {token, {t_lbrack, TokenLine, TokenChars}}.
+{RBRACK}    : {token, {t_rbrack, TokenLine, TokenChars}}.
+{LBRACE}    : {token, {t_lbrace, TokenLine, TokenChars}}.
+{RBRACE}    : {token, {t_rbrace, TokenLine, TokenChars}}.
+{ASSIGN}    : {token, {t_assign, TokenLine, TokenChars}}.
+{COLON}     : {token, {t_colon, TokenLine, TokenChars}}.
+{ARROW}     : {token, {t_arrow, TokenLine, TokenChars}}.
+{EQU}       : {token, {t_equ, TokenLine, TokenChars}}.
+{SHARP}     : {token, {t_sharp, TokenLine, TokenChars}}.
+{LESSEQ}    : {token, {t_lesseq, TokenLine, TokenChars}}.
+{MOREEQ}    : {token, {t_moreeq, TokenLine, TokenChars}}.
+{LESS}      : {token, {t_less, TokenLine, TokenChars}}.
+{MORE}      : {token, {t_more, TokenLine, TokenChars}}.
+
 
 {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 {INTEGER}   : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
@@ -45,13 +154,6 @@ Rules.
 {REAL}      : {token, {real, TokenLine, TokenChars}}.
 {STRING}    : {token, {string, TokenLine, str_validate(TokenChars, TokenLine)}}.
 {CHARACTER} : {token, {character, TokenLine, TokenChars}}.
-
-{DOT}       : {token, {dot, TokenLine, TokenChars}}.
-{LBRACK}    : {token, {lbrack, TokenLine, TokenChars}}.
-{ARROW}     : {token, {arrow, TokenLine, TokenChars}}.
-{LPAR}      : {token, {lpar, TokenLine, TokenChars}}.
-
-% {COMMENTS}  : {token, {comments, TokenLine, TokenChars}}.
 
 {WS}        : skip_token.
 

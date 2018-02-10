@@ -144,52 +144,157 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
+    str = 'ARRAY'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_array, 1, str}], 1} == res
+
+    str = 'array'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:ident, 1, str}], 1} == res
+
+    str = '+'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_plus, 1, str}], 1} == res
+
+    str = '-'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_minus, 1, str}], 1} == res
+
+    str = '*'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_mul, 1, str}], 1} == res
+
+    str = '/'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_divide, 1, str}], 1} == res
+
+    str = '~'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_tilda, 1, str}], 1} == res
+
+    str = '&'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_and, 1, str}], 1} == res
+
     str = '.'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:dot, 1, str}], 1} == res
+    assert {:ok, [{:t_dot, 1, str}], 1} == res
 
-    str = '['
+    str = '..'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:lbrack, 1, str}], 1} == res
+    assert {:ok, [{:t_ddot, 1, str}], 1} == res
+
+    str = ','
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_comma, 1, str}], 1} == res
+
+    str = ';'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_semicolon, 1, str}], 1} == res
+
+    str = '|'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_vline, 1, str}], 1} == res
+
+    str = '()'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_lpar, 1, '('}, {:t_rpar, 1, ')'}], 1} == res
+
+    str = '[]'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok,  [{:t_lbrack, 1, '['}, {:t_rbrack, 1, ']'}], 1} == res
+
+    str = '{}'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok,  [{:t_lbrace, 1, '{'}, {:t_rbrace, 1, '}'}], 1} == res
+
+    str = ':='
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    assert {:ok, [{:t_assign, 1, str}], 1} == res
 
     str = '^'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:arrow, 1, str}], 1} == res
+    assert {:ok, [{:t_arrow, 1, str}], 1} == res
 
-    str = '('
+    str = '='
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:lpar, 1, str}], 1} == res
+    assert {:ok, [{:t_equ, 1, str}], 1} == res
 
-    str = '(* some comment *)'
+    str = '#'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    # assert {:ok, [{:comments, 1, str}], 1} == res
+    assert {:ok, [{:t_sharp, 1, str}], 1} == res
 
-    str = '(* some (*  \r\n  comment2 *)\r\n comment *)'
+    str = '< >'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    # assert {:ok, [{:comments, 1, str}], _} = res
+    assert {:ok, [{:t_less, 1, '<'}, {:t_more, 1, '>'}], 1} == res
 
-    str =  '(* (* 1 *)\n'
-        ++ '(* 2 *) *)'
+    str = '<= >='
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    # assert {:ok, [{:comments, 1, str}], _} = res
+    assert {:ok, [{:t_lesseq, 1, '<='}, {:t_moreeq, 1, '>='}], 1} == res
 
-    # должно быть невалидно
-    str =  '(* ляляля\n'
-        ++ 'Print("    *)       ");\n'
-        ++ '*)'
+    str = ':'
     res = :obr.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    {:error, {1, :obr, {:illegal, sym}}, 1} = res
+    assert {:ok, [{:t_colon, 1, ':'}], 1} == res
 
-    # assert {:ok, [{:comments, 1, str}], _} = res
-    Logger.debug ">>>>>> sym=#{sym}"
+    str =  'MODULE ASCII;\n'
+        ++ 'IMPORT Console;\n'
+        ++ 'VAR\n'
+        ++ '  n: SHORTINT;\n'
+        ++ 'BEGIN\n'
+        ++ '  FOR n := 32-1 TO 127-1 DO Console.WriteCh(CHR(n+1)) END;\n'
+        ++ 'END ASCII.\n'
+    res = :obr.string(str)
+    Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+
+    # str = '(* some comment *)'
+    # res = :obr.string(str)
+    # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    # # assert {:ok, [{:comments, 1, str}], 1} == res
+
+    # str = '(* some (*  \r\n  comment2 *)\r\n comment *)'
+    # res = :obr.string(str)
+    # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    # # assert {:ok, [{:comments, 1, str}], _} = res
+
+    # str =  '(* (* 1 *)\n'
+    #     ++ '(* 2 *) *)'
+    # res = :obr.string(str)
+    # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    # # assert {:ok, [{:comments, 1, str}], _} = res
+
+    # # должно быть невалидно
+    # str =  '(* ляляля\n'
+    #     ++ 'Print("    *)       ");\n'
+    #     ++ '*)'
+    # res = :obr.string(str)
+    # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
+    # {:error, {1, :obr, {:illegal, sym}}, 1} = res
+
+    # # assert {:ok, [{:comments, 1, str}], _} = res
+    # Logger.debug ">>>>>> sym=#{sym}"
 
 
 
