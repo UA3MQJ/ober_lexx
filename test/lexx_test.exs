@@ -259,6 +259,120 @@ defmodule OberLexxTest do
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_colon, 1, ':'}], 1} == res
 
+    assert {:ok, [{:t_array, 1, _}], 1}     = :obr.string('ARRAY')
+    assert {:ok, [{:t_array, 1, _}], 1}     = :obr.string(' ARRAY ')
+    assert {:ok, [{:t_begin, 1, _}], 1}     = :obr.string(' BEGIN ')
+    assert {:ok, [{:t_by, 1, _}], 1}        = :obr.string(' BY ')
+    assert {:ok, [{:t_case, 1, _}], 1}      = :obr.string(' CASE ')
+    assert {:ok, [{:t_const, 1, _}], 1}     = :obr.string(' CONST ')
+    assert {:ok, [{:t_div, 1, _}], 1}       = :obr.string(' DIV ')
+    assert {:ok, [{:t_do, 1, _}], 1}        = :obr.string(' DO ')
+    assert {:ok, [{:t_else, 1, _}], 1}      = :obr.string(' ELSE ')
+    assert {:ok, [{:t_elseif, 1, _}], 1}    = :obr.string(' ELSEIF ')
+    assert {:ok, [{:t_end, 1, _}], 1}       = :obr.string(' END ')
+    assert {:ok, [{:t_false, 1, _}], 1}     = :obr.string(' FALSE ')
+    assert {:ok, [{:t_for, 1, _}], 1}       = :obr.string(' FOR ')
+    assert {:ok, [{:t_if, 1, _}], 1}        = :obr.string(' IF ')
+    assert {:ok, [{:t_import, 1, _}], 1}    = :obr.string(' IMPORT ')
+    assert {:ok, [{:t_in, 1, _}], 1}        = :obr.string(' IN ')
+    assert {:ok, [{:t_is, 1, _}], 1}        = :obr.string(' IS ')
+    assert {:ok, [{:t_mod, 1, _}], 1}       = :obr.string(' MOD ')
+    assert {:ok, [{:t_module, 1, _}], 1}    = :obr.string(' MODULE ')
+    assert {:ok, [{:t_nil, 1, _}], 1}       = :obr.string(' NIL ')
+    assert {:ok, [{:t_of, 1, _}], 1}        = :obr.string(' OF ')
+    assert {:ok, [{:t_or, 1, _}], 1}        = :obr.string(' OR ')
+    assert {:ok, [{:t_pointer, 1, _}], 1}   = :obr.string(' POINTER ')
+    assert {:ok, [{:t_procedure, 1, _}], 1} = :obr.string(' PROCEDURE ')
+    assert {:ok, [{:t_record, 1, _}], 1}    = :obr.string(' RECORD ')
+    assert {:ok, [{:t_repeat, 1, _}], 1}    = :obr.string(' REPEAT ')
+    assert {:ok, [{:t_return, 1, _}], 1}    = :obr.string(' RETURN ')
+    assert {:ok, [{:t_to, 1, _}], 1}        = :obr.string(' TO ')
+    assert {:ok, [{:t_true, 1, _}], 1}      = :obr.string(' TRUE ')
+    assert {:ok, [{:t_type, 1, _}], 1}      = :obr.string(' TYPE ')
+    assert {:ok, [{:t_var, 1, _}], 1}       = :obr.string(' VAR ')
+    assert {:ok, [{:t_while, 1, _}], 1}     = :obr.string(' WHILE ')
+    assert {:ok, [{:t_then, 1, _}], 1}      = :obr.string(' THEN ')
+    assert {:ok, [{:t_until, 1, _}], 1}     = :obr.string(' UNTIL ')
+
+    assert {:ok, [{:t_abs, 1, _}], 1}     = :obr.string(' ABS ')
+    assert {:ok, [{:t_asr, 1, _}], 1}     = :obr.string(' ASR ')
+    assert {:ok, [{:t_assert, 1, _}], 1}  = :obr.string(' ASSERT ')
+    assert {:ok, [{:t_boolean, 1, _}], 1} = :obr.string(' BOOLEAN ')
+    assert {:ok, [{:t_byte, 1, _}], 1}    = :obr.string(' BYTE ')
+    assert {:ok, [{:t_char, 1, _}], 1}    = :obr.string(' CHAR ')
+    assert {:ok, [{:t_chr, 1, _}], 1}     = :obr.string(' CHR ')
+    assert {:ok, [{:t_dec, 1, _}], 1}     = :obr.string(' DEC ')
+    assert {:ok, [{:t_excl, 1, _}], 1}    = :obr.string(' EXCL ')
+    assert {:ok, [{:t_floor, 1, _}], 1}   = :obr.string(' FLOOR ')
+    assert {:ok, [{:t_flt, 1, _}], 1}     = :obr.string(' FLT ')
+    assert {:ok, [{:t_incl, 1, _}], 1}    = :obr.string(' INCL ')
+    assert {:ok, [{:t_inc, 1, _}], 1}     = :obr.string(' INC ')
+    assert {:ok, [{:t_integer, 1, _}], 1} = :obr.string(' INTEGER ')
+    assert {:ok, [{:t_len, 1, _}], 1}     = :obr.string(' LEN ')
+    assert {:ok, [{:t_lsl, 1, _}], 1}     = :obr.string(' LSL ')
+    assert {:ok, [{:t_new, 1, _}], 1}     = :obr.string(' NEW ')
+    assert {:ok, [{:t_odd, 1, _}], 1}     = :obr.string(' ODD ')
+    assert {:ok, [{:t_ord, 1, _}], 1}     = :obr.string(' ORD ')
+    assert {:ok, [{:t_pack, 1, _}], 1}    = :obr.string(' PACK ')
+    assert {:ok, [{:t_real, 1, _}], 1}    = :obr.string(' REAL ')
+    assert {:ok, [{:t_ror, 1, _}], 1}     = :obr.string(' ROR ')
+    assert {:ok, [{:t_set, 1, _}], 1}     = :obr.string(' SET ')
+    assert {:ok, [{:t_unpk, 1, _}], 1}    = :obr.string(' UNPK ')
+
+    # PLUS       = \+
+    assert {:ok, [{:t_plus, 1, _}], 1}         = :obr.string(' + ')
+    # MINUS      = \-
+    assert {:ok, [{:t_minus, 1, _}], 1}        = :obr.string(' - ')
+    # MUL        = \*
+    assert {:ok, [{:t_mul, 1, _}], 1}          = :obr.string(' * ')
+    # DIVIDE     = /
+    assert {:ok, [{:t_divide, 1, _}], 1}       = :obr.string(' / ')
+    # TILDA      = ~
+    assert {:ok, [{:t_tilda, 1, _}], 1}        = :obr.string(' ~ ')
+    # AND        = &
+    assert {:ok, [{:t_and, 1, _}], 1}          = :obr.string(' & ')
+    # DDOT       = \.\.
+    assert {:ok, [{:t_ddot, 1, _}], 1}         = :obr.string(' .. ')
+    # DOT        = \.
+    assert {:ok, [{:t_dot, 1, _}], 1}          = :obr.string(' . ')
+    # COMMA      = ,
+    assert {:ok, [{:t_comma, 1, _}], 1}        = :obr.string(' , ')
+    # SEMICOLON  = ;
+    assert {:ok, [{:t_semicolon, 1, _}], 1}    = :obr.string(' ; ')
+    # VLINE      = \|
+    assert {:ok, [{:t_vline, 1, _}], 1}        = :obr.string(' | ')
+    # LPAR       = \(
+    assert {:ok, [{:t_lpar, 1, _}], 1}         = :obr.string(' ( ')
+    # RPAR       = \)
+    assert {:ok, [{:t_rpar, 1, _}], 1}         = :obr.string(' ) ')
+    # LBRACK     = \[
+    assert {:ok, [{:t_lbrack, 1, _}], 1}       = :obr.string(' [ ')
+    # RBRACK     = \]
+    assert {:ok, [{:t_rbrack, 1, _}], 1}       = :obr.string(' ] ')
+    # LBRACE     = \{
+    assert {:ok, [{:t_lbrace, 1, _}], 1}       = :obr.string(' { ')
+    # RBRACE     = \}
+    assert {:ok, [{:t_rbrace, 1, _}], 1}       = :obr.string(' } ')
+    # ASSIGN     = \:\=
+    assert {:ok, [{:t_assign, 1, _}], 1}       = :obr.string(' := ')
+    # COLON      = \:
+    assert {:ok, [{:t_colon, 1, _}], 1}        = :obr.string(' : ')
+    # ARROW      = \^
+    assert {:ok, [{:t_arrow, 1, _}], 1}        = :obr.string(' ^ ')
+    # EQU        = \=
+    assert {:ok, [{:t_equ, 1, _}], 1}          = :obr.string(' = ')
+    # SHARP      = \#
+    assert {:ok, [{:t_sharp, 1, _}], 1}        = :obr.string(' # ')
+    # LESSEQ     = \<\=
+    assert {:ok, [{:t_lesseq, 1, _}], 1}       = :obr.string(' <= ')
+    # MOREEQ     = \>\=
+    assert {:ok, [{:t_moreeq, 1, _}], 1}       = :obr.string(' >= ')
+    # LESS       = \<
+    assert {:ok, [{:t_less, 1, _}], 1}         = :obr.string(' < ')
+    # MORE       = \>
+    assert {:ok, [{:t_more, 1, _}], 1}         = :obr.string(' > ')
+
+
     str =  'MODULE ASCII;\n'
         ++ 'IMPORT Console;\n'
         ++ 'VAR\n'

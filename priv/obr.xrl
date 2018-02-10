@@ -23,8 +23,8 @@ IF         = IF
 IMPORT     = IMPORT
 IN         = IN
 IS         = IS
-MOD        = MOD
 MODULE     = MODULE
+MOD        = MOD
 NIL        = NIL
 OF         = OF
 OR         = OR
@@ -40,6 +40,31 @@ VAR        = VAR
 WHILE      = WHILE
 THEN       = THEN
 UNTIL      = UNTIL
+
+ABS        = ABS
+ASR        = ASR
+ASSERT     = ASSERT
+BOOLEAN    = BOOLEAN
+BYTE       = BYTE
+CHAR       = CHAR
+CHR        = CHR
+DEC        = DEC
+EXCL       = EXCL
+FLOOR      = FLOOR
+FLT        = FLT
+INCL       = INCL
+INC        = INC
+TINTEGER   = INTEGER
+LEN        = LEN
+LSL        = LSL
+NEW        = NEW
+ODD        = ODD
+ORD        = ORD
+PACK       = PACK
+TREAL      = REAL
+ROR        = ROR
+SET        = SET
+UNPK       = UNPK
 
 PLUS       = \+
 MINUS      = \-
@@ -75,8 +100,8 @@ IDENT      = {LETTER}({LETTER}|{DIGIT})*
 INTHEXWR   = ([0-9A-F])
 INTHEX     = ([0-9A-F]+H)
 INTDEC     = {DIGIT}+
-INTEGER    = {INTHEX}|{INTDEC}
-INTEGER2   = {INTHEXWR}+
+INT        = {INTHEX}|{INTDEC}
+INT2       = {INTHEXWR}+
 REAL       = [0-9]+\.[0-9]+([E|D][-+]?[0-9]+)?
 STRING1    = "([^"|^\n|^\r])*"
 STRING2    = '([^'|^\n|^\r])*'
@@ -102,8 +127,8 @@ Rules.
 {IMPORT}    : {token, {t_import, TokenLine, TokenChars}}.
 {IN}        : {token, {t_in, TokenLine, TokenChars}}.
 {IS}        : {token, {t_is, TokenLine, TokenChars}}.
-{MOD}       : {token, {t_mod, TokenLine, TokenChars}}.
 {MODULE}    : {token, {t_module, TokenLine, TokenChars}}.
+{MOD}       : {token, {t_mod, TokenLine, TokenChars}}.
 {NIL}       : {token, {t_nil, TokenLine, TokenChars}}.
 {OF}        : {token, {t_of, TokenLine, TokenChars}}.
 {OR}        : {token, {t_or, TokenLine, TokenChars}}.
@@ -119,6 +144,31 @@ Rules.
 {WHILE}     : {token, {t_while, TokenLine, TokenChars}}.
 {THEN}      : {token, {t_then, TokenLine, TokenChars}}.
 {UNTIL}     : {token, {t_until, TokenLine, TokenChars}}.
+
+{ABS}       : {token, {t_abs, TokenLine, TokenChars}}.
+{ASR}       : {token, {t_asr, TokenLine, TokenChars}}.
+{ASSERT}    : {token, {t_assert, TokenLine, TokenChars}}.
+{BOOLEAN}   : {token, {t_boolean, TokenLine, TokenChars}}.
+{BYTE}      : {token, {t_byte, TokenLine, TokenChars}}.
+{CHAR}      : {token, {t_char, TokenLine, TokenChars}}.
+{CHR}       : {token, {t_chr, TokenLine, TokenChars}}.
+{DEC}       : {token, {t_dec, TokenLine, TokenChars}}.
+{EXCL}      : {token, {t_excl, TokenLine, TokenChars}}.
+{FLOOR}     : {token, {t_floor, TokenLine, TokenChars}}.
+{FLT}       : {token, {t_flt, TokenLine, TokenChars}}.
+{INCL}      : {token, {t_incl, TokenLine, TokenChars}}.
+{INC}       : {token, {t_inc, TokenLine, TokenChars}}.
+{TINTEGER}  : {token, {t_integer, TokenLine, TokenChars}}.
+{LEN}       : {token, {t_len, TokenLine, TokenChars}}.
+{LSL}       : {token, {t_lsl, TokenLine, TokenChars}}.
+{NEW}       : {token, {t_new, TokenLine, TokenChars}}.
+{ODD}       : {token, {t_odd, TokenLine, TokenChars}}.
+{ORD}       : {token, {t_ord, TokenLine, TokenChars}}.
+{PACK}      : {token, {t_pack, TokenLine, TokenChars}}.
+{TREAL}     : {token, {t_real, TokenLine, TokenChars}}.
+{ROR}       : {token, {t_ror, TokenLine, TokenChars}}.
+{SET}       : {token, {t_set, TokenLine, TokenChars}}.
+{UNPK}      : {token, {t_unpk, TokenLine, TokenChars}}.
 
 {PLUS}      : {token, {t_plus, TokenLine, TokenChars}}.
 {MINUS}     : {token, {t_minus, TokenLine, TokenChars}}.
@@ -149,8 +199,8 @@ Rules.
 
 
 {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
-{INTEGER}   : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
-{INTEGER2}  : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
+{INT}       : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
+{INT2}      : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
 {REAL}      : {token, {real, TokenLine, TokenChars}}.
 {STRING}    : {token, {string, TokenLine, str_validate(TokenChars, TokenLine)}}.
 {CHARACTER} : {token, {character, TokenLine, TokenChars}}.
