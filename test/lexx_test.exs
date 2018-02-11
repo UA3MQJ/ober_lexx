@@ -11,7 +11,6 @@ defmodule OberLexxTest do
     time1 = :os.system_time(:millisecond)
     {:ok, _} = :leex.file('./priv/obr_lexer.xrl')
     time2 = :os.system_time(:millisecond)
-
     {:ok, :obr_lexer} = :c.c('./priv/obr_lexer.erl')
     time3 = :os.system_time(:millisecond)
 

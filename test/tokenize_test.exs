@@ -28,11 +28,11 @@ defmodule TokenizeTest do
     
     res = OberLexx.tokenize('123')
     Logger.debug ">>>>>> res=#{inspect res}"
-    assert res=[{:integer, "123", 1}]
+    assert [{:integer, "123", 1}] = res
 
     res = OberLexx.tokenize('  123 ')
     Logger.debug ">>>>>> res=#{inspect res}"
-    assert res=[{:integer, "123", 1}]
+    assert [{:integer, "123", 1}] = res
 
 
     # # число
