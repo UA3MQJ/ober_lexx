@@ -116,13 +116,19 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # constexpr
-    {:ok, tokens, _} = :obr_lexer.string('1..2')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # # constexpr
+    # {:ok, tokens, _} = :obr_lexer.string('1..2')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('1')
+    # {:ok, tokens, _} = :obr_lexer.string('1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # number
+    {:ok, tokens, _} = :obr_lexer.string('123')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
