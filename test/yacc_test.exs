@@ -4,7 +4,7 @@ defmodule OberYaccTest do
   require Logger
 
   # mix test --only yacc
-  @tag yacc: true  
+  @tag yacc: true
 
   test "the truth" do   
     time1 = :os.system_time(:millisecond)
@@ -30,7 +30,99 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('1+2')
+    # # IdentDef
+    # {:ok, tokens, _} = :obr_lexer.string('asd')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('asd-')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('asd*')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # IdentList
+    # {:ok, tokens, _} = :obr_lexer.string('asd')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('asd*, blabla')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('asd*, blabla, cdef-')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # ExprList
+    # {:ok, tokens, _} = :obr_lexer.string('1,2,3')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('1*1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('1*1, 2*3')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # element
+    # {:ok, tokens, _} = :obr_lexer.string('1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('1..2')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # set
+    # {:ok, tokens, _} = :obr_lexer.string('{}')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('{1}')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('{1,2}')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('{1,5,7..9}')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # constexpr
+    # {:ok, tokens, _} = :obr_lexer.string('1<2')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # constexpr
+    {:ok, tokens, _} = :obr_lexer.string('1..2')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('1')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
