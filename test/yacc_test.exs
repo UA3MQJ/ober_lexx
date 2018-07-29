@@ -542,18 +542,61 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # constantdeclaration
-    {:ok, tokens, _} = :obr_lexer.string('N      =  100')
+    # # constantdeclaration
+    # {:ok, tokens, _} = :obr_lexer.string('N      =  100')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('limit  =  2*N -1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('all    =  {0 .. WordSize-1}')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # label
+    # {:ok, tokens, _} = :obr_lexer.string('1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('"abc"')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('x')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # labelrange
+    # {:ok, tokens, _} = :obr_lexer.string('1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('1..2')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # caselabellist
+    {:ok, tokens, _} = :obr_lexer.string('1')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('limit  =  2*N -1')
+    {:ok, tokens, _} = :obr_lexer.string('1, 2, 3')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('all    =  {0 .. WordSize-1}')
+    {:ok, tokens, _} = :obr_lexer.string('1..2, 5..6')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"

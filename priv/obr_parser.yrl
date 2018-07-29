@@ -14,7 +14,7 @@ factor term simpleexpression expression constexpression constantdeclaration expl
 length element set setlist designator deselem deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters 
-procedureheading
+procedureheading label labelrange cllist caselabellist
 .
 
 Terminals 
@@ -49,7 +49,13 @@ Rootsymbol module.
 % module -> procedureheading : '$1'.
 % module -> length : '$1'.
 % module -> typedeclaration : '$1'.
-module -> constantdeclaration : '$1'.
+% module -> constantdeclaration : '$1'.
+% module -> label : '$1'.
+% module -> labelrange : '$1'.
+module -> caselabellist : '$1'.
+
+
+
 
 
 
@@ -290,14 +296,19 @@ actualparameters -> t_lpar explist t_rpar : {actualparameters, str_of('$1'), val
 % TODO
 % case = [CaseLabelList ":" StatementSequence].
 
-% TODO
 % CaseLabelList = LabelRange {"," LabelRange}.
+caselabellist -> cllist : {caselabellist, str_of('$1'), value_of('$1')}.
+cllist -> labelrange : {cllist, str_of('$1'), [('$1')]}.
+cllist -> labelrange t_comma cllist : {cllist, str_of('$1'),[('$1')] ++ value_of('$3')}.
 
-% TODO
 % LabelRange = label [".." label].
+labelrange -> label : {labelrange, str_of('$1'), {'$1'}}.
+labelrange -> label t_ddot label: {labelrange, str_of('$1'), {'$1', '$3'}}.
 
-% TODO
 % label = integer | string | qualident.
+label -> integer : {label, str_of('$1'), '$1'}.
+label -> string : {label, str_of('$1'), '$1'}.
+label -> qualident : {label, str_of('$1'), '$1'}.
 
 % TODO
 % WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
