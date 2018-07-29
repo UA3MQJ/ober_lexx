@@ -462,6 +462,17 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
+    # {:ok, tokens, _} = :obr_lexer.string('RECORD (Node) END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('RECORD (Node) a:integer; b:real; END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+
     # # type - pointer to
     # {:ok, tokens, _} = :obr_lexer.string('POINTER TO aaa')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
@@ -474,68 +485,78 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # procedureheading
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE *test1')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1(a:INTEGER)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE *test1(a:INTEGER)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1(a:INTEGER) : INTEGER')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE *test1(a:INTEGER) : INTEGER')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1()')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1() : INTEGER')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-
-    # forwarddeclaration
-    {:ok, tokens, _} = :obr_lexer.string('PROCEDURE ^test1')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE ^test1*')
+    # # procedureheading
+    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE ^test1*(a:integer)')
+    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1(a:INTEGER)')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE ^test1(a:integer)')
+    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1(a:INTEGER) : INTEGER')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1()')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('PROCEDURE test1() : INTEGER')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+
+    # # length
+    # {:ok, tokens, _} = :obr_lexer.string('1+2')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # typedeclaration
+    # {:ok, tokens, _} = :obr_lexer.string('Table       =  ARRAY N OF REAL')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string(' Tree        =  POINTER TO Node')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('Function*   =  PROCEDURE (x: INTEGER): INTEGER')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('  CenterNode  =  RECORD
+    #                name: ARRAY 32 OF CHAR;
+    #                subnode: Tree
+    #              END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # constantdeclaration
+    {:ok, tokens, _} = :obr_lexer.string('N      =  100')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('limit  =  2*N -1')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('all    =  {0 .. WordSize-1}')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
 
   end
 end

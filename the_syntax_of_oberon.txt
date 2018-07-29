@@ -26,12 +26,12 @@ module = MODULE ident ";" [ImportList] DeclarationSequence
 +ImportList = IMPORT import {"," import} ";".
 +import = ident [":=" ident].
 DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
-ConstDeclaration = identdef "=" ConstExpression.
-ConstExpression = expression.
-TypeDeclaration = identdef "=" StrucType.
++ConstDeclaration = identdef "=" ConstExpression.
++ConstExpression = expression.
++TypeDeclaration = identdef "=" StrucType.
 +StrucType = ArrayType | RecordType | PointerType | ProcedureType.
 +ArrayType = ARRAY length {"," length} OF type.
-length = ConstExpression.
++length = ConstExpression.
 +RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
 +BaseType = qualident.
 +FieldListSequence = FieldList {";" FieldList}.
@@ -44,10 +44,10 @@ length = ConstExpression.
 +FormalType = {ARRAY OF} qualident.
 +qualident = [ident "."] ident.
 +identdef = ident ["*"].
-VariableDeclaration = IdentList ":" type.
++VariableDeclaration = IdentList ":" type.
 +type = qualident | StrucType.
 ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
-ProcedureHeading = PROCEDURE identdef [FormalParameters].
++ProcedureHeading = PROCEDURE identdef [FormalParameters].
 ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
 +expression = SimpleExpression [relation SimpleExpression].
 +relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
@@ -57,7 +57,7 @@ ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression
 +MulOperator = "*" | "/" | DIV | MOD | "&".
 +factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
 +designator = qualident {selector}.
-selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
++selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
 +set = "{" [element {"," element}] "}".
 +element = expression [".." expression].
 +ExpList = expression {"," expression}.
