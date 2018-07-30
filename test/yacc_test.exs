@@ -585,18 +585,24 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # caselabellist
-    {:ok, tokens, _} = :obr_lexer.string('1')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # # caselabellist
+    # {:ok, tokens, _} = :obr_lexer.string('1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('1, 2, 3')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('1, 2, 3')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('1..2, 5..6')
+    # {:ok, tokens, _} = :obr_lexer.string('1..2, 5..6')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # assignment
+    {:ok, tokens, _} = :obr_lexer.string('x := 123')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"

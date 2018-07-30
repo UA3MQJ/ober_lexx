@@ -14,7 +14,7 @@ factor term simpleexpression expression constexpression constantdeclaration expl
 length element set setlist designator deselem deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters 
-procedureheading label labelrange cllist caselabellist
+procedureheading label labelrange cllist caselabellist assignment
 .
 
 Terminals 
@@ -52,7 +52,9 @@ Rootsymbol module.
 % module -> constantdeclaration : '$1'.
 % module -> label : '$1'.
 % module -> labelrange : '$1'.
-module -> caselabellist : '$1'.
+% module -> caselabellist : '$1'.
+module -> assignment : '$1'.
+
 
 
 
@@ -278,8 +280,8 @@ actualparameters -> t_lpar explist t_rpar : {actualparameters, str_of('$1'), val
 % TODO
 % statement = [assignment | ProcedureCall | IfStatement | CaseStatement |     WhileStatement | RepeatStatement | ForStatement].
 
-% TODO
 % assignment = designator ":=" expression.
+assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
 % TODO
 % ProcedureCall = designator [ActualParameters].
