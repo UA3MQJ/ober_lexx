@@ -9,7 +9,7 @@ defmodule OberYaccTest do
   test "the truth" do
 
     time1 = :os.system_time(:millisecond)
-    {:ok, _} = :leex.file('./priv/obr_lexer.xrl')
+    {:ok, _} = :leex.file('./priv/obr_lexer.xrl', [verbose: true])
     time2 = :os.system_time(:millisecond)
     {:ok, :obr_lexer} = :c.c('./priv/obr_lexer.erl')
     time3 = :os.system_time(:millisecond)
@@ -19,7 +19,7 @@ defmodule OberYaccTest do
 
 
     time1 = :os.system_time(:millisecond)
-    {:ok, _} = :yecc.file('./priv/obr_parser.yrl')
+    {:ok, _} = :yecc.file('./priv/obr_parser.yrl', [verbose: true])
     time2 = :os.system_time(:millisecond)
     {:ok, :obr_parser} = :c.c('./priv/obr_parser.erl')
     time3 = :os.system_time(:millisecond)
@@ -61,6 +61,11 @@ defmodule OberYaccTest do
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
     # {:ok, tokens, _} = :obr_lexer.string('ident2.name')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('ident2.name.name')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
@@ -601,11 +606,53 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # assignment
-    {:ok, tokens, _} = :obr_lexer.string('x := 123')
+    # # assignment
+    # {:ok, tokens, _} = :obr_lexer.string('x := 123')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # procedurecall
+    {:ok, tokens, _} = :obr_lexer.string('procedurename')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('procedurename()')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('procedurename(1+1)')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('procedurename(2)')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('procedurename(xx)')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('procedurename(xx.yy.zz)')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    {:ok, tokens, _} = :obr_lexer.string('procedurename(1,2,3)')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # term
+    # {:ok, tokens, _} = :obr_lexer.string('1*2/3')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
   end
 end

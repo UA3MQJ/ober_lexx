@@ -1,4 +1,5 @@
 % http://oberon07.com/EBNF.txt
+% https://models.molpit.org/oberon.html
 
 % Для описания синтаксиса Оберона-2 используются Расширенные Бэкуса-Наура Формы (РБНФ). 
 % Варианты разделяются знаком |. 
@@ -10,11 +11,11 @@
 
 Nonterminals 
 module number muloperator addoperator relation import implist importlist qualident identdef basetype
-factor term simpleexpression expression constexpression constantdeclaration explist exlist actualparameters
+factor term simpleexpression expression constexpression constantdeclaration explist exlist
 length element set setlist designator deselem deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
-pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters 
-procedureheading label labelrange cllist caselabellist assignment
+pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
+procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters
 .
 
 Terminals 
@@ -24,6 +25,11 @@ t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_co
 character string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure
 .
+
+
+Left 500 t_dot.
+Nonassoc 400 qualident.
+Nonassoc 300 deslist2.
 
 Rootsymbol module.
 
@@ -53,11 +59,9 @@ Rootsymbol module.
 % module -> label : '$1'.
 % module -> labelrange : '$1'.
 % module -> caselabellist : '$1'.
-module -> assignment : '$1'.
-
-
-
-
+% module -> assignment : '$1'.
+module -> procedurecall : '$1'.
+% module -> term : '$1'.
 
 
 
@@ -173,6 +177,7 @@ t_array_list -> t_array_list t_array t_of : {t_array_list, str_of('$1'), value_o
 qualident -> ident : {qualident, str_of('$1'), value_of('$1')}.
 qualident -> ident t_dot ident : {qualident, str_of('$1'), value_of('$1')++"."++value_of('$3')}.
 
+
 % +identdef = ident ["*"].
 identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
 identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1') ++ "*"}.
@@ -220,8 +225,17 @@ addoperator -> t_minus : '$1'.
 addoperator -> t_or : '$1'.
 
 % +term = factor {MulOperator factor}.
-term -> factor : {term, str_of('$1'), value_of('$1')}.
-term -> term muloperator term: {term, str_of('$1'), {'$2', value_of('$1'), value_of('$3')}}.
+% term -> factor : {term, str_of('$1'), value_of('$1')}.
+% term -> term muloperator term: {term, str_of('$1'), {'$2', value_of('$1'), value_of('$3')}}.
+term -> termlist : {term, str_of('$1'), value_of('$1')}.
+termlist -> factor : {termlist, str_of('$1'), '$1'}.
+termlist -> factor muloperator termlist: {termlist, str_of('$1'), {'$2', '$1', value_of('$3')}}.
+
+% % +IdentList = identdef {"," identdef}.
+% identlist -> idlist : {identlist, str_of('$1'), value_of('$1')}.
+% idlist -> identdef : {idlist, str_of('$1'), ['$1']}.
+% idlist -> identdef t_comma idlist: {idlist, str_of('$1'), ['$1'] ++ value_of('$3')}.
+
 
 % +MulOperator = "*" | "/" | DIV | MOD | "&".
 muloperator -> t_mul : '$1'.
@@ -283,8 +297,10 @@ actualparameters -> t_lpar explist t_rpar : {actualparameters, str_of('$1'), val
 % assignment = designator ":=" expression.
 assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
-% TODO
 % ProcedureCall = designator [ActualParameters].
+procedurecall -> designator : {procedurecall, str_of('$1'), {'$1', []}}.
+procedurecall -> designator actualparameters : {procedurecall, str_of('$1'), {'$1', '$2'}}.
+
 
 % TODO
 % StatementSequence = statement {";" statement}.
@@ -325,7 +341,7 @@ label -> qualident : {label, str_of('$1'), '$1'}.
 
 Erlang code.
 
-list_tail({_, List}) -> List.
+% list_tail({_, List}) -> List.
 
 str_of(Token) ->
     element(2, Token).
