@@ -16,7 +16,7 @@ length element set setlist designator deselem deslist deslist2 identlist idlist 
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
 procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
-ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement
+ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whilestatement elsifdosec
 .
 
 Terminals 
@@ -25,7 +25,7 @@ ident t_import t_semicolon t_is t_in t_moreeq t_more t_lesseq t_less
 t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_comma t_dot
 character string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case t_if t_then t_elsif t_else
-t_repeat t_until
+t_repeat t_until t_while t_do
 .
 
 
@@ -70,7 +70,8 @@ Rootsymbol module.
 % module -> ntcaselist : '$1'.
 % module -> casestatement : '$1'.
 % module -> ifstatement : '$1'.
-module -> repeatstatement : '$1'.
+% module -> repeatstatement : '$1'.
+module -> whilestatement : '$1'.
 
 
 
@@ -352,8 +353,11 @@ label -> integer : {label, str_of('$1'), '$1'}.
 label -> string : {label, str_of('$1'), '$1'}.
 label -> qualident : {label, str_of('$1'), '$1'}.
 
-% TODO
-% WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
+% +WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
+whilestatement -> t_while expression t_do statementsequence elsifdosec t_end: {whilestatement, str_of('$1'), [{while_do, '$2', '$4'}] ++ '$5'}.
+elsifdosec -> '$empty' : [].
+elsifdosec -> t_elsif expression t_do statementsequence : [{while_else_do, '$2', '$4'}].
+elsifdosec -> elsifdosec t_elsif expression t_do statementsequence : '$1' ++ [{while_else_do, '$3', '$5'}].
 
 % +RepeatStatement = REPEAT StatementSequence UNTIL expression.
 repeatstatement -> t_repeat statementsequence t_until expression : {repeatstatement, str_of('$1'), {'$2', '$4'}}.

@@ -721,11 +721,44 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # repeatstatement
-    {:ok, tokens, _} = :obr_lexer.string('REPEAT a:=a+1 UNTIL a<100')
+    # # repeatstatement
+    # {:ok, tokens, _} = :obr_lexer.string('REPEAT a:=a+1 UNTIL a<100')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # whilestatement
+    str = '''
+    WHILE j > 0 DO
+        j := j DIV 2; i := i+1
+    END
+    '''
+    {:ok, tokens, _} = :obr_lexer.string(str)
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    str = '''
+    WHILE m > n DO m := m - n
+    ELSIF n > m DO n := n - m
+    END
+    '''
+    {:ok, tokens, _} = :obr_lexer.string(str)
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    str = '''
+    WHILE m > n DO m := m - n
+    ELSIF n > m DO n := n - m
+    ELSIF n = m DO n := n * m
+    END
+    '''
+    {:ok, tokens, _} = :obr_lexer.string(str)
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
 
   end
 end
