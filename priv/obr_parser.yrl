@@ -15,7 +15,8 @@ factor term simpleexpression expression constexpression constantdeclaration expl
 length element set setlist designator deselem deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
-procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters
+procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
+ntcase ntcaselist casestatement
 .
 
 Terminals 
@@ -23,7 +24,7 @@ integer real
 ident t_import t_semicolon t_is t_in t_moreeq t_more t_lesseq t_less
 t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_comma t_dot
 character string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
-t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure
+t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case
 .
 
 
@@ -60,8 +61,17 @@ Rootsymbol module.
 % module -> labelrange : '$1'.
 % module -> caselabellist : '$1'.
 % module -> assignment : '$1'.
-module -> procedurecall : '$1'.
+% module -> procedurecall : '$1'.
 % module -> term : '$1'.
+% module -> statement : '$1'.
+% module -> statementsequence : '$1'.
+% module -> ntcase : '$1'.
+% module -> ntcaselist : '$1'.
+module -> casestatement : '$1'.
+
+
+
+
 
 
 
@@ -292,38 +302,50 @@ actualparameters -> t_lpar t_rpar : {actualparameters, str_of('$1'), []}.
 actualparameters -> t_lpar explist t_rpar : {actualparameters, str_of('$1'), value_of('$2')}.
 
 % TODO
-% statement = [assignment | ProcedureCall | IfStatement | CaseStatement |     WhileStatement | RepeatStatement | ForStatement].
+% statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
+statement -> assignment : {statement, str_of('$1'), '$1'}.
 
-% assignment = designator ":=" expression.
+% +assignment = designator ":=" expression.
 assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
-% ProcedureCall = designator [ActualParameters].
+% +ProcedureCall = designator [ActualParameters].
 procedurecall -> designator : {procedurecall, str_of('$1'), {'$1', []}}.
 procedurecall -> designator actualparameters : {procedurecall, str_of('$1'), {'$1', '$2'}}.
 
 
-% TODO
-% StatementSequence = statement {";" statement}.
+% +StatementSequence = statement {";" statement}.
+statementsequence -> sslist : {statementsequence, str_of('$1'), value_of('$1')}.
+sslist -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
+% может быть надо будет включить, если точка с запятой в конце
+% sslist -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
+sslist -> statement t_semicolon sslist : {sslist, str_of('$1'), [value_of('$1')] ++ value_of('$3')}.
+
+% % +ExpList = expression {"," expression}.
+% explist -> exlist : {explist, str_of('$1'), value_of('$1')}.
+% exlist -> expression : {exlist, str_of('$1'), [value_of('$1')]}.
+% exlist -> expression t_comma exlist : {exlist, str_of('$1'),[value_of('$1')] ++ value_of('$3')}.
 
 % TODO
 % IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 
-% TODO
-% CaseStatement = CASE expression OF case {"|" case} END.
+% +CaseStatement = CASE expression OF case {"|" case} END.
+casestatement -> t_case expression t_of ntcaselist t_end : {casestatement, str_of('$1'), {'$2', '$4'}}.
+ntcaselist -> ntcase : {ntcaselist, str_of('$1'), ['$1']}.
+ntcaselist -> ntcase t_vline ntcase : {ntcaselist, str_of('$1'), ['$1'] ++ value_of('$3')}.
 
-% TODO
-% case = [CaseLabelList ":" StatementSequence].
+% +case = [CaseLabelList ":" StatementSequence].
+ntcase -> caselabellist t_colon statementsequence : {ntcase, str_of('$1'), {'$1', '$3'}}.
 
-% CaseLabelList = LabelRange {"," LabelRange}.
+% +CaseLabelList = LabelRange {"," LabelRange}.
 caselabellist -> cllist : {caselabellist, str_of('$1'), value_of('$1')}.
 cllist -> labelrange : {cllist, str_of('$1'), [('$1')]}.
 cllist -> labelrange t_comma cllist : {cllist, str_of('$1'),[('$1')] ++ value_of('$3')}.
 
-% LabelRange = label [".." label].
+% +LabelRange = label [".." label].
 labelrange -> label : {labelrange, str_of('$1'), {'$1'}}.
 labelrange -> label t_ddot label: {labelrange, str_of('$1'), {'$1', '$3'}}.
 
-% label = integer | string | qualident.
+% +label = integer | string | qualident.
 label -> integer : {label, str_of('$1'), '$1'}.
 label -> string : {label, str_of('$1'), '$1'}.
 label -> qualident : {label, str_of('$1'), '$1'}.

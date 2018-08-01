@@ -612,47 +612,94 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # procedurecall
-    {:ok, tokens, _} = :obr_lexer.string('procedurename')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # # procedurecall
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('procedurename()')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename()')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('procedurename(1+1)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename(1+1)')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('procedurename(2)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename(2)')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('procedurename(xx)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename(xx)')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('procedurename(xx.yy.zz)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename(xx.yy.zz)')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('procedurename(1,2,3)')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('procedurename(1,2,3)')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
     # # term
     # {:ok, tokens, _} = :obr_lexer.string('1*2/3')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # statement
+    # {:ok, tokens, _} = :obr_lexer.string('a := 1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # statementsequence
+    # {:ok, tokens, _} = :obr_lexer.string('a := 1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+    
+    # {:ok, tokens, _} = :obr_lexer.string('a := 1; b:=2')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # case
+    # # TODO !!!!!!!!!! какие то проблемы с парсингом ноля
+    # {:ok, tokens, _} = :obr_lexer.string('0 : x := x + y')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('55 : x := x + y')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # {:ok, tokens, _} = :obr_lexer.string('55..66 : x := x + y')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # ntcaselist
+    # {:ok, tokens, _} = :obr_lexer.string('22 : x := x + y | 33 : x := x - y ')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # casestatement
+    {:ok, tokens, _} = :obr_lexer.string('CASE x OF 22 : x := x + y | 33 : x := x - y END')
+    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    res = :obr_parser.parse(tokens)
+    Logger.debug ">>>>>>>> res = #{inspect res}"
+
 
   end
 end
