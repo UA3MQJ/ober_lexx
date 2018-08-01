@@ -16,7 +16,7 @@ length element set setlist designator deselem deslist deslist2 identlist idlist 
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
 procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
-ntcase ntcaselist casestatement ifstatement elsifsec ifelse
+ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement
 .
 
 Terminals 
@@ -25,6 +25,7 @@ ident t_import t_semicolon t_is t_in t_moreeq t_more t_lesseq t_less
 t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_comma t_dot
 character string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case t_if t_then t_elsif t_else
+t_repeat t_until
 .
 
 
@@ -68,7 +69,8 @@ Rootsymbol module.
 % module -> ntcase : '$1'.
 % module -> ntcaselist : '$1'.
 % module -> casestatement : '$1'.
-module -> ifstatement : '$1'.
+% module -> ifstatement : '$1'.
+module -> repeatstatement : '$1'.
 
 
 
@@ -320,7 +322,7 @@ sslist -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
 % sslist -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
 sslist -> statement t_semicolon sslist : {sslist, str_of('$1'), [value_of('$1')] ++ value_of('$3')}.
 
-% IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
+% +IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 ifstatement -> t_if expression t_then statementsequence elsifsec ifelse t_end : {ifstatement, str_of('$1'), [{t_if, '$2', '$4'}] ++ '$5' ++ '$6'}.
 elsifsec -> '$empty' : [].
 elsifsec -> t_elsif expression t_then statementsequence : [{t_elsif, '$2', '$4'}].
@@ -353,8 +355,8 @@ label -> qualident : {label, str_of('$1'), '$1'}.
 % TODO
 % WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
 
-% TODO
-% RepeatStatement = REPEAT StatementSequence UNTIL expression.
+% +RepeatStatement = REPEAT StatementSequence UNTIL expression.
+repeatstatement -> t_repeat statementsequence t_until expression : {repeatstatement, str_of('$1'), {'$2', '$4'}}.
 
 % TODO
 % ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.

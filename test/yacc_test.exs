@@ -700,23 +700,29 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # IfStatement
-    {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 END')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # # IfStatement
+    # {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 ELSIF x<1 THEN a:=-1 END')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 ELSIF x<1 THEN a:=-1 END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 ELSIF x<1 THEN a:=-1 ELSIF x=1 THEN a:=1 END')
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
+    # {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 ELSIF x<1 THEN a:=-1 ELSIF x=1 THEN a:=1 END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 ELSIF x<1 THEN a:=-1 ELSIF x=1 THEN a:=1 ELSE a:= 555 END')
+    # {:ok, tokens, _} = :obr_lexer.string('IF x>1 THEN a:=0 ELSIF x<1 THEN a:=-1 ELSIF x=1 THEN a:=1 ELSE a:= 555 END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # repeatstatement
+    {:ok, tokens, _} = :obr_lexer.string('REPEAT a:=a+1 UNTIL a<100')
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
