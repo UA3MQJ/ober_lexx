@@ -727,33 +727,46 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # whilestatement
-    str = '''
-    WHILE j > 0 DO
-        j := j DIV 2; i := i+1
-    END
-    '''
+    # # whilestatement
+    # str = '''
+    # WHILE j > 0 DO
+    #     j := j DIV 2; i := i+1
+    # END
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # str = '''
+    # WHILE m > n DO m := m - n
+    # ELSIF n > m DO n := n - m
+    # END
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # str = '''
+    # WHILE m > n DO m := m - n
+    # ELSIF n > m DO n := n - m
+    # ELSIF n = m DO n := n * m
+    # END
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # forstatement
+    str = 'FOR v := beg TO end DO S END'
     {:ok, tokens, _} = :obr_lexer.string(str)
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    str = '''
-    WHILE m > n DO m := m - n
-    ELSIF n > m DO n := n - m
-    END
-    '''
-    {:ok, tokens, _} = :obr_lexer.string(str)
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    str = '''
-    WHILE m > n DO m := m - n
-    ELSIF n > m DO n := n - m
-    ELSIF n = m DO n := n * m
-    END
-    '''
+    str = 'FOR v := beg TO end BY inc DO S END'
     {:ok, tokens, _} = :obr_lexer.string(str)
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
