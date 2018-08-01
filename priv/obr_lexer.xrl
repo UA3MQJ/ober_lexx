@@ -16,6 +16,7 @@ DIV        = DIV
 DO         = DO
 ELSE       = ELSE
 ELSEIF     = ELSEIF
+ELSIF      = ELSIF
 END        = END
 FALSE      = FALSE
 FOR        = FOR
@@ -120,6 +121,7 @@ Rules.
 {DO}        : {token, {t_do, TokenLine, TokenChars}}.
 {ELSE}      : {token, {t_else, TokenLine, TokenChars}}.
 {ELSEIF}    : {token, {t_elseif, TokenLine, TokenChars}}.
+{ELSIF}     : {token, {t_elsif, TokenLine, TokenChars}}.
 {END}       : {token, {t_end, TokenLine, TokenChars}}.
 {FALSE}     : {token, {t_false, TokenLine, TokenChars}}.
 {FOR}       : {token, {t_for, TokenLine, TokenChars}}.
