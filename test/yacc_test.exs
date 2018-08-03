@@ -759,19 +759,45 @@ defmodule OberYaccTest do
     # res = :obr_parser.parse(tokens)
     # Logger.debug ">>>>>>>> res = #{inspect res}"
 
-    # forstatement
-    str = 'FOR v := beg TO end DO S END'
+    # # forstatement
+    # str = 'FOR v := beg TO end DO S END'
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # str = 'FOR v := beg TO end BY inc DO S END'
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # # proceduredeclaration
+    # str = '''
+    #     PROCEDURE ReadInt(VAR x: INTEGER);
+    #             VAR i : INTEGER; ch: CHAR;
+    #     BEGIN i := 0; Read(ch);
+    #             WHILE ("0" <= ch) & (ch <= "9") DO
+    #                     i := 10*i + (ORD(ch)-ORD("0")); Read(ch)
+    #             END ;
+    #             x := i
+    #     END ReadInt
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # res = :obr_parser.parse(tokens)
+    # Logger.debug ">>>>>>>> res = #{inspect res}"
+
+    # module
+    str = '''
+        MODULE ASCII;
+
+        END ASCII.
+    '''
     {:ok, tokens, _} = :obr_lexer.string(str)
     Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     res = :obr_parser.parse(tokens)
     Logger.debug ">>>>>>>> res = #{inspect res}"
-
-    str = 'FOR v := beg TO end BY inc DO S END'
-    {:ok, tokens, _} = :obr_lexer.string(str)
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    res = :obr_parser.parse(tokens)
-    Logger.debug ">>>>>>>> res = #{inspect res}"
-
 
   end
 end

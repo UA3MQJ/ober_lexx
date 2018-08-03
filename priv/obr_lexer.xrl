@@ -165,7 +165,7 @@ Rules.
 {LSL}       : {token, {t_lsl, TokenLine, TokenChars}}.
 {NEW}       : {token, {t_new, TokenLine, TokenChars}}.
 {ODD}       : {token, {t_odd, TokenLine, TokenChars}}.
-{ORD}       : {token, {t_ord, TokenLine, TokenChars}}.
+% {ORD}       : {token, {t_ord, TokenLine, TokenChars}}.
 {PACK}      : {token, {t_pack, TokenLine, TokenChars}}.
 % {TREAL}     : {token, {t_real, TokenLine, TokenChars}}.
 {ROR}       : {token, {t_ror, TokenLine, TokenChars}}.

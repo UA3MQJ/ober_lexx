@@ -17,7 +17,9 @@ typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence rec
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
 procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
 ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whilestatement elsifdosec
-forstatement forby
+forstatement forby procedurebody declarationsequence procedurebody_stat_seq procedurebody_ret_exp proceduredeclaration
+declarationsequence_const declarationsequence_type declarationsequence_var const_decl_li type_decl_li var_decl_li proc_decl_li
+module_importlist module_begin
 .
 
 Terminals 
@@ -26,7 +28,7 @@ ident t_import t_semicolon t_is t_in t_moreeq t_more t_lesseq t_less
 t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_comma t_dot
 character string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case t_if t_then t_elsif t_else
-t_repeat t_until t_while t_do t_for t_by
+t_repeat t_until t_while t_do t_for t_by t_begin t_return t_const t_type t_var t_module
 .
 
 
@@ -73,7 +75,8 @@ Rootsymbol module.
 % module -> ifstatement : '$1'.
 % module -> repeatstatement : '$1'.
 % module -> whilestatement : '$1'.
-module -> forstatement : '$1'.
+% module -> forstatement : '$1'.
+% module -> proceduredeclaration : '$1'.
 
 
 
@@ -95,8 +98,13 @@ module -> forstatement : '$1'.
 number -> integer : '$1'.
 number -> real : '$1'.
 
-% TODO
-% module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
+% +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
+module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : {module, nil, {'$2', '$4', '$5', '$6', '$8'}}.
+module_importlist -> '$empty' : {importlist, nil, []}.
+module_importlist -> importlist : '$1'.
+
+module_begin -> '$empty' : nil.
+module_begin -> t_begin statementsequence : '$2'.
 
 % +ImportList = IMPORT import {"," import} ";".
 importlist -> t_import implist t_semicolon : {importlist, str_of('$1'), '$2'}.
@@ -107,8 +115,34 @@ implist -> import t_comma implist : ['$1'] ++ '$3'.
 import -> ident : {import, str_of('$1'), {value_of('$1'), value_of('$1')}}.
 import -> ident t_assign ident: {import, str_of('$1'), {value_of('$1'), value_of('$3')}}.
 
-% TODO
-% DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
+% +DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
+declarationsequence -> declarationsequence_const declarationsequence_type declarationsequence_var proc_decl_li : {declarationsequence, nil, {'$1', '$2', '$3', '$4'}}.
+
+%   [CONST {ConstDeclaration ";"}]
+declarationsequence_const -> '$empty' : nil.
+declarationsequence_const -> t_const const_decl_li : {const, str_of('$1'), '$2'}.
+const_decl_li -> '$empty' : [].
+const_decl_li -> constantdeclaration t_semicolon: ['$1'].
+const_decl_li -> const_decl_li constantdeclaration t_semicolon: '$1' ++ ['$2'].
+
+%   [TYPE {TypeDeclaration ";"}]
+declarationsequence_type -> '$empty' : nil.
+declarationsequence_type -> t_type type_decl_li : {type, str_of('$1'), '$2'}.
+type_decl_li -> '$empty' : [].
+type_decl_li -> typedeclaration t_semicolon: ['$1'].
+type_decl_li -> type_decl_li typedeclaration t_semicolon: '$1' ++ ['$2'].
+
+%   [VAR {VariableDeclaration ";"}]
+declarationsequence_var -> '$empty' : nil.
+declarationsequence_var -> t_var var_decl_li : {var, str_of('$1'), '$2'}.
+var_decl_li -> '$empty' : [].
+var_decl_li -> variabledeclaration t_semicolon: ['$1'].
+var_decl_li -> var_decl_li variabledeclaration t_semicolon: '$1' ++ ['$2'].
+
+%   {ProcedureDeclaration ";"}.
+proc_decl_li ->  '$empty' : [].
+proc_decl_li -> proceduredeclaration t_semicolon : ['$1'].
+proc_decl_li -> proc_decl_li proceduredeclaration t_semicolon : '$1' ++ ['$2'].
 
 % +ConstDeclaration = identdef "=" ConstExpression.
 constantdeclaration -> identdef t_equ constexpression : {constantdeclaration, '$1', '$3'}.
@@ -204,15 +238,19 @@ variabledeclaration -> identlist t_colon type : {variabledeclaration, str_of('$1
 type -> qualident : {type, str_of('$1'), '$1'}.
 type -> structype : {type, str_of('$1'), '$1'}.
 
-% TODO
-% ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+% +ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+proceduredeclaration -> procedureheading t_semicolon procedurebody ident : {proceduredeclaration, str_of('$1'), {'$1', '$3', '$4'}}.
 
 % +ProcedureHeading = PROCEDURE identdef [FormalParameters].
 procedureheading -> t_procedure identdef : {procedureheading, str_of('$1'), {'$2', []}}.
 procedureheading -> t_procedure identdef formalparameters : {procedureheading, str_of('$1'), {'$2', '$3'}}.
 
-% TODO
-% ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+% +ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+procedurebody -> declarationsequence procedurebody_stat_seq procedurebody_ret_exp t_end : {procedurebody, str_of('$1'), {'$1', '$2', '$3'}}.
+procedurebody_stat_seq -> '$empty' : nil.
+procedurebody_stat_seq -> t_begin statementsequence : '$2'.
+procedurebody_ret_exp  -> '$empty' : nil.
+procedurebody_ret_exp  -> t_return expression : '$2'.
 
 % +expression = SimpleExpression [relation SimpleExpression].
 expression -> simpleexpression : {expression, str_of('$1'), value_of('$1')}.
@@ -245,12 +283,6 @@ addoperator -> t_or : '$1'.
 term -> termlist : {term, str_of('$1'), value_of('$1')}.
 termlist -> factor : {termlist, str_of('$1'), '$1'}.
 termlist -> factor muloperator termlist: {termlist, str_of('$1'), {'$2', '$1', value_of('$3')}}.
-
-% % +IdentList = identdef {"," identdef}.
-% identlist -> idlist : {identlist, str_of('$1'), value_of('$1')}.
-% idlist -> identdef : {idlist, str_of('$1'), ['$1']}.
-% idlist -> identdef t_comma idlist: {idlist, str_of('$1'), ['$1'] ++ value_of('$3')}.
-
 
 % +MulOperator = "*" | "/" | DIV | MOD | "&".
 muloperator -> t_mul : '$1'.
@@ -306,8 +338,7 @@ exlist -> expression t_comma exlist : {exlist, str_of('$1'),[value_of('$1')] ++ 
 actualparameters -> t_lpar t_rpar : {actualparameters, str_of('$1'), []}.
 actualparameters -> t_lpar explist t_rpar : {actualparameters, str_of('$1'), value_of('$2')}.
 
-% TODO
-% statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
+% +statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment      : {statement, str_of('$1'), '$1'}.
 statement -> procedurecall   : {statement, str_of('$1'), '$1'}.
 statement -> ifstatement     : {statement, str_of('$1'), '$1'}.
@@ -381,6 +412,7 @@ Erlang code.
 % list_tail({_, List}) -> List.
 
 str_of(Token) ->
+    % io:format('str_of ~w~n', [Token]),
     element(2, Token).
 
 value_of(Token) ->
