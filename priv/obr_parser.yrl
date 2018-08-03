@@ -13,7 +13,7 @@ Nonterminals
 module number muloperator addoperator relation import implist importlist qualident identdef basetype
 factor term simpleexpression expression constexpression constantdeclaration explist exlist
 length element set setlist designator deselem deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
-typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype fldlist
+typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
 procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
 ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whilestatement elsifdosec
@@ -26,11 +26,24 @@ Terminals
 integer real
 ident t_import t_semicolon t_is t_in t_moreeq t_more t_lesseq t_less
 t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_comma t_dot
-character string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
+string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case t_if t_then t_elsif t_else
-t_repeat t_until t_while t_do t_for t_by t_begin t_return t_const t_type t_var t_module
+t_repeat t_until t_while t_do t_for t_by t_begin t_return t_const t_type t_module
 .
 
+
+Nonassoc 950 const_decl_li.
+Nonassoc 940 type_decl_li.
+Nonassoc 930 var_decl_li.
+
+Nonassoc 850 declarationsequence_const.
+Nonassoc 840 declarationsequence_type.
+Nonassoc 830 declarationsequence_var.
+Nonassoc 820 proc_decl_li.
+
+Nonassoc 650 elsifsec.
+Nonassoc 640 ifelse.
+Nonassoc 630 elsifdosec.
 
 Left 500 t_dot.
 Nonassoc 400 qualident.
