@@ -132,14 +132,14 @@ declarationsequence -> declarationsequence_const declarationsequence_type declar
 
 %   [CONST {ConstDeclaration ";"}]
 declarationsequence_const -> '$empty' : nil.
-declarationsequence_const -> t_const const_decl_li : 'Elixir.T':new({constantdeclaration, str_of('$1'), '$2'}).
+declarationsequence_const -> t_const const_decl_li : '$2'.
 const_decl_li -> '$empty' : [].
 const_decl_li -> constantdeclaration t_semicolon: ['$1'].
 const_decl_li -> const_decl_li constantdeclaration t_semicolon: '$1' ++ ['$2'].
 
 %   [TYPE {TypeDeclaration ";"}]
 declarationsequence_type -> '$empty' : nil.
-declarationsequence_type -> t_type type_decl_li : 'Elixir.T':new({typedeclaration, str_of('$1'), '$2'}).
+declarationsequence_type -> t_type type_decl_li : '$2'.
 type_decl_li -> '$empty' : [].
 type_decl_li -> typedeclaration t_semicolon: ['$1'].
 type_decl_li -> type_decl_li typedeclaration t_semicolon: '$1' ++ ['$2'].
@@ -152,7 +152,7 @@ var_decl_li -> variabledeclaration t_semicolon: ['$1'].
 var_decl_li -> var_decl_li variabledeclaration t_semicolon: '$1' ++ ['$2'].
 
 %   {ProcedureDeclaration ";"}.
-proc_decl_li ->  '$empty' : nil.
+proc_decl_li ->  '$empty' : [].
 proc_decl_li -> proceduredeclaration t_semicolon : ['$1'].
 proc_decl_li -> proc_decl_li proceduredeclaration t_semicolon : '$1' ++ ['$2'].
 
@@ -375,8 +375,8 @@ procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, st
 % +StatementSequence = statement {";" statement}.
 statementsequence -> sslist : 'Elixir.T':new({statementsequence, str_of('$1'), value_of('$1')}).
 sslist -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
-% может быть надо будет включить, если точка с запятой в конце
-% sslist -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
+% может быть надо будет включить, если точка с запятой в конце - да. так и есть.
+sslist -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
 sslist -> statement t_semicolon sslist : {sslist, str_of('$1'), [value_of('$1')] ++ value_of('$3')}.
 
 % +IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.

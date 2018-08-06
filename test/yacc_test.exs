@@ -70,6 +70,16 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
+    # {:ok, tokens, _} = :obr_lexer.string('ident_num1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
+
+    # {:ok, tokens, _} = :obr_lexer.string('_ident_num1')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
+
     # {:ok, tokens, _} = :obr_lexer.string('ident1*')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
@@ -187,6 +197,11 @@ defmodule OberYaccTest do
 
 
     # # expression
+    # {:ok, tokens, _} = :obr_lexer.string('-100')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
+
     # {:ok, tokens, _} = :obr_lexer.string('1')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
@@ -874,16 +889,100 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
-    str = '''
-        MODULE ASCII;
-        IMPORT system;
+    # str = '''
+    #     MODULE ASCII;
+    #     IMPORT system;
+    #     END ASCII.
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
 
-        END ASCII.
-    '''
-    {:ok, tokens, _} = :obr_lexer.string(str)
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    {:ok, res} = :obr_parser.parse(tokens)
-    IO.inspect(res)
 
+    test_file("./priv/mods/examples/Test1.Mod")
+    test_file("./priv/mods/examples/IM1.Mod")
+    test_file("./priv/mods/examples/AsmTest.Mod")
+    test_file("./priv/mods/examples/BasicRegs1.Mod") # TODO THEN END
+    test_file("./priv/mods/examples/BasicRegs2.Mod")
+    test_file("./priv/mods/examples/BasicRegs3.Mod")
+    test_file("./priv/mods/examples/Best40Test.Mod") # TODO CONST
+    test_file("./priv/mods/examples/BigCircles.Mod")
+
+    test_file("./priv/mods/examples/BrightLetters.Mod")
+    test_file("./priv/mods/examples/Circl.Mod")
+    test_file("./priv/mods/examples/ConsoleDemo.Mod")
+    test_file("./priv/mods/examples/DemoDynMem.Mod")
+    test_file("./priv/mods/examples/DemoInvert.Mod")
+    test_file("./priv/mods/examples/DemoRus.Mod")
+    test_file("./priv/mods/examples/DemoSpr2.Mod")
+    test_file("./priv/mods/examples/DemoSprL.Mod")
+    test_file("./priv/mods/examples/DemoSpr.Mod")
+    test_file("./priv/mods/examples/DemoStatMem.Mod")
+    test_file("./priv/mods/examples/DemoTiles.Mod")
+    test_file("./priv/mods/examples/Empty.Mod")
+    test_file("./priv/mods/examples/Fill.Mod")
+    test_file("./priv/mods/examples/Flower.Mod")
+    test_file("./priv/mods/examples/GraphSinus.Mod")
+    test_file("./priv/mods/examples/HelloWorld.Mod")
+    test_file("./priv/mods/examples/IM1.Mod")
+    test_file("./priv/mods/examples/IM2.Mod")
+    test_file("./priv/mods/examples/Kubik.Mod") # TODO {:error, {43, :obr_lexer, {:illegal, '"|'}}, 43}
+    test_file("./priv/mods/examples/LambdaTest2.Mod")
+    test_file("./priv/mods/examples/LambdaTest3.Mod")
+    test_file("./priv/mods/examples/LambdaTest.Mod")
+    test_file("./priv/mods/examples/Laser2Demo_clean.Mod")
+    test_file("./priv/mods/examples/Laser2Demo.Mod")
+    test_file("./priv/mods/examples/Laser2Test1.Mod")
+    test_file("./priv/mods/examples/Laser2Test2.Mod")
+    test_file("./priv/mods/examples/Laser2Test3.Mod")
+    test_file("./priv/mods/examples/LaserDemo.Mod")
+    test_file("./priv/mods/examples/MemTest2.Mod")
+    test_file("./priv/mods/examples/MemTest.Mod")
+    test_file("./priv/mods/examples/MiraTest.Mod")
+    test_file("./priv/mods/examples/MoveSpr2.Mod")
+    test_file("./priv/mods/examples/MoveSpr.Mod")
+    test_file("./priv/mods/examples/Primer.Mod")
+    test_file("./priv/mods/examples/Spiral11f2.Mod")
+    test_file("./priv/mods/examples/Spiral11f3.Mod")
+    test_file("./priv/mods/examples/Spiral11.Mod")
+    test_file("./priv/mods/examples/Test1.Mod")
+    test_file("./priv/mods/examples/TestCalc.Mod")
+    test_file("./priv/mods/examples/TestCircle.Mod")
+    test_file("./priv/mods/examples/TestCtrl.Mod")
+    test_file("./priv/mods/examples/TestInPar.Mod")
+    test_file("./priv/mods/examples/TestInpBuf.Mod")
+    test_file("./priv/mods/examples/TestInput.Mod")
+    test_file("./priv/mods/examples/TestPT3IM2.Mod")
+    test_file("./priv/mods/examples/TestPT3.Mod")
+    test_file("./priv/mods/examples/TestSnd.Mod")
+    test_file("./priv/mods/examples/TinyHello.Mod")
+    test_file("./priv/mods/examples/TrDosTest.Mod")
+    test_file("./priv/mods/examples/UMath.Mod")
+    test_file("./priv/mods/examples/Unsigned.Mod")
+    test_file("./priv/mods/examples/WhamTest.Mod")
+    test_file("./priv/mods/examples/XDevHello.Mod")
+
+  end
+
+  def test_file(file) do
+    # read binary
+    {:ok, binary} = File.read(file)    
+    # bynary -> string
+    str = OberLexx.Utils.raw_binary_to_string(binary)
+    # string - remove comments -> string
+    # IO.puts(str)
+    clean_str = OberLexx.Utils.binary_remove_comments(str)
+    # IO.puts(clean_str)
+    # string -> charlist
+    charlist = to_charlist(clean_str)
+    {:ok, tokens, _} = :obr_lexer.string(charlist)
+    case :obr_parser.parse(tokens) do
+      {:ok, res} ->
+        # IO.inspect(res)
+        Logger.info "#{file} - ok"
+      _else ->
+        Logger.info "#{file} - error"        
+    end
   end
 end

@@ -614,7 +614,7 @@ yeccpars2(198=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %% yeccpars2(199=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_199(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(200=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_117(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_200(S, Cat, Ss, Stack, T, Ts, Tzr);
 %% yeccpars2(201=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_201(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(202=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -1852,7 +1852,22 @@ yeccpars2_199(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_199_(Stack),
  yeccgoto_assignment(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
-%% yeccpars2_200: see yeccpars2_117
+yeccpars2_200(S, ident, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 41, Ss, Stack, T, Ts, Tzr);
+yeccpars2_200(S, t_case, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 129, Ss, Stack, T, Ts, Tzr);
+yeccpars2_200(S, t_for, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 130, Ss, Stack, T, Ts, Tzr);
+yeccpars2_200(S, t_if, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 131, Ss, Stack, T, Ts, Tzr);
+yeccpars2_200(S, t_repeat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 132, Ss, Stack, T, Ts, Tzr);
+yeccpars2_200(S, t_while, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 133, Ss, Stack, T, Ts, Tzr);
+yeccpars2_200(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ [_|Nss] = Ss,
+ NewStack = yeccpars2_200_(Stack),
+ yeccgoto_sslist(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
 yeccpars2_201(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  [_,_|Nss] = Ss,
@@ -4002,7 +4017,7 @@ yeccpars2_18_(__Stack0) ->
 yeccpars2_21_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   'Elixir.T' : new ( { constantdeclaration , str_of ( __1 ) , __2 } )
+   __2
   end | __Stack].
 
 -compile({inline,yeccpars2_22_/1}).
@@ -4865,6 +4880,14 @@ yeccpars2_199_(__Stack0) ->
    'Elixir.T' : new ( { assignment , str_of ( __1 ) , { __1 , __3 } } )
   end | __Stack].
 
+-compile({inline,yeccpars2_200_/1}).
+-file("./priv/obr_parser.yrl", 375).
+yeccpars2_200_(__Stack0) ->
+ [__2,__1 | __Stack] = __Stack0,
+ [begin
+   { sslist , str_of ( __1 ) , [ value_of ( __1 ) ] }
+  end | __Stack].
+
 -compile({inline,yeccpars2_201_/1}).
 -file("./priv/obr_parser.yrl", 376).
 yeccpars2_201_(__Stack0) ->
@@ -4900,7 +4923,7 @@ yeccpars2_206_(__Stack0) ->
 yeccpars2_208_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
-   'Elixir.T' : new ( { typedeclaration , str_of ( __1 ) , __2 } )
+   __2
   end | __Stack].
 
 -compile({inline,yeccpars2_211_/1}).
@@ -5251,7 +5274,7 @@ yeccpars2_283_(__Stack0) ->
 -file("./priv/obr_parser.yrl", 151).
 yeccpars2_284_(__Stack0) ->
  [begin
-   nil
+   [ ]
   end | __Stack0].
 
 -compile({inline,yeccpars2_285_/1}).

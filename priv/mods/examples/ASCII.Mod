@@ -1,6 +1,4 @@
 MODULE ASCII; (** portable CHR *)
-IMPORT Console;
-IMPORT Asm, B := Basic, PT3x0A, B40 := Best40;
 IMPORT b := Basic, d := Debug;
 
 TYPE
@@ -22,12 +20,10 @@ END
 HumanRec = RECORD
 END
 
-
 BEGIN (*$MAIN*)
   c:=TRUE;
   e:="asdvsdvsd";
   e:='asdvsdvsd';
   b.Init; b.CLS;
-  a * 2;
   FOR n := 32-1 TO 127-1 DO Console.WriteCh(CHR(n+1)) END;
 END ASCII.

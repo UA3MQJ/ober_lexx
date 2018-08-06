@@ -97,7 +97,8 @@ MORE       = \>
 
 LETTER     = [A-Za-z]
 DIGIT      = [0-9]
-IDENT      = {LETTER}({LETTER}|{DIGIT})*
+% _ not in EBNF!
+IDENT      = ({LETTER}|_)({LETTER}|{DIGIT}|_)*
 INTHEXWR   = ([0-9A-F])
 INTHEX     = ([0-9A-F]+H)
 INTDEC     = {DIGIT}+
