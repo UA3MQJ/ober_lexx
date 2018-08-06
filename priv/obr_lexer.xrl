@@ -221,6 +221,7 @@ id_validate(Chars, Line) ->
   end.
 
 int_validate(Chars, _Line) -> int_validate_del_zero(Chars).
+int_validate_del_zero([$0] = Chars) -> Chars;
 int_validate_del_zero([$0|Chars]) -> int_validate_del_zero(Chars);
 int_validate_del_zero(Chars) -> Chars.
 

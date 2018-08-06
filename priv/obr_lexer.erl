@@ -24,6 +24,7 @@ id_validate(Chars, Line) ->
   end.
 
 int_validate(Chars, _Line) -> int_validate_del_zero(Chars).
+int_validate_del_zero([$0] = Chars) -> Chars;
 int_validate_del_zero([$0|Chars]) -> int_validate_del_zero(Chars);
 int_validate_del_zero(Chars) -> Chars.
 
@@ -324,7 +325,7 @@ adjust_line(T, A, [_|Cs], L) ->
 %% return signal either an unrecognised character or end of current
 %% input.
 
--file("./priv/obr_lexer.erl", 326).
+-file("./priv/obr_lexer.erl", 327).
 yystate() -> 152.
 
 yystate(155, [80|Ics], Line, Tlen, _, _) ->
