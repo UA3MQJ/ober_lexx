@@ -863,16 +863,16 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
-    # module
-    str = '''
-        MODULE ASCII;
+    # # module
+    # str = '''
+    #     MODULE ASCII;
 
-        END ASCII.
-    '''
-    {:ok, tokens, _} = :obr_lexer.string(str)
-    Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
-    {:ok, res} = :obr_parser.parse(tokens)
-    IO.inspect(res)
+    #     END ASCII.
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
 
     str = '''
         MODULE ASCII;

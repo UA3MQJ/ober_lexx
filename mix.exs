@@ -17,6 +17,7 @@ defmodule OberLexx.Mixfile do
 
   defp deps do
     [
+      {:poison, "~> 3.1"},
     ]
   end
 end

@@ -92,11 +92,6 @@ Rootsymbol module.
 % module -> forstatement : '$1'.
 % module -> proceduredeclaration : '$1'.
 
-
-
-
-
-
 % то, что уже есть благодаря лексеру
 % +ident = letter {letter | digit}.
 % +letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z".
@@ -115,8 +110,7 @@ number -> character : 'Elixir.T':new('$1').
 
 
 % +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-% module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : {module, nil, {'$2', '$4', '$5', '$6', '$8'}}.
-module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : module2map('$2', '$4', '$5', '$6', '$8').
+module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
 module_importlist -> '$empty' : nil.
 module_importlist -> importlist : '$1'.
 
