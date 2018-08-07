@@ -1,6 +1,6 @@
 -module(obr_parser).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("./priv/obr_parser.yrl", 426).
+-file("./priv/obr_parser.yrl", 427).
 
 -define(MType, '__struct__').
 
@@ -594,17 +594,17 @@ yeccpars2(188=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %% yeccpars2(189=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_189(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(190=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_178(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_190(S, Cat, Ss, Stack, T, Ts, Tzr);
 %% yeccpars2(191=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_191(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(192=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_178(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_190(S, Cat, Ss, Stack, T, Ts, Tzr);
 %% yeccpars2(193=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_193(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(194=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_194(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(195=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_178(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_195(S, Cat, Ss, Stack, T, Ts, Tzr);
 %% yeccpars2(196=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_196(S, Cat, Ss, Stack, T, Ts, Tzr);
 %% yeccpars2(197=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -1751,15 +1751,15 @@ yeccpars2_177(S, t_of, Ss, Stack, T, Ts, Tzr) ->
 yeccpars2_177(_, _, _, _, T, _, _) ->
  yeccerror(T).
 
--dialyzer({nowarn_function, yeccpars2_178/7}).
 yeccpars2_178(S, ident, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 41, Ss, Stack, T, Ts, Tzr);
 yeccpars2_178(S, integer, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 186, Ss, Stack, T, Ts, Tzr);
 yeccpars2_178(S, string, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 187, Ss, Stack, T, Ts, Tzr);
-yeccpars2_178(_, _, _, _, T, _, _) ->
- yeccerror(T).
+yeccpars2_178(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ NewStack = yeccpars2_178_(Stack),
+ yeccpars2_181(_S, Cat, [178 | Ss], NewStack, T, Ts, Tzr).
 
 yeccpars2_179(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_179_(Stack),
@@ -1814,14 +1814,22 @@ yeccpars2_189(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_189_(Stack),
  yeccgoto_ntcase(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
-%% yeccpars2_190: see yeccpars2_178
+-dialyzer({nowarn_function, yeccpars2_190/7}).
+yeccpars2_190(S, ident, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 41, Ss, Stack, T, Ts, Tzr);
+yeccpars2_190(S, integer, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 186, Ss, Stack, T, Ts, Tzr);
+yeccpars2_190(S, string, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 187, Ss, Stack, T, Ts, Tzr);
+yeccpars2_190(_, _, _, _, T, _, _) ->
+ yeccerror(T).
 
 yeccpars2_191(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  [_,_|Nss] = Ss,
  NewStack = yeccpars2_191_(Stack),
  yeccgoto_labelrange(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
-%% yeccpars2_192: see yeccpars2_178
+%% yeccpars2_192: see yeccpars2_190
 
 yeccpars2_193(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  [_,_|Nss] = Ss,
@@ -1833,7 +1841,15 @@ yeccpars2_194(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  NewStack = yeccpars2_194_(Stack),
  yeccgoto_casestatement(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
-%% yeccpars2_195: see yeccpars2_178
+yeccpars2_195(S, ident, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 41, Ss, Stack, T, Ts, Tzr);
+yeccpars2_195(S, integer, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 186, Ss, Stack, T, Ts, Tzr);
+yeccpars2_195(S, string, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars1(S, 187, Ss, Stack, T, Ts, Tzr);
+yeccpars2_195(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ NewStack = yeccpars2_195_(Stack),
+ yeccpars2_196(_S, Cat, [195 | Ss], NewStack, T, Ts, Tzr).
 
 yeccpars2_196(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  [_,_|Nss] = Ss,
@@ -4661,14 +4677,14 @@ yeccpars2_128_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_136_/1}).
--file("./priv/obr_parser.yrl", 410).
+-file("./priv/obr_parser.yrl", 411).
 yeccpars2_136_(__Stack0) ->
  [begin
    [ ]
   end | __Stack0].
 
 -compile({inline,yeccpars2_141_/1}).
--file("./priv/obr_parser.yrl", 411).
+-file("./priv/obr_parser.yrl", 412).
 yeccpars2_141_(__Stack0) ->
  [__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4676,7 +4692,7 @@ yeccpars2_141_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_143_/1}).
--file("./priv/obr_parser.yrl", 409).
+-file("./priv/obr_parser.yrl", 410).
 yeccpars2_143_(__Stack0) ->
  [__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4684,7 +4700,7 @@ yeccpars2_143_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_146_/1}).
--file("./priv/obr_parser.yrl", 412).
+-file("./priv/obr_parser.yrl", 413).
 yeccpars2_146_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4692,7 +4708,7 @@ yeccpars2_146_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_149_/1}).
--file("./priv/obr_parser.yrl", 415).
+-file("./priv/obr_parser.yrl", 416).
 yeccpars2_149_(__Stack0) ->
  [__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4746,14 +4762,14 @@ yeccpars2_165_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_170_/1}).
--file("./priv/obr_parser.yrl", 419).
+-file("./priv/obr_parser.yrl", 420).
 yeccpars2_170_(__Stack0) ->
  [begin
    nil
   end | __Stack0].
 
 -compile({inline,yeccpars2_173_/1}).
--file("./priv/obr_parser.yrl", 420).
+-file("./priv/obr_parser.yrl", 421).
 yeccpars2_173_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4761,15 +4777,22 @@ yeccpars2_173_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_176_/1}).
--file("./priv/obr_parser.yrl", 418).
+-file("./priv/obr_parser.yrl", 419).
 yeccpars2_176_(__Stack0) ->
  [__10,__9,__8,__7,__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    'Elixir.T' : new ( { forstatement , str_of ( __1 ) , { __2 , __4 , __6 , __7 , __9 } } )
   end | __Stack].
 
+-compile({inline,yeccpars2_178_/1}).
+-file("./priv/obr_parser.yrl", 392).
+yeccpars2_178_(__Stack0) ->
+ [begin
+   'Elixir.T' : new ( { ntcase , nil , nil } )
+  end | __Stack0].
+
 -compile({inline,yeccpars2_179_/1}).
--file("./priv/obr_parser.yrl", 406).
+-file("./priv/obr_parser.yrl", 407).
 yeccpars2_179_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -4785,7 +4808,7 @@ yeccpars2_181_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_182_/1}).
--file("./priv/obr_parser.yrl", 396).
+-file("./priv/obr_parser.yrl", 397).
 yeccpars2_182_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -4793,7 +4816,7 @@ yeccpars2_182_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_183_/1}).
--file("./priv/obr_parser.yrl", 400).
+-file("./priv/obr_parser.yrl", 401).
 yeccpars2_183_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -4801,7 +4824,7 @@ yeccpars2_183_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_184_/1}).
--file("./priv/obr_parser.yrl", 395).
+-file("./priv/obr_parser.yrl", 396).
 yeccpars2_184_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -4809,7 +4832,7 @@ yeccpars2_184_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_186_/1}).
--file("./priv/obr_parser.yrl", 404).
+-file("./priv/obr_parser.yrl", 405).
 yeccpars2_186_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -4817,7 +4840,7 @@ yeccpars2_186_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_187_/1}).
--file("./priv/obr_parser.yrl", 405).
+-file("./priv/obr_parser.yrl", 406).
 yeccpars2_187_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -4825,7 +4848,7 @@ yeccpars2_187_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_189_/1}).
--file("./priv/obr_parser.yrl", 392).
+-file("./priv/obr_parser.yrl", 393).
 yeccpars2_189_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4833,7 +4856,7 @@ yeccpars2_189_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_191_/1}).
--file("./priv/obr_parser.yrl", 401).
+-file("./priv/obr_parser.yrl", 402).
 yeccpars2_191_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4841,7 +4864,7 @@ yeccpars2_191_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_193_/1}).
--file("./priv/obr_parser.yrl", 397).
+-file("./priv/obr_parser.yrl", 398).
 yeccpars2_193_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -4855,6 +4878,13 @@ yeccpars2_194_(__Stack0) ->
  [begin
    'Elixir.T' : new ( { casestatement , str_of ( __1 ) , { __2 , value_of ( __4 ) } } )
   end | __Stack].
+
+-compile({inline,yeccpars2_195_/1}).
+-file("./priv/obr_parser.yrl", 392).
+yeccpars2_195_(__Stack0) ->
+ [begin
+   'Elixir.T' : new ( { ntcase , nil , nil } )
+  end | __Stack0].
 
 -compile({inline,yeccpars2_196_/1}).
 -file("./priv/obr_parser.yrl", 389).
@@ -5410,4 +5440,4 @@ yeccpars2_313_(__Stack0) ->
   end | __Stack].
 
 
--file("./priv/obr_parser.yrl", 462).
+-file("./priv/obr_parser.yrl", 463).

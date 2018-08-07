@@ -393,6 +393,7 @@ ntcaselist -> ntcase : {ntcaselist, str_of('$1'), ['$1']}.
 ntcaselist -> ntcaselist t_vline ntcase : {ntcaselist, str_of('$1'), value_of('$1') ++ ['$3']}.
 
 % +case = [CaseLabelList ":" StatementSequence].
+ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
 ntcase -> caselabellist t_colon statementsequence : 'Elixir.T':new({ntcase, str_of('$1'), {'$1', '$3'}}).
 
 % +CaseLabelList = LabelRange {"," LabelRange}.

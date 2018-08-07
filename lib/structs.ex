@@ -367,6 +367,7 @@ end
 
 defmodule CASE do
   defstruct str: nil, case_label_list: nil, statement_sequence: nil
+  def new({:ntcase, nil, nil}), do: %__MODULE__{}
   def new({:ntcase, str, {case_label_list, statement_sequence}}), do: %__MODULE__{str: str, case_label_list: case_label_list, statement_sequence: statement_sequence}
 end
 

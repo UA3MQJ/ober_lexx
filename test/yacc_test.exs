@@ -37,6 +37,11 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
+    # {:ok, tokens, _} = :obr_lexer.string('123.')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
+
     # # importlist
     # {:ok, tokens, _} = :obr_lexer.string('IMPORT system;')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
@@ -784,8 +789,23 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
-    # # casestatement
+    # casestatement
     # {:ok, tokens, _} = :obr_lexer.string('CASE x OF 22 : x := x + y | 33 : x := x - y END')
+    # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
+    # {:ok, res} = :obr_parser.parse(tokens)
+    # IO.inspect(res)
+
+    # str = '''
+    # CASE i OF
+    #   0: n := 0
+    # | 2: n := 1
+    # | 4: n := 2
+    # | 6: n := 3
+    # | 8: n := 4
+    # |10: n := 5
+    # END
+    # '''
+    # {:ok, tokens, _} = :obr_lexer.string(str)
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
@@ -900,68 +920,45 @@ defmodule OberYaccTest do
     # IO.inspect(res)
 
 
-    test_file("./priv/mods/examples/Test1.Mod")
-    test_file("./priv/mods/examples/IM1.Mod")
-    test_file("./priv/mods/examples/AsmTest.Mod")
-    test_file("./priv/mods/examples/BasicRegs1.Mod") # TODO THEN END
-    test_file("./priv/mods/examples/BasicRegs2.Mod")
-    test_file("./priv/mods/examples/BasicRegs3.Mod")
-    test_file("./priv/mods/examples/Best40Test.Mod") # TODO CONST
-    test_file("./priv/mods/examples/BigCircles.Mod")
+    # test_file("./priv/mods/examples/BasicRegs1.Mod") # TODO THEN END
+    # test_file("./priv/mods/examples/Best40Test.Mod") # TODO CONST
+    # test_file("./priv/mods/examples/Kubik.Mod") # TODO {:error, {43, :obr_lexer, {:illegal, '"|'}}, 43}
 
-    test_file("./priv/mods/examples/BrightLetters.Mod")
-    test_file("./priv/mods/examples/Circl.Mod")
-    test_file("./priv/mods/examples/ConsoleDemo.Mod")
-    test_file("./priv/mods/examples/DemoDynMem.Mod")
-    test_file("./priv/mods/examples/DemoInvert.Mod")
-    test_file("./priv/mods/examples/DemoRus.Mod")
-    test_file("./priv/mods/examples/DemoSpr2.Mod")
-    test_file("./priv/mods/examples/DemoSprL.Mod")
-    test_file("./priv/mods/examples/DemoSpr.Mod")
-    test_file("./priv/mods/examples/DemoStatMem.Mod")
-    test_file("./priv/mods/examples/DemoTiles.Mod")
-    test_file("./priv/mods/examples/Empty.Mod")
-    test_file("./priv/mods/examples/Fill.Mod")
-    test_file("./priv/mods/examples/Flower.Mod")
-    test_file("./priv/mods/examples/GraphSinus.Mod")
-    test_file("./priv/mods/examples/HelloWorld.Mod")
-    test_file("./priv/mods/examples/IM1.Mod")
-    test_file("./priv/mods/examples/IM2.Mod")
-    test_file("./priv/mods/examples/Kubik.Mod") # TODO {:error, {43, :obr_lexer, {:illegal, '"|'}}, 43}
-    test_file("./priv/mods/examples/LambdaTest2.Mod")
-    test_file("./priv/mods/examples/LambdaTest3.Mod")
-    test_file("./priv/mods/examples/LambdaTest.Mod")
-    test_file("./priv/mods/examples/Laser2Demo_clean.Mod")
-    test_file("./priv/mods/examples/Laser2Demo.Mod")
-    test_file("./priv/mods/examples/Laser2Test1.Mod")
-    test_file("./priv/mods/examples/Laser2Test2.Mod")
-    test_file("./priv/mods/examples/Laser2Test3.Mod")
-    test_file("./priv/mods/examples/LaserDemo.Mod")
-    test_file("./priv/mods/examples/MemTest2.Mod")
-    test_file("./priv/mods/examples/MemTest.Mod")
-    test_file("./priv/mods/examples/MiraTest.Mod")
-    test_file("./priv/mods/examples/MoveSpr2.Mod")
-    test_file("./priv/mods/examples/MoveSpr.Mod")
-    test_file("./priv/mods/examples/Primer.Mod")
-    test_file("./priv/mods/examples/Spiral11f2.Mod")
-    test_file("./priv/mods/examples/Spiral11f3.Mod")
-    test_file("./priv/mods/examples/Spiral11.Mod")
-    test_file("./priv/mods/examples/Test1.Mod")
-    test_file("./priv/mods/examples/TestCalc.Mod")
-    test_file("./priv/mods/examples/TestCircle.Mod")
-    test_file("./priv/mods/examples/TestCtrl.Mod")
-    test_file("./priv/mods/examples/TestInPar.Mod")
-    test_file("./priv/mods/examples/TestInpBuf.Mod")
-    test_file("./priv/mods/examples/TestInput.Mod")
-    test_file("./priv/mods/examples/TestPT3IM2.Mod")
-    test_file("./priv/mods/examples/TestPT3.Mod")
-    test_file("./priv/mods/examples/TestSnd.Mod")
-    test_file("./priv/mods/examples/TinyHello.Mod")
-    test_file("./priv/mods/examples/TrDosTest.Mod")
-    test_file("./priv/mods/examples/UMath.Mod")
-    test_file("./priv/mods/examples/Unsigned.Mod")
-    test_file("./priv/mods/examples/WhamTest.Mod")
-    test_file("./priv/mods/examples/XDevHello.Mod")
+    test_file("./test/vostok-tests/Add.mod")
+    test_file("./test/vostok-tests/Array.mod")
+    test_file("./test/vostok-tests/Bits.mod")
+    test_file("./test/vostok-tests/Bool.mod")
+    test_file("./test/vostok-tests/BubbleSortTest.mod")
+    test_file("./test/vostok-tests/Byte.mod")
+    test_file("./test/vostok-tests/Case.mod")
+    test_file("./test/vostok-tests/Char.mod")
+    test_file("./test/vostok-tests/Chars.mod")
+    test_file("./test/vostok-tests/Const.mod")
+    test_file("./test/vostok-tests/Copy.mod")
+    test_file("./test/vostok-tests/Div.mod")
+    test_file("./test/vostok-tests/For.mod")
+    test_file("./test/vostok-tests/Integers.mod")
+    test_file("./test/vostok-tests/LinkedList.mod")
+    test_file("./test/vostok-tests/MathTest.mod")
+    test_file("./test/vostok-tests/Mult.mod")
+    # test_file("./test/vostok-tests/OopInsertSort.mod") # err
+    test_file("./test/vostok-tests/Pointers.mod")
+    test_file("./test/vostok-tests/ProcType.mod")
+    test_file("./test/vostok-tests/PtrLoop.mod")
+    test_file("./test/vostok-tests/Queens.mod")
+    test_file("./test/vostok-tests/QuickSort.mod")
+    test_file("./test/vostok-tests/Rand.mod")
+    test_file("./test/vostok-tests/Real.mod")
+    # test_file("./test/vostok-tests/RecordExt.mod") # err
+    test_file("./test/vostok-tests/Record.mod")
+    test_file("./test/vostok-tests/Repeat.mod")
+    test_file("./test/vostok-tests/Return.mod")
+    test_file("./test/vostok-tests/Set.mod")
+    test_file("./test/vostok-tests/String.mod")
+    test_file("./test/vostok-tests/Test.mod")
+    test_file("./test/vostok-tests/WeakLink.mod")
+    test_file("./test/vostok-tests/While.mod")
+
 
   end
 
@@ -976,13 +973,16 @@ defmodule OberYaccTest do
     # IO.puts(clean_str)
     # string -> charlist
     charlist = to_charlist(clean_str)
+    # IO.inspect(charlist)
     {:ok, tokens, _} = :obr_lexer.string(charlist)
+    # IO.inspect(tokens)
     case :obr_parser.parse(tokens) do
       {:ok, res} ->
         # IO.inspect(res)
         Logger.info "#{file} - ok"
-      _else ->
-        Logger.info "#{file} - error"        
+      error ->
+        Logger.info "#{file} - error"
+        Logger.debug "#{inspect error}"        
     end
   end
 end
