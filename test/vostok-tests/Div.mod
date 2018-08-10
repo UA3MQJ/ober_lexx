@@ -1,0 +1,44 @@
+MODULE Div;
+
+PROCEDURE Div(x, y: INTEGER; VAR r: INTEGER): INTEGER;
+VAR d: INTEGER;
+BEGIN
+	d := x DIV y;
+	r := x MOD y;
+	ASSERT(x = d * y + r);
+	ASSERT((0 <= r) & (r < y))
+RETURN
+	d
+END Div;
+
+PROCEDURE Go*;
+CONST m = 1024 * 1024 * 1024 DIV 1025;
+VAR a, b, c, r: INTEGER;
+BEGIN
+	ASSERT(10 DIV 3 = 3);
+	ASSERT(10 MOD 3 = 1);
+	ASSERT(10. / 3. = 3.33333333333333333333333333333333333);
+
+	ASSERT(10 MOD 9 MOD 3 = 1);
+
+	a := 10; b := 9; c := 3;
+	ASSERT(a MOD b MOD c = 1);
+
+	ASSERT(160 DIV m >= 0);
+
+	ASSERT(Div(5, 3, r) = 1);
+	ASSERT(r = 2);
+	ASSERT(Div(-5, 3, r) = -2);
+	ASSERT(r = 1);
+
+	ASSERT(Div(2147483647, 2147483647, r) = 1);
+	ASSERT(r = 0);
+	ASSERT(Div(2147483640, 2147483647, r) = 0);
+	ASSERT(r = 2147483640);
+	ASSERT(Div(-2147483647, 2147483647, r) = -1);
+	ASSERT(r = 0);
+	ASSERT(Div(-2147483640, 2147483647, r) = -1);
+	ASSERT(r = 7);
+END Go;
+
+END Div.

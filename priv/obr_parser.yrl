@@ -10,9 +10,9 @@
 % или записываются целиком заглавными буквами (например, BEGIN), или заключаются в кавычки (например, ":=").
 
 Nonterminals 
-module number muloperator addoperator relation import implist importlist qualident identdef basetype
-factor term simpleexpression simpleexpression_list simpleexpression_pre expression constexpression constantdeclaration explist exlist
-length element set setlist designator deselem deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
+module number muloperator addoperator relation import implist importlist qualident qualident_one qualident_two identdef basetype
+factor term simpleexpression simpleexpression_list expression constexpression constantdeclaration explist exlist
+length element set setlist designator deselem1 deselem2 deselem3 deselem4 deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
 procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
@@ -32,22 +32,29 @@ t_repeat t_until t_while t_do t_for t_by t_begin t_return t_const t_type t_modul
 .
 
 
-Nonassoc 950 const_decl_li.
-Nonassoc 940 type_decl_li.
-Nonassoc 930 var_decl_li.
+% Nonassoc 950 const_decl_li.
+% Nonassoc 940 type_decl_li.
+% Nonassoc 930 var_decl_li.
 
-Nonassoc 850 declarationsequence_const.
-Nonassoc 840 declarationsequence_type.
-Nonassoc 830 declarationsequence_var.
-Nonassoc 820 proc_decl_li.
+% Nonassoc 850 declarationsequence_const.
+% Nonassoc 840 declarationsequence_type.
+% Nonassoc 830 declarationsequence_var.
+% Nonassoc 820 proc_decl_li.
 
-Nonassoc 650 elsifsec.
-Nonassoc 640 ifelse.
-Nonassoc 630 elsifdosec.
+% Nonassoc 650 elsifsec.
+% Nonassoc 640 ifelse.
+% Nonassoc 630 elsifdosec.
 
-Left 500 t_dot.
-Nonassoc 400 qualident.
-Nonassoc 300 deslist2.
+% Nonassoc 570 t_dot.
+% % Nonassoc 550 qualident.
+% % % Nonassoc 560 ident.
+% % % Nonassoc 550 qualident_two.
+% % % Nonassoc 540 qualident_one.
+
+
+% % % Nonassoc 300 deslist2.
+% % % Left 550 deselem2.
+% % % Left 540 formalparameters.
 
 Rootsymbol module.
 
@@ -59,7 +66,7 @@ Rootsymbol module.
 % module -> set : '$1'.
 % module -> term : '$1'.
 % module -> statement : '$1'.
-% module -> expression : '$1'.
+module -> expression : '$1'.
 % module -> constantdeclaration : '$1'.
 % module -> explist : '$1'.
 % module -> actualparameters : '$1'.
@@ -235,9 +242,10 @@ t_array_list -> t_array t_of : {t_array_list, str_of('$1'), 1}.
 t_array_list -> t_array_list t_array t_of : {t_array_list, str_of('$1'), value_of('$1') + 1}.
 
 % +qualident = [ident "."] ident.
-qualident -> ident : 'Elixir.T':new({qualident, str_of('$1'), value_of('$1')}).
-qualident -> ident t_dot ident : 'Elixir.T':new({qualident, str_of('$1'), value_of('$1')++"."++value_of('$3')}).
-
+qualident -> qualident_two : '$1'.
+qualident -> qualident_one : '$1'.
+qualident_two -> ident t_dot ident: 'Elixir.T':new({qualident, str_of('$1'), value_of('$1') ++ "." ++ value_of('$3')}).
+qualident_one -> ident : 'Elixir.T':new({qualident, str_of('$1'), value_of('$1')}).
 
 % +identdef = ident ["*"].
 identdef -> ident       : 'Elixir.T':new({identdef, str_of('$1'), value_of('$1')}).
@@ -324,16 +332,25 @@ factor -> t_tilda factor : 'Elixir.T':new({factor, str_of('$1'), {t_tilda, '$2'}
 % designator  =  qualident {"." ident | "[" ExpList "]" | "(" qualident ")" | "^" }. 
 designator -> deslist: 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
 
-deslist -> qualident : {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'),value_of('$1')})]}.
-deslist -> qualident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'), value_of('$1')})]++value_of('$2')}.
+% deslist -> qualident : {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'),value_of('$1')})]}.
+deslist -> qualident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'), value_of('$1')})]++ '$2'}.
 
-deslist2 -> deselem : {deslist2, str_of('$1'), [value_of('$1')]}.
-deslist2 -> deslist2 deselem : {deslist2, str_of('$1'), value_of('$1') ++ [value_of('$2')]}.
+deslist2 -> '$empty' : [].
+deslist2 -> deselem1 : ['$1'].
+deslist2 -> deselem2 : ['$1'].
+deslist2 -> deselem3 : ['$1'].
+deslist2 -> deselem4 : ['$1'].
+deslist2 -> deslist2 deselem1 : '$1' ++ ['$2'].
+deslist2 -> deslist2 deselem2 : '$1' ++ ['$2'].
+deslist2 -> deslist2 deselem3 : '$1' ++ ['$2'].
+deslist2 -> deslist2 deselem4 : '$1' ++ ['$2'].
 
-deselem -> t_dot ident : {deselem, str_of('$1'), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})}.
-deselem -> t_lbrack explist t_rbrack : {deselem, str_of('$1'), 'Elixir.T':new({explist, str_of('$1'), ('$2')})}.
-deselem -> t_lpar qualident t_rpar  : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
-deselem -> t_arrow : {deselem, str_of('$1'), 'Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})}. % {4, t_arrow}.
+deselem1 -> t_dot ident : {deselem, str_of('$1'), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})}.
+deselem2 -> t_lbrack explist t_rbrack : {deselem, str_of('$1'), 'Elixir.T':new({explist, str_of('$1'), ('$2')})}.
+deselem3 -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
+% тестовая хрень
+% deselem3 -> t_lpar t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), 'nil'}}.
+deselem4 -> t_arrow : {deselem, str_of('$1'), 'Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})}. % {4, t_arrow}.
 
 % +set = "{" [element {"," element}] "}".
 set -> t_lbrace t_rbrace : 'Elixir.T':new({set, str_of('$1'), []}).
@@ -449,14 +466,3 @@ tvalue_of(Token) ->
 mvalue_of(Map) ->
     % io:format('value_of ~w~n', [Map]),
     maps:get(value, Map, nil).
-
-% map make functions
-
-% module2map(_t_module, _ident, _t_semicolon, _module_importlist, _declarationsequence, _module_begin, _t_end, _ident, _t_dot) ->
-% t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident
-module2map(Ident, ImportList, DeclarationSequence, StatementSequence, IdentEnd) ->
-    #{?MType => 'Elixir.MODULE', 
-      ident => 'Elixir.IDENT':new(Ident),
-      import_list => ImportList, declaration_sequence => DeclarationSequence,
-      statement_sequence => StatementSequence, ident_end => 'Elixir.IDENT':new(IdentEnd)}.
-

@@ -1,0 +1,38 @@
+MODULE Return;
+
+CONST
+
+TYPE
+
+VAR
+	b: BOOLEAN;
+
+PROCEDURE R(): INTEGER;
+	RETURN 0
+END R;
+
+PROCEDURE R2(): BOOLEAN;
+BEGIN
+	b := ~b
+	RETURN b
+END R2;
+
+PROCEDURE R3(): INTEGER;
+BEGIN
+	b := 5 = 6
+	RETURN ORD(b)
+END R3;
+
+PROCEDURE Go*;
+BEGIN
+	ASSERT(R() = 0);
+	ASSERT(R() # 1);
+
+	b := FALSE;
+	ASSERT(R2());
+	ASSERT(~R2());
+
+	ASSERT(R3() = 0)
+END Go;
+
+END Return.
