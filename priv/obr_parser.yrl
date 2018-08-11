@@ -10,7 +10,8 @@
 % или записываются целиком заглавными буквами (например, BEGIN), или заключаются в кавычки (например, ":=").
 
 Nonterminals 
-module number muloperator addoperator relation import implist importlist qualident qualident_one qualident_two identdef basetype
+module number muloperator addoperator relation import implist importlist identdef basetype
+qualident qualident_one qualident_two
 factor term simpleexpression simpleexpression_list expression constexpression constantdeclaration explist exlist
 length element set setlist designator deselem1 deselem2 deselem3 deselem4 deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
 typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype
@@ -66,7 +67,7 @@ Rootsymbol module.
 % module -> set : '$1'.
 % module -> term : '$1'.
 % module -> statement : '$1'.
-module -> expression : '$1'.
+% module -> expression : '$1'.
 % module -> constantdeclaration : '$1'.
 % module -> explist : '$1'.
 % module -> actualparameters : '$1'.
@@ -114,7 +115,6 @@ module -> expression : '$1'.
 number -> integer : 'Elixir.T':new('$1').
 number -> real : 'Elixir.T':new('$1').
 number -> character : 'Elixir.T':new('$1').
-
 
 % +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
 module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
@@ -222,7 +222,7 @@ proceduretype -> t_procedure formalparameters: 'Elixir.T':new({proceduretype, st
 formalparameters -> t_lpar t_rpar : 'Elixir.T':new({formalparameters, str_of('$1'), {[], nil}}).
 formalparameters -> t_lpar t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {[], '$4'}}).
 formalparameters -> t_lpar fpseclist t_rpar : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', nil}}).
-formalparameters -> t_lpar fpseclist t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$5'}}).
+formalparameters -> t_lpar fpseclist t_rpar t_colon ident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$5'}}).
 
 fpseclist -> fpsection : ['$1'].
 fpseclist -> fpsection t_semicolon fpseclist : ['$1'] ++ '$3'.
@@ -330,27 +330,32 @@ factor -> t_tilda factor : 'Elixir.T':new({factor, str_of('$1'), {t_tilda, '$2'}
 % +designator = qualident {selector}.
 % +selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
 % designator  =  qualident {"." ident | "[" ExpList "]" | "(" qualident ")" | "^" }. 
+% поправка
+% designator = qualident {selector}.
+% +selector = "." ident | "[" ExpList "]" | "^" | actualparameters.
 designator -> deslist: 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
 
 % deslist -> qualident : {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'),value_of('$1')})]}.
-deslist -> qualident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'), value_of('$1')})]++ '$2'}.
+deslist -> ident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
 
 deslist2 -> '$empty' : [].
-deslist2 -> deselem1 : ['$1'].
-deslist2 -> deselem2 : ['$1'].
-deslist2 -> deselem3 : ['$1'].
-deslist2 -> deselem4 : ['$1'].
-deslist2 -> deslist2 deselem1 : '$1' ++ ['$2'].
-deslist2 -> deslist2 deselem2 : '$1' ++ ['$2'].
-deslist2 -> deslist2 deselem3 : '$1' ++ ['$2'].
-deslist2 -> deslist2 deselem4 : '$1' ++ ['$2'].
+deslist2 -> deselem1 : '$1'.
+deslist2 -> deselem2 : '$1'.
+deslist2 -> deselem3 : '$1'.
+deslist2 -> deselem4 : '$1'.
+deslist2 -> deslist2 deselem1 : '$1' ++ '$2'.
+deslist2 -> deslist2 deselem2 : '$1' ++ '$2'.
+deslist2 -> deslist2 deselem3 : '$1' ++ '$2'.
+deslist2 -> deslist2 deselem4 : '$1' ++ '$2'.
 
-deselem1 -> t_dot ident : {deselem, str_of('$1'), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})}.
-deselem2 -> t_lbrack explist t_rbrack : {deselem, str_of('$1'), 'Elixir.T':new({explist, str_of('$1'), ('$2')})}.
-deselem3 -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
+deselem1 -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
+deselem2 -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
+% deselem3 -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
+% deselem3 -> t_lpar ident t_rpar : [{pars_qualident, str_of('$1'), '$2'}].
+deselem3 -> actualparameters : ['$1'].
 % тестовая хрень
 % deselem3 -> t_lpar t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), 'nil'}}.
-deselem4 -> t_arrow : {deselem, str_of('$1'), 'Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})}. % {4, t_arrow}.
+deselem4 -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
 
 % +set = "{" [element {"," element}] "}".
 set -> t_lbrace t_rbrace : 'Elixir.T':new({set, str_of('$1'), []}).
