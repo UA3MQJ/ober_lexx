@@ -4,7 +4,7 @@ defmodule RemoveCommentsTest do
   require Logger
 
   # mix test --only removecomments
-  @tag removecomments: true  
+  @tag removecomments: true
 
   # test "removecomments file" do
   #   in_file_name = "./priv/mods/examples/BrightLetters.Mod"
@@ -14,22 +14,22 @@ defmodule RemoveCommentsTest do
   # end
 
   test "removecomments binary" do
-    charlist = '''
+    charlist = ~c"""
         MODULE ASCII;(* some comment *)
         IMPORT system;
 
         END ASCII.
-    '''
+    """
     instr = to_string(charlist)
 
     # Logger.debug "#{inspect instr}"
 
-    charlist_clean = '''
+    charlist_clean = ~c"""
         MODULE ASCII;
         IMPORT system;
 
         END ASCII.
-    '''
+    """
     truestr = to_string(charlist_clean)
 
     new_str = OberLexx.Utils.binary_remove_comments(instr)

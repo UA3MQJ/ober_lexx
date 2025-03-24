@@ -46,7 +46,6 @@ defmodule OberLexx do
       # вложенность комментария уменьшается, но он еще не кончился
       new_cb_counter > 0 ->
         new_state = %{state | token_line: state.token_line,
-                              cb_counter: new_cb_counter,
                               comment_str: state.comment_str <> "*)",
                               cb_counter: new_cb_counter }
         tokenize(oberon_str, tokens, new_state)
@@ -66,11 +65,22 @@ defmodule OberLexx do
   defp tokenize([sym|oberon_str], tokens, %{comment: false} = state) do
     Logger.debug ">>>>> токенизируем всё остальное"
     cond do
-      is_obr_integer(sym) ->        
+      is_obr_integer(sym) ->
         tokenize_integer(oberon_str, tokens, %{state| acc: [sym]})
       true ->
         tokenize(oberon_str, tokens, state)
     end
+  end
+
+  defp tokenize([], tokens, state) do
+    Logger.debug ">>>>> state=#{inspect state}"
+    new_tokens = cond do
+      state.cb_counter > 0  ->
+        [{:illegal, "*)", state.token_line}|tokens]
+      true ->
+        tokens
+    end
+    Enum.reverse(new_tokens)
   end
 
   defp tokenize_integer([sym|oberon_str], tokens, state) do
@@ -85,17 +95,6 @@ defmodule OberLexx do
   end
   defp tokenize_integer([], tokens, state) do
     tokenize([], [{:integer, to_string(state.acc), state.token_line}|tokens], %{state| acc: []})
-  end
-
-  defp tokenize([], tokens, state) do
-    Logger.debug ">>>>> state=#{inspect state}"
-    new_tokens = cond do
-      state.cb_counter > 0  ->
-        [{:illegal, "*)", state.token_line}|tokens]
-      true ->
-        tokens
-    end
-    Enum.reverse(new_tokens)
   end
 
   defp is_obr_integer(sym), do: sym in [?1, ?2, ?3]

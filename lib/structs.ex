@@ -69,7 +69,7 @@ defmodule T do
   def new({:label, _str, _value} = tuple), do: LABEL.new(tuple)
   def new({:labelrange, _str, _value} = tuple), do: LABEL_RANGE.new(tuple)
   def new({:caselabellist, _str, _value} = tuple), do: CASE_LABEL_LIST.new(tuple)
-  
+
   def new({:procedurecall, _str, _value} = tuple), do: PROCEDURE_CALL.new(tuple)
   def new({:statementsequence, _str, _value} = tuple), do: STATEMENT_SEQUENCE.new(tuple)
   def new({:ntcase, _str, _value} = tuple), do: CASE.new(tuple)
@@ -87,7 +87,7 @@ defmodule T do
 
   def new({:whilestatement, _str, _value} = tuple), do: WHILE_STATEMENT.new(tuple)
   def new({:forstatement, _str, _value} = tuple), do: FOR_STATEMENT.new(tuple)
-  
+
   def new({:proceduredeclaration, _str, _value} = tuple), do: PROCEDURE_DECLARATION.new(tuple)
   def new({:procedurebody, _str, _value} = tuple), do: PROCEDURE_BODY.new(tuple)
 
@@ -108,6 +108,10 @@ end
 defmodule DECLARATION_SEQUENCE do
   defstruct constant_declaration: nil, type_declaration: nil, variable_declaration: nil, procedure_declaration: nil
   def new({:declarationsequence, _str, {constant_declaration, type_declaration, variable_declaration, procedure_declaration}}), do: %__MODULE__{constant_declaration: constant_declaration, type_declaration: type_declaration, variable_declaration: variable_declaration, procedure_declaration: procedure_declaration}
+  # TODO check
+  def new({:decl_const, _str, {constant_declaration, type_declaration, variable_declaration, procedure_declaration}}), do: %__MODULE__{constant_declaration: constant_declaration, type_declaration: type_declaration, variable_declaration: variable_declaration, procedure_declaration: procedure_declaration}
+  def new({:decl_type, _str, {constant_declaration, type_declaration, variable_declaration, procedure_declaration}}), do: %__MODULE__{constant_declaration: constant_declaration, type_declaration: type_declaration, variable_declaration: variable_declaration, procedure_declaration: procedure_declaration}
+  def new({:decl_var, _str, {constant_declaration, type_declaration, variable_declaration, procedure_declaration}}), do: %__MODULE__{constant_declaration: constant_declaration, type_declaration: type_declaration, variable_declaration: variable_declaration, procedure_declaration: procedure_declaration}
 end
 
 defmodule VARIABLE_DECLARATION do

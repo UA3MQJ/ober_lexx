@@ -8,9 +8,9 @@ defmodule OberYaccTest do
 
   test "the truth" do
     time1 = :os.system_time(:millisecond)
-    {:ok, _} = :leex.file('./priv/obr_lexer.xrl', [verbose: true])
+    {:ok, _} = :leex.file(~c"./priv/obr_lexer.xrl", [verbose: true])
     time2 = :os.system_time(:millisecond)
-    {:ok, :obr_lexer} = :c.c('./priv/obr_lexer.erl')
+    {:ok, :obr_lexer} = :c.c(~c"./priv/obr_lexer.erl")
     time3 = :os.system_time(:millisecond)
 
     Logger.debug "Leex - generate erl time = #{time2 - time1} ms"
@@ -18,9 +18,9 @@ defmodule OberYaccTest do
 
 
     time1 = :os.system_time(:millisecond)
-    {:ok, _} = :yecc.file('./priv/obr_parser.yrl', [verbose: true])
+    {:ok, _} = :yecc.file(~c"./priv/obr_parser.yrl", [verbose: true])
     time2 = :os.system_time(:millisecond)
-    {:ok, :obr_parser} = :c.c('./priv/obr_parser.erl')
+    {:ok, :obr_parser} = :c.c(~c"./priv/obr_parser.erl")
     time3 = :os.system_time(:millisecond)
 
     Logger.debug "Yecc - generate erl time = #{time2 - time1} ms"
@@ -191,7 +191,7 @@ defmodule OberYaccTest do
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
-    
+
     # {:ok, tokens, _} = :obr_lexer.string('par(Ext1).r')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
@@ -381,7 +381,7 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
-    # # TODO    
+    # # TODO
     # {:ok, tokens, _} = :obr_lexer.string('tree(name).subnode')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
@@ -402,7 +402,7 @@ defmodule OberYaccTest do
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
 
-    # TODO    
+    # TODO
     # {:ok, tokens, _} = :obr_lexer.string('tree(name).subnode(name)')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
@@ -796,7 +796,7 @@ defmodule OberYaccTest do
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
     # IO.inspect(res)
-    
+
     # {:ok, tokens, _} = :obr_lexer.string('a := 1; b:=2')
     # Logger.debug ">>>>>>>> tokens = #{inspect tokens}"
     # {:ok, res} = :obr_parser.parse(tokens)
@@ -1017,7 +1017,7 @@ defmodule OberYaccTest do
 
   def test_file(file) do
     # read binary
-    {:ok, binary} = File.read(file)    
+    {:ok, binary} = File.read(file)
     # bynary -> string
     str = OberLexx.Utils.raw_binary_to_string(binary)
     # string - remove comments -> string
@@ -1030,12 +1030,12 @@ defmodule OberYaccTest do
     {:ok, tokens, _} = :obr_lexer.string(charlist)
     # IO.inspect(tokens)
     case :obr_parser.parse(tokens) do
-      {:ok, res} ->
+      {:ok, _res} ->
         # IO.inspect(res)
         Logger.info "#{file} - ok"
       error ->
         Logger.info "#{file} - error"
-        Logger.debug "#{inspect error}"        
+        Logger.debug "#{inspect error}"
     end
   end
 end

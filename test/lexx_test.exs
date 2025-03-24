@@ -4,393 +4,393 @@ defmodule OberLexxTest do
   require Logger
 
   # mix test --only erleex
-  @tag erleex: true  
+  @tag erleex: true
 
   test "the truth" do
-    
+
     time1 = :os.system_time(:millisecond)
-    {:ok, _} = :leex.file('./priv/obr_lexer.xrl')
+    {:ok, _} = :leex.file(~c"./priv/obr_lexer.xrl")
     time2 = :os.system_time(:millisecond)
-    {:ok, :obr_lexer} = :c.c('./priv/obr_lexer.erl')
+    {:ok, :obr_lexer} = :c.c(~c"./priv/obr_lexer.erl")
     time3 = :os.system_time(:millisecond)
 
 
     # число
-    res1 = :obr_lexer.string('123')
+    res1 = :obr_lexer.string(~c"123")
     Logger.debug ">>>>>> res1=#{inspect res1}"
-    assert {:ok, [{:integer, 1, '123'}], 1} == res1
+    assert {:ok, [{:integer, 1, ~c"123"}], 1} == res1
 
     # hex число
-    res2 = :obr_lexer.string('123H')
+    res2 = :obr_lexer.string(~c"123H")
     Logger.debug ">>>>>> res2=#{inspect res2}"
-    assert {:ok, [{:integer, 1, '123H'}], 1} == res2
+    assert {:ok, [{:integer, 1, ~c"123H"}], 1} == res2
 
     # нет ноля перед символами, значит это не число, а ID
-    res3 = :obr_lexer.string('DEH')
+    res3 = :obr_lexer.string(~c"DEH")
     Logger.debug ">>>>>> res3=#{inspect res3}"
-    assert {:ok, [{:ident, 1, 'DEH'}], 1} == res3
+    assert {:ok, [{:ident, 1, ~c"DEH"}], 1} == res3
 
     # шестнадцатиричное число но тоже INT незначащй нолик убрался
-    res4 = :obr_lexer.string('0DEH')
+    res4 = :obr_lexer.string(~c"0DEH")
     Logger.debug ">>>>>> res4=#{inspect res4}"
-    assert {:ok, [{:integer, 1, 'DEH'}], 1} == res4
+    assert {:ok, [{:integer, 1, ~c"DEH"}], 1} == res4
 
     # число, но без ноликов
-    res5 = :obr_lexer.string('000000123')
+    res5 = :obr_lexer.string(~c"000000123")
     Logger.debug ">>>>>> res5=#{inspect res5}"
-    assert {:ok, [{:integer, 1, '123'}], 1} == res5
+    assert {:ok, [{:integer, 1, ~c"123"}], 1} == res5
 
     # hex число, но без ноликов
-    res6 = :obr_lexer.string('0000000CH')
+    res6 = :obr_lexer.string(~c"0000000CH")
     Logger.debug ">>>>>> res6=#{inspect res6}"
-    assert {:ok, [{:integer, 1, 'CH'}], 1} == res6
+    assert {:ok, [{:integer, 1, ~c"CH"}], 1} == res6
 
     # сокращается длина ИД до 40 символов
-    res7 = :obr_lexer.string('abcdedsdfsfsdjfsijdfisdjfisjdfijsdifjisjdfijisdjfivsjdivfjsdvsdfvs')
+    res7 = :obr_lexer.string(~c"abcdedsdfsfsdjfsijdfisdjfisjdfijsdifjisjdfijisdjfivsjdivfjsdvsdfvs")
     Logger.debug ">>>>>> res7=#{inspect res7}"
-    assert {:ok, [{:ident, 1, 'abcdedsdfsfsdjfsijdfisdjfisjdfijsdifjisj'}], 1} == res7
+    assert {:ok, [{:ident, 1, ~c"abcdedsdfsfsdjfsijdfisdjfisjdfijsdifjisj"}], 1} == res7
     assert {:ok, [{:ident, 1, id40}], 1} = res7
     assert length(id40) == 40
 
     # исправляет, добавляя H в конце
-    res8 = :obr_lexer.string('000000000000000CAFE')
+    res8 = :obr_lexer.string(~c"000000000000000CAFE")
     Logger.debug ">>>>>> res8=#{inspect res8}"
-    assert {:ok, [{:integer, 1, 'CAFEH'}], 1} == res8
+    assert {:ok, [{:integer, 1, ~c"CAFEH"}], 1} == res8
 
     # тесты на real
-    res9 = :obr_lexer.string('12.012')
+    res9 = :obr_lexer.string(~c"12.012")
     Logger.debug ">>>>>> res9=#{inspect res9}"
-    assert {:ok, [{:real, 1, '12.012'}], 1} == res9
+    assert {:ok, [{:real, 1, ~c"12.012"}], 1} == res9
 
-    res10 = :obr_lexer.string('3.402823466E38')
+    res10 = :obr_lexer.string(~c"3.402823466E38")
     Logger.debug ">>>>>> res10=#{inspect res10}"
-    assert {:ok, [{:real, 1, '3.402823466E38'}], 1} == res10
+    assert {:ok, [{:real, 1, ~c"3.402823466E38"}], 1} == res10
 
-    res11 = :obr_lexer.string('1.7976931348623158D307')
+    res11 = :obr_lexer.string(~c"1.7976931348623158D307")
     Logger.debug ">>>>>> res11=#{inspect res11}"
-    assert {:ok, [{:real, 1, '1.7976931348623158D307'}], 1} == res11
+    assert {:ok, [{:real, 1, ~c"1.7976931348623158D307"}], 1} == res11
 
     # строка
-    str = '"abc\\123"'
+    str = ~c"\"abc\\123\""
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:string, 1, str}], 1} == res
 
-    str = '"abc\"123"'
+    str = ~c"\"abc\"123\""
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:error, _, _} = res
 
-    str = '"abc\'123"'
+    str = ~c"\"abc\'123\""
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:string, 1, str}], 1} == res
 
-    str = '\'abc123\''
+    str = ~c"\'abc123\'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:string, 1, str}], 1} == res
 
-    str = '\'abc\"123\''
+    str = ~c"\'abc\"123\'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:string, 1, str}], 1} == res
 
-    str = '\'abc\'123\''
+    str = ~c"\'abc\'123\'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:error, _, _} = res
 
-    str = '\'  \''
+    str = ~c"\'  \'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:string, 1, str}], 1} == res
 
-    str = '\'русские буквы\''
+    str = ~c"\'русские буквы\'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:string, 1, str}], 1} == res
 
-    str = '\' \n \''
+    str = ~c"\' \n \'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:error, _, _} = res
 
-    str = '\' \r \''
+    str = ~c"\' \r \'"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:error, _, _} = res
 
     # char - заканчивается на X
-    str = '0X'
+    str = ~c"0X"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
-    str = '01X'
+    str = ~c"01X"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
-    str = '0AX'
+    str = ~c"0AX"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
-    str = '01AX'
+    str = ~c"01AX"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
-    str = '0A1X'
+    str = ~c"0A1X"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:character, 1, str}], 1} == res
 
-    str = 'ARRAY'
+    str = ~c"ARRAY"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_array, 1, str}], 1} == res
 
-    str = 'array'
+    str = ~c"array"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:ident, 1, str}], 1} == res
 
-    str = '+'
+    str = ~c"+"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_plus, 1, str}], 1} == res
 
-    str = '-'
+    str = ~c"-"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_minus, 1, str}], 1} == res
 
-    str = '*'
+    str = ~c"*"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_mul, 1, str}], 1} == res
 
-    str = '/'
+    str = ~c"/"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_divide, 1, str}], 1} == res
 
-    str = '~'
+    str = ~c"~"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_tilda, 1, str}], 1} == res
 
-    str = '&'
+    str = ~c"&"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_and, 1, str}], 1} == res
 
-    str = '.'
+    str = ~c"."
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_dot, 1, str}], 1} == res
 
-    str = '..'
+    str = ~c".."
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_ddot, 1, str}], 1} == res
 
-    str = ','
+    str = ~c","
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_comma, 1, str}], 1} == res
 
-    str = ';'
+    str = ~c";"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_semicolon, 1, str}], 1} == res
 
-    str = '|'
+    str = ~c"|"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_vline, 1, str}], 1} == res
 
-    str = '()'
+    str = ~c"()"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:t_lpar, 1, '('}, {:t_rpar, 1, ')'}], 1} == res
+    assert {:ok, [{:t_lpar, 1, ~c"("}, {:t_rpar, 1, ~c")"}], 1} == res
 
-    str = '[]'
+    str = ~c"[]"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok,  [{:t_lbrack, 1, '['}, {:t_rbrack, 1, ']'}], 1} == res
+    assert {:ok,  [{:t_lbrack, 1, ~c"["}, {:t_rbrack, 1, ~c"]"}], 1} == res
 
-    str = '{}'
+    str = ~c"{}"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok,  [{:t_lbrace, 1, '{'}, {:t_rbrace, 1, '}'}], 1} == res
+    assert {:ok,  [{:t_lbrace, 1, ~c"{"}, {:t_rbrace, 1, ~c"}"}], 1} == res
 
-    str = ':='
+    str = ~c":="
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_assign, 1, str}], 1} == res
 
-    str = '^'
+    str = ~c"^"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_arrow, 1, str}], 1} == res
 
-    str = '='
+    str = ~c"="
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_equ, 1, str}], 1} == res
 
-    str = '#'
+    str = ~c"#"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     assert {:ok, [{:t_sharp, 1, str}], 1} == res
 
-    str = '< >'
+    str = ~c"< >"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:t_less, 1, '<'}, {:t_more, 1, '>'}], 1} == res
+    assert {:ok, [{:t_less, 1, ~c"<"}, {:t_more, 1, ~c">"}], 1} == res
 
-    str = '<= >='
+    str = ~c"<= >="
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:t_lesseq, 1, '<='}, {:t_moreeq, 1, '>='}], 1} == res
+    assert {:ok, [{:t_lesseq, 1, ~c"<="}, {:t_moreeq, 1, ~c">="}], 1} == res
 
-    str = ':'
+    str = ~c":"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
-    assert {:ok, [{:t_colon, 1, ':'}], 1} == res
+    assert {:ok, [{:t_colon, 1, ~c":"}], 1} == res
 
-    assert {:ok, [{:t_array, 1, _}], 1}     = :obr_lexer.string('ARRAY')
-    assert {:ok, [{:t_array, 1, _}], 1}     = :obr_lexer.string(' ARRAY ')
-    assert {:ok, [{:t_begin, 1, _}], 1}     = :obr_lexer.string(' BEGIN ')
-    assert {:ok, [{:t_by, 1, _}], 1}        = :obr_lexer.string(' BY ')
-    assert {:ok, [{:t_case, 1, _}], 1}      = :obr_lexer.string(' CASE ')
-    assert {:ok, [{:t_const, 1, _}], 1}     = :obr_lexer.string(' CONST ')
-    assert {:ok, [{:t_div, 1, _}], 1}       = :obr_lexer.string(' DIV ')
-    assert {:ok, [{:t_do, 1, _}], 1}        = :obr_lexer.string(' DO ')
-    assert {:ok, [{:t_else, 1, _}], 1}      = :obr_lexer.string(' ELSE ')
-    assert {:ok, [{:t_elseif, 1, _}], 1}    = :obr_lexer.string(' ELSEIF ')
-    assert {:ok, [{:t_end, 1, _}], 1}       = :obr_lexer.string(' END ')
-    assert {:ok, [{:t_false, 1, _}], 1}     = :obr_lexer.string(' FALSE ')
-    assert {:ok, [{:t_for, 1, _}], 1}       = :obr_lexer.string(' FOR ')
-    assert {:ok, [{:t_if, 1, _}], 1}        = :obr_lexer.string(' IF ')
-    assert {:ok, [{:t_import, 1, _}], 1}    = :obr_lexer.string(' IMPORT ')
-    assert {:ok, [{:t_in, 1, _}], 1}        = :obr_lexer.string(' IN ')
-    assert {:ok, [{:t_is, 1, _}], 1}        = :obr_lexer.string(' IS ')
-    assert {:ok, [{:t_mod, 1, _}], 1}       = :obr_lexer.string(' MOD ')
-    assert {:ok, [{:t_module, 1, _}], 1}    = :obr_lexer.string(' MODULE ')
-    assert {:ok, [{:t_nil, 1, _}], 1}       = :obr_lexer.string(' NIL ')
-    assert {:ok, [{:t_of, 1, _}], 1}        = :obr_lexer.string(' OF ')
-    assert {:ok, [{:t_or, 1, _}], 1}        = :obr_lexer.string(' OR ')
-    assert {:ok, [{:t_pointer, 1, _}], 1}   = :obr_lexer.string(' POINTER ')
-    assert {:ok, [{:t_procedure, 1, _}], 1} = :obr_lexer.string(' PROCEDURE ')
-    assert {:ok, [{:t_record, 1, _}], 1}    = :obr_lexer.string(' RECORD ')
-    assert {:ok, [{:t_repeat, 1, _}], 1}    = :obr_lexer.string(' REPEAT ')
-    assert {:ok, [{:t_return, 1, _}], 1}    = :obr_lexer.string(' RETURN ')
-    assert {:ok, [{:t_to, 1, _}], 1}        = :obr_lexer.string(' TO ')
-    assert {:ok, [{:t_true, 1, _}], 1}      = :obr_lexer.string(' TRUE ')
-    assert {:ok, [{:t_type, 1, _}], 1}      = :obr_lexer.string(' TYPE ')
-    assert {:ok, [{:t_var, 1, _}], 1}       = :obr_lexer.string(' VAR ')
-    assert {:ok, [{:t_while, 1, _}], 1}     = :obr_lexer.string(' WHILE ')
-    assert {:ok, [{:t_then, 1, _}], 1}      = :obr_lexer.string(' THEN ')
-    assert {:ok, [{:t_until, 1, _}], 1}     = :obr_lexer.string(' UNTIL ')
+    assert {:ok, [{:t_array, 1, _}], 1}     = :obr_lexer.string(~c"ARRAY")
+    assert {:ok, [{:t_array, 1, _}], 1}     = :obr_lexer.string(~c" ARRAY ")
+    assert {:ok, [{:t_begin, 1, _}], 1}     = :obr_lexer.string(~c" BEGIN ")
+    assert {:ok, [{:t_by, 1, _}], 1}        = :obr_lexer.string(~c" BY ")
+    assert {:ok, [{:t_case, 1, _}], 1}      = :obr_lexer.string(~c" CASE ")
+    assert {:ok, [{:t_const, 1, _}], 1}     = :obr_lexer.string(~c" CONST ")
+    assert {:ok, [{:t_div, 1, _}], 1}       = :obr_lexer.string(~c" DIV ")
+    assert {:ok, [{:t_do, 1, _}], 1}        = :obr_lexer.string(~c" DO ")
+    assert {:ok, [{:t_else, 1, _}], 1}      = :obr_lexer.string(~c" ELSE ")
+    assert {:ok, [{:t_elseif, 1, _}], 1}    = :obr_lexer.string(~c" ELSEIF ")
+    assert {:ok, [{:t_end, 1, _}], 1}       = :obr_lexer.string(~c" END ")
+    assert {:ok, [{:t_false, 1, _}], 1}     = :obr_lexer.string(~c" FALSE ")
+    assert {:ok, [{:t_for, 1, _}], 1}       = :obr_lexer.string(~c" FOR ")
+    assert {:ok, [{:t_if, 1, _}], 1}        = :obr_lexer.string(~c" IF ")
+    assert {:ok, [{:t_import, 1, _}], 1}    = :obr_lexer.string(~c" IMPORT ")
+    assert {:ok, [{:t_in, 1, _}], 1}        = :obr_lexer.string(~c" IN ")
+    assert {:ok, [{:t_is, 1, _}], 1}        = :obr_lexer.string(~c" IS ")
+    assert {:ok, [{:t_mod, 1, _}], 1}       = :obr_lexer.string(~c" MOD ")
+    assert {:ok, [{:t_module, 1, _}], 1}    = :obr_lexer.string(~c" MODULE ")
+    assert {:ok, [{:t_nil, 1, _}], 1}       = :obr_lexer.string(~c" NIL ")
+    assert {:ok, [{:t_of, 1, _}], 1}        = :obr_lexer.string(~c" OF ")
+    assert {:ok, [{:t_or, 1, _}], 1}        = :obr_lexer.string(~c" OR ")
+    assert {:ok, [{:t_pointer, 1, _}], 1}   = :obr_lexer.string(~c" POINTER ")
+    assert {:ok, [{:t_procedure, 1, _}], 1} = :obr_lexer.string(~c" PROCEDURE ")
+    assert {:ok, [{:t_record, 1, _}], 1}    = :obr_lexer.string(~c" RECORD ")
+    assert {:ok, [{:t_repeat, 1, _}], 1}    = :obr_lexer.string(~c" REPEAT ")
+    assert {:ok, [{:t_return, 1, _}], 1}    = :obr_lexer.string(~c" RETURN ")
+    assert {:ok, [{:t_to, 1, _}], 1}        = :obr_lexer.string(~c" TO ")
+    assert {:ok, [{:t_true, 1, _}], 1}      = :obr_lexer.string(~c" TRUE ")
+    assert {:ok, [{:t_type, 1, _}], 1}      = :obr_lexer.string(~c" TYPE ")
+    assert {:ok, [{:t_var, 1, _}], 1}       = :obr_lexer.string(~c" VAR ")
+    assert {:ok, [{:t_while, 1, _}], 1}     = :obr_lexer.string(~c" WHILE ")
+    assert {:ok, [{:t_then, 1, _}], 1}      = :obr_lexer.string(~c" THEN ")
+    assert {:ok, [{:t_until, 1, _}], 1}     = :obr_lexer.string(~c" UNTIL ")
 
-    assert {:ok, [{:t_abs, 1, _}], 1}     = :obr_lexer.string(' ABS ')
-    assert {:ok, [{:t_asr, 1, _}], 1}     = :obr_lexer.string(' ASR ')
-    assert {:ok, [{:t_assert, 1, _}], 1}  = :obr_lexer.string(' ASSERT ')
-    assert {:ok, [{:t_boolean, 1, _}], 1} = :obr_lexer.string(' BOOLEAN ')
-    assert {:ok, [{:t_byte, 1, _}], 1}    = :obr_lexer.string(' BYTE ')
-    assert {:ok, [{:t_char, 1, _}], 1}    = :obr_lexer.string(' CHAR ')
-    assert {:ok, [{:t_chr, 1, _}], 1}     = :obr_lexer.string(' CHR ')
-    assert {:ok, [{:t_dec, 1, _}], 1}     = :obr_lexer.string(' DEC ')
-    assert {:ok, [{:t_excl, 1, _}], 1}    = :obr_lexer.string(' EXCL ')
-    assert {:ok, [{:t_floor, 1, _}], 1}   = :obr_lexer.string(' FLOOR ')
-    assert {:ok, [{:t_flt, 1, _}], 1}     = :obr_lexer.string(' FLT ')
-    assert {:ok, [{:t_incl, 1, _}], 1}    = :obr_lexer.string(' INCL ')
-    assert {:ok, [{:t_inc, 1, _}], 1}     = :obr_lexer.string(' INC ')
-    assert {:ok, [{:t_integer, 1, _}], 1} = :obr_lexer.string(' INTEGER ')
-    assert {:ok, [{:t_len, 1, _}], 1}     = :obr_lexer.string(' LEN ')
-    assert {:ok, [{:t_lsl, 1, _}], 1}     = :obr_lexer.string(' LSL ')
-    assert {:ok, [{:t_new, 1, _}], 1}     = :obr_lexer.string(' NEW ')
-    assert {:ok, [{:t_odd, 1, _}], 1}     = :obr_lexer.string(' ODD ')
-    assert {:ok, [{:t_ord, 1, _}], 1}     = :obr_lexer.string(' ORD ')
-    assert {:ok, [{:t_pack, 1, _}], 1}    = :obr_lexer.string(' PACK ')
-    assert {:ok, [{:t_real, 1, _}], 1}    = :obr_lexer.string(' REAL ')
-    assert {:ok, [{:t_ror, 1, _}], 1}     = :obr_lexer.string(' ROR ')
-    assert {:ok, [{:t_set, 1, _}], 1}     = :obr_lexer.string(' SET ')
-    assert {:ok, [{:t_unpk, 1, _}], 1}    = :obr_lexer.string(' UNPK ')
+    assert {:ok, [{:t_abs, 1, _}], 1}     = :obr_lexer.string(~c" ABS ")
+    assert {:ok, [{:t_asr, 1, _}], 1}     = :obr_lexer.string(~c" ASR ")
+    assert {:ok, [{:t_assert, 1, _}], 1}  = :obr_lexer.string(~c" ASSERT ")
+    assert {:ok, [{:t_boolean, 1, _}], 1} = :obr_lexer.string(~c" BOOLEAN ")
+    assert {:ok, [{:t_byte, 1, _}], 1}    = :obr_lexer.string(~c" BYTE ")
+    assert {:ok, [{:t_char, 1, _}], 1}    = :obr_lexer.string(~c" CHAR ")
+    assert {:ok, [{:t_chr, 1, _}], 1}     = :obr_lexer.string(~c" CHR ")
+    assert {:ok, [{:t_dec, 1, _}], 1}     = :obr_lexer.string(~c" DEC ")
+    assert {:ok, [{:t_excl, 1, _}], 1}    = :obr_lexer.string(~c" EXCL ")
+    assert {:ok, [{:t_floor, 1, _}], 1}   = :obr_lexer.string(~c" FLOOR ")
+    assert {:ok, [{:t_flt, 1, _}], 1}     = :obr_lexer.string(~c" FLT ")
+    assert {:ok, [{:t_incl, 1, _}], 1}    = :obr_lexer.string(~c" INCL ")
+    assert {:ok, [{:t_inc, 1, _}], 1}     = :obr_lexer.string(~c" INC ")
+    assert {:ok, [{:t_integer, 1, _}], 1} = :obr_lexer.string(~c" INTEGER ")
+    assert {:ok, [{:t_len, 1, _}], 1}     = :obr_lexer.string(~c" LEN ")
+    assert {:ok, [{:t_lsl, 1, _}], 1}     = :obr_lexer.string(~c" LSL ")
+    assert {:ok, [{:t_new, 1, _}], 1}     = :obr_lexer.string(~c" NEW ")
+    assert {:ok, [{:t_odd, 1, _}], 1}     = :obr_lexer.string(~c" ODD ")
+    assert {:ok, [{:t_ord, 1, _}], 1}     = :obr_lexer.string(~c" ORD ")
+    assert {:ok, [{:t_pack, 1, _}], 1}    = :obr_lexer.string(~c" PACK ")
+    assert {:ok, [{:t_real, 1, _}], 1}    = :obr_lexer.string(~c" REAL ")
+    assert {:ok, [{:t_ror, 1, _}], 1}     = :obr_lexer.string(~c" ROR ")
+    assert {:ok, [{:t_set, 1, _}], 1}     = :obr_lexer.string(~c" SET ")
+    assert {:ok, [{:t_unpk, 1, _}], 1}    = :obr_lexer.string(~c" UNPK ")
 
     # PLUS       = \+
-    assert {:ok, [{:t_plus, 1, _}], 1}         = :obr_lexer.string(' + ')
+    assert {:ok, [{:t_plus, 1, _}], 1}         = :obr_lexer.string(~c" + ")
     # MINUS      = \-
-    assert {:ok, [{:t_minus, 1, _}], 1}        = :obr_lexer.string(' - ')
+    assert {:ok, [{:t_minus, 1, _}], 1}        = :obr_lexer.string(~c" - ")
     # MUL        = \*
-    assert {:ok, [{:t_mul, 1, _}], 1}          = :obr_lexer.string(' * ')
+    assert {:ok, [{:t_mul, 1, _}], 1}          = :obr_lexer.string(~c" * ")
     # DIVIDE     = /
-    assert {:ok, [{:t_divide, 1, _}], 1}       = :obr_lexer.string(' / ')
+    assert {:ok, [{:t_divide, 1, _}], 1}       = :obr_lexer.string(~c" / ")
     # TILDA      = ~
-    assert {:ok, [{:t_tilda, 1, _}], 1}        = :obr_lexer.string(' ~ ')
+    assert {:ok, [{:t_tilda, 1, _}], 1}        = :obr_lexer.string(~c" ~ ")
     # AND        = &
-    assert {:ok, [{:t_and, 1, _}], 1}          = :obr_lexer.string(' & ')
+    assert {:ok, [{:t_and, 1, _}], 1}          = :obr_lexer.string(~c" & ")
     # DDOT       = \.\.
-    assert {:ok, [{:t_ddot, 1, _}], 1}         = :obr_lexer.string(' .. ')
+    assert {:ok, [{:t_ddot, 1, _}], 1}         = :obr_lexer.string(~c" .. ")
     # DOT        = \.
-    assert {:ok, [{:t_dot, 1, _}], 1}          = :obr_lexer.string(' . ')
+    assert {:ok, [{:t_dot, 1, _}], 1}          = :obr_lexer.string(~c" . ")
     # COMMA      = ,
-    assert {:ok, [{:t_comma, 1, _}], 1}        = :obr_lexer.string(' , ')
+    assert {:ok, [{:t_comma, 1, _}], 1}        = :obr_lexer.string(~c" , ")
     # SEMICOLON  = ;
-    assert {:ok, [{:t_semicolon, 1, _}], 1}    = :obr_lexer.string(' ; ')
+    assert {:ok, [{:t_semicolon, 1, _}], 1}    = :obr_lexer.string(~c" ; ")
     # VLINE      = \|
-    assert {:ok, [{:t_vline, 1, _}], 1}        = :obr_lexer.string(' | ')
+    assert {:ok, [{:t_vline, 1, _}], 1}        = :obr_lexer.string(~c" | ")
     # LPAR       = \(
-    assert {:ok, [{:t_lpar, 1, _}], 1}         = :obr_lexer.string(' ( ')
+    assert {:ok, [{:t_lpar, 1, _}], 1}         = :obr_lexer.string(~c" ( ")
     # RPAR       = \)
-    assert {:ok, [{:t_rpar, 1, _}], 1}         = :obr_lexer.string(' ) ')
+    assert {:ok, [{:t_rpar, 1, _}], 1}         = :obr_lexer.string(~c" ) ")
     # LBRACK     = \[
-    assert {:ok, [{:t_lbrack, 1, _}], 1}       = :obr_lexer.string(' [ ')
+    assert {:ok, [{:t_lbrack, 1, _}], 1}       = :obr_lexer.string(~c" [ ")
     # RBRACK     = \]
-    assert {:ok, [{:t_rbrack, 1, _}], 1}       = :obr_lexer.string(' ] ')
+    assert {:ok, [{:t_rbrack, 1, _}], 1}       = :obr_lexer.string(~c" ] ")
     # LBRACE     = \{
-    assert {:ok, [{:t_lbrace, 1, _}], 1}       = :obr_lexer.string(' { ')
+    assert {:ok, [{:t_lbrace, 1, _}], 1}       = :obr_lexer.string(~c" { ")
     # RBRACE     = \}
-    assert {:ok, [{:t_rbrace, 1, _}], 1}       = :obr_lexer.string(' } ')
+    assert {:ok, [{:t_rbrace, 1, _}], 1}       = :obr_lexer.string(~c" } ")
     # ASSIGN     = \:\=
-    assert {:ok, [{:t_assign, 1, _}], 1}       = :obr_lexer.string(' := ')
+    assert {:ok, [{:t_assign, 1, _}], 1}       = :obr_lexer.string(~c" := ")
     # COLON      = \:
-    assert {:ok, [{:t_colon, 1, _}], 1}        = :obr_lexer.string(' : ')
+    assert {:ok, [{:t_colon, 1, _}], 1}        = :obr_lexer.string(~c" : ")
     # ARROW      = \^
-    assert {:ok, [{:t_arrow, 1, _}], 1}        = :obr_lexer.string(' ^ ')
+    assert {:ok, [{:t_arrow, 1, _}], 1}        = :obr_lexer.string(~c" ^ ")
     # EQU        = \=
-    assert {:ok, [{:t_equ, 1, _}], 1}          = :obr_lexer.string(' = ')
+    assert {:ok, [{:t_equ, 1, _}], 1}          = :obr_lexer.string(~c" = ")
     # SHARP      = \#
-    assert {:ok, [{:t_sharp, 1, _}], 1}        = :obr_lexer.string(' # ')
+    assert {:ok, [{:t_sharp, 1, _}], 1}        = :obr_lexer.string(~c" # ")
     # LESSEQ     = \<\=
-    assert {:ok, [{:t_lesseq, 1, _}], 1}       = :obr_lexer.string(' <= ')
+    assert {:ok, [{:t_lesseq, 1, _}], 1}       = :obr_lexer.string(~c" <= ")
     # MOREEQ     = \>\=
-    assert {:ok, [{:t_moreeq, 1, _}], 1}       = :obr_lexer.string(' >= ')
+    assert {:ok, [{:t_moreeq, 1, _}], 1}       = :obr_lexer.string(~c" >= ")
     # LESS       = \<
-    assert {:ok, [{:t_less, 1, _}], 1}         = :obr_lexer.string(' < ')
+    assert {:ok, [{:t_less, 1, _}], 1}         = :obr_lexer.string(~c" < ")
     # MORE       = \>
-    assert {:ok, [{:t_more, 1, _}], 1}         = :obr_lexer.string(' > ')
+    assert {:ok, [{:t_more, 1, _}], 1}         = :obr_lexer.string(~c" > ")
 
 
-    str =  'MODULE ASCII;\n'
-        ++ 'IMPORT Console;\n'
-        ++ 'VAR\n'
-        ++ '  n: SHORTINT;\n'
-        ++ 'BEGIN\n'
-        ++ '  FOR n := 32-1 TO 127-1 DO Console.WriteCh(CHR(n+1)) END;\n'
-        ++ 'END ASCII.\n'
+    str =  ~c"MODULE ASCII;\n"
+        ++ ~c"IMPORT Console;\n"
+        ++ ~c"VAR\n"
+        ++ ~c"  n: SHORTINT;\n"
+        ++ ~c"BEGIN\n"
+        ++ ~c"  FOR n := 32-1 TO 127-1 DO Console.WriteCh(CHR(n+1)) END;\n"
+        ++ ~c"END ASCII.\n"
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
 
-    str = '"some test"'
+    str = ~c"\"some test\""
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
 
-    str = '"какой то текст"'
+    str = ~c"\"какой то текст\""
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     {:ok, [{:string, 1, res_string}], 1}  = res
@@ -399,26 +399,26 @@ defmodule OberLexxTest do
     Logger.debug "Leex - generate erl time = #{time2 - time1} ms"
     Logger.debug "Compile erl time = #{time3 - time2} ms"
 
-    # str = '(* some comment *)'
+    # str = ~c"(* some comment *)"
     # res = :obr_lexer.string(str)
     # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     # # assert {:ok, [{:comments, 1, str}], 1} == res
 
-    # str = '(* some (*  \r\n  comment2 *)\r\n comment *)'
+    # str = ~c"(* some (*  \r\n  comment2 *)\r\n comment *)"
     # res = :obr_lexer.string(str)
     # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     # # assert {:ok, [{:comments, 1, str}], _} = res
 
-    # str =  '(* (* 1 *)\n'
-    #     ++ '(* 2 *) *)'
+    # str =  ~c"(* (* 1 *)\n"
+    #     ++ ~c"(* 2 *) *)"
     # res = :obr_lexer.string(str)
     # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     # # assert {:ok, [{:comments, 1, str}], _} = res
 
     # # должно быть невалидно
-    # str =  '(* ляляля\n'
-    #     ++ 'Print("    *)       ");\n'
-    #     ++ '*)'
+    # str =  ~c"(* ляляля\n"
+    #     ++ ~c"Print("    *)       ");\n"
+    #     ++ ~c"*)"
     # res = :obr_lexer.string(str)
     # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     # {:error, {1, :obr, {:illegal, sym}}, 1} = res
@@ -430,11 +430,11 @@ defmodule OberLexxTest do
 
 
     # TODO должно быть невалидно
-    # str =  '(*DEFINITION Abc;\n'
-    #     ++ '\n'
-    #     ++ 'PROCEDURE A1; (* Эта процедура делает тото1 *)\n'
-    #     ++ 'PROCEDURE A2; (* Эта процедура делает тото1 *)\n'
-    #     ++ '123\n'
+    # str =  ~c"(*DEFINITION Abc;\n"
+    #     ++ ~c"\n"
+    #     ++ ~c"PROCEDURE A1; (* Эта процедура делает тото1 *)\n"
+    #     ++ ~c"PROCEDURE A2; (* Эта процедура делает тото1 *)\n"
+    #     ++ ~c"123\n"
     # res = :obr_lexer.string(str)
     # Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
     # assert {:ok, [{:comments, 1, str}], _} = res

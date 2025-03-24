@@ -43,30 +43,30 @@ WHILE      = WHILE
 THEN       = THEN
 UNTIL      = UNTIL
 
-% ABS        = ABS
-% ASR        = ASR
-% ASSERT     = ASSERT
-% BOOLEAN    = BOOLEAN
-% BYTE       = BYTE
-% CHAR       = CHAR
-% CHR        = CHR
-% DEC        = DEC
-% EXCL       = EXCL
-% FLOOR      = FLOOR
-% FLT        = FLT
-% INCL       = INCL
-% INC        = INC
-% TINTEGER   = INTEGER
-% LEN        = LEN
-% LSL        = LSL
-% NEW        = NEW
-% ODD        = ODD
-% ORD        = ORD
-% PACK       = PACK
-% TREAL      = REAL
-% ROR        = ROR
-% SET        = SET
-% UNPK       = UNPK
+ABS        = ABS
+ASR        = ASR
+ASSERT     = ASSERT
+BOOLEAN    = BOOLEAN
+BYTE       = BYTE
+CHAR       = CHAR
+CHR        = CHR
+DEC        = DEC
+EXCL       = EXCL
+FLOOR      = FLOOR
+FLT        = FLT
+INCL       = INCL
+INC        = INC
+TINTEGER   = INTEGER
+LEN        = LEN
+LSL        = LSL
+NEW        = NEW
+ODD        = ODD
+ORD        = ORD
+PACK       = PACK
+TREAL      = REAL
+ROR        = ROR
+SET        = SET
+UNPK       = UNPK
 
 PLUS       = \+
 MINUS      = \-
@@ -149,30 +149,30 @@ Rules.
 {THEN}      : {token, {t_then, TokenLine, TokenChars}}.
 {UNTIL}     : {token, {t_until, TokenLine, TokenChars}}.
 
-% {ABS}       : {token, {t_abs, TokenLine, TokenChars}}.
-% {ASR}       : {token, {t_asr, TokenLine, TokenChars}}.
-% {ASSERT}    : {token, {t_assert, TokenLine, TokenChars}}.
-% {BOOLEAN}   : {token, {t_boolean, TokenLine, TokenChars}}.
-% {BYTE}      : {token, {t_byte, TokenLine, TokenChars}}.
-% {CHAR}      : {token, {t_char, TokenLine, TokenChars}}.
-% {CHR}       : {token, {t_chr, TokenLine, TokenChars}}.
-% {DEC}       : {token, {t_dec, TokenLine, TokenChars}}.
-% {EXCL}      : {token, {t_excl, TokenLine, TokenChars}}.
-% {FLOOR}     : {token, {t_floor, TokenLine, TokenChars}}.
-% {FLT}       : {token, {t_flt, TokenLine, TokenChars}}.
-% {INCL}      : {token, {t_incl, TokenLine, TokenChars}}.
-% {INC}       : {token, {t_inc, TokenLine, TokenChars}}.
-% {TINTEGER}  : {token, {t_integer, TokenLine, TokenChars}}.
-% {LEN}       : {token, {t_len, TokenLine, TokenChars}}.
-% {LSL}       : {token, {t_lsl, TokenLine, TokenChars}}.
-% {NEW}       : {token, {t_new, TokenLine, TokenChars}}.
-% {ODD}       : {token, {t_odd, TokenLine, TokenChars}}.
-% {ORD}       : {token, {t_ord, TokenLine, TokenChars}}.
-% {PACK}      : {token, {t_pack, TokenLine, TokenChars}}.
-% {TREAL}     : {token, {t_real, TokenLine, TokenChars}}.
-% {ROR}       : {token, {t_ror, TokenLine, TokenChars}}.
-% {SET}       : {token, {t_set, TokenLine, TokenChars}}.
-% {UNPK}      : {token, {t_unpk, TokenLine, TokenChars}}.
+{ABS}       : {token, {t_abs, TokenLine, TokenChars}}.
+{ASR}       : {token, {t_asr, TokenLine, TokenChars}}.
+{ASSERT}    : {token, {t_assert, TokenLine, TokenChars}}.
+{BOOLEAN}   : {token, {t_boolean, TokenLine, TokenChars}}.
+{BYTE}      : {token, {t_byte, TokenLine, TokenChars}}.
+{CHAR}      : {token, {t_char, TokenLine, TokenChars}}.
+{CHR}       : {token, {t_chr, TokenLine, TokenChars}}.
+{DEC}       : {token, {t_dec, TokenLine, TokenChars}}.
+{EXCL}      : {token, {t_excl, TokenLine, TokenChars}}.
+{FLOOR}     : {token, {t_floor, TokenLine, TokenChars}}.
+{FLT}       : {token, {t_flt, TokenLine, TokenChars}}.
+{INCL}      : {token, {t_incl, TokenLine, TokenChars}}.
+{INC}       : {token, {t_inc, TokenLine, TokenChars}}.
+{TINTEGER}  : {token, {t_integer, TokenLine, TokenChars}}.
+{LEN}       : {token, {t_len, TokenLine, TokenChars}}.
+{LSL}       : {token, {t_lsl, TokenLine, TokenChars}}.
+{NEW}       : {token, {t_new, TokenLine, TokenChars}}.
+{ODD}       : {token, {t_odd, TokenLine, TokenChars}}.
+{ORD}       : {token, {t_ord, TokenLine, TokenChars}}.
+{PACK}      : {token, {t_pack, TokenLine, TokenChars}}.
+{TREAL}     : {token, {t_real, TokenLine, TokenChars}}.
+{ROR}       : {token, {t_ror, TokenLine, TokenChars}}.
+{SET}       : {token, {t_set, TokenLine, TokenChars}}.
+{UNPK}      : {token, {t_unpk, TokenLine, TokenChars}}.
 
 {PLUS}      : {token, {t_plus, TokenLine, TokenChars}}.
 {MINUS}     : {token, {t_minus, TokenLine, TokenChars}}.

@@ -4,33 +4,33 @@ defmodule TokenizeTest do
   require Logger
 
   # mix test --only tokenize
-  @tag tokenize: true  
+  @tag tokenize: true
 
   test "the tokenize" do
 
-    str =  '(* (* 1 *)\n'
-        ++ '(* 2 *) *)'
+    str =  ~c"(* (* 1 *)\n"
+        ++ ~c"(* 2 *) *)"
     res = OberLexx.tokenize(str)
     Logger.debug ">>>>>> res=#{inspect res}"
     assert [{:comments, "(* (* 1 *)\n(* 2 *) *)", 2}] == res
 
-    res = OberLexx.tokenize('(*\n"\n*)')
+    res = OberLexx.tokenize(~c"(*\n\"\n*)")
     Logger.debug ">>>>>> res=#{inspect res}"
     assert [{:comments, "(*\n\"\n*)", 3}] == res
 
-    res = OberLexx.tokenize('(**)*)')
+    res = OberLexx.tokenize(~c"(**)*)")
     Logger.debug ">>>>>> res=#{inspect res}"
     assert [{:comments, "(**)", 1}, {:illegal, "*)", 1}] == res
 
-    res = OberLexx.tokenize('(* (* comment *)')
+    res = OberLexx.tokenize(~c"(* (* comment *)")
     Logger.debug ">>>>>> res=#{inspect res}"
     assert [{:illegal, "*)", 1}] == res
-    
-    res = OberLexx.tokenize('123')
+
+    res = OberLexx.tokenize(~c"123")
     Logger.debug ">>>>>> res=#{inspect res}"
     assert [{:integer, "123", 1}] = res
 
-    res = OberLexx.tokenize('  123 ')
+    res = OberLexx.tokenize(~c"  123 ")
     Logger.debug ">>>>>> res=#{inspect res}"
     assert [{:integer, "123", 1}] = res
 
