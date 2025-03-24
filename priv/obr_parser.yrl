@@ -14,13 +14,14 @@ module number muloperator addoperator relation import implist importlist identde
 qualident qualident_one qualident_two
 factor term simpleexpression simpleexpression_list expression constexpression constantdeclaration explist exlist
 length element set setlist designator deselem1 deselem2 deselem3 deselem4 deslist deslist2 identlist idlist fieldlistsequence_list t_array_list
-typedeclaration type structype arraytype lenlist fieldlist fieldlistsequence recordtype
+typedeclaration type simpletype structype arraytype lenlist fieldlist fieldlistsequence recordtype
 pointertype variabledeclaration formaltype proceduretype fpsection idlist2 fpseclist formalparameters termlist
 procedureheading label labelrange cllist caselabellist assignment procedurecall actualparameters statement statementsequence sslist
 ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whilestatement elsifdosec
 forstatement forby procedurebody declarationsequence procedurebody_stat_seq procedurebody_ret_exp proceduredeclaration
 declarationsequence_const declarationsequence_type declarationsequence_var const_decl_li type_decl_li var_decl_li proc_decl_li
 module_importlist module_begin
+assertdeclaration
 .
 
 Terminals 
@@ -30,6 +31,8 @@ t_sharp t_equ t_or t_minus t_plus t_and t_mod t_div t_divide t_mul t_assign t_co
 string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arrow t_lbrack t_rbrack
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case t_if t_then t_elsif t_else
 t_repeat t_until t_while t_do t_for t_by t_begin t_return t_const t_type t_module
+t_integer t_boolean t_byte t_char t_real
+t_assert
 .
 
 
@@ -89,6 +92,8 @@ Rootsymbol module.
 % module -> labelrange : '$1'.
 % module -> caselabellist : '$1'.
 % module -> assignment : '$1'.
+% module -> statementsequence : '$1'.
+% module -> declarationsequence : '$1'.
 % module -> procedurecall : '$1'.
 % module -> statementsequence : '$1'.
 % module -> ntcase : '$1'.
@@ -236,7 +241,9 @@ idlist2 -> ident t_comma idlist2 : {idlist2, str_of('$1'), ['Elixir.T':new('$1')
 
 % +FormalType = {ARRAY OF} qualident.
 formaltype -> qualident : 'Elixir.T':new({formaltype, str_of('$1'), {'$1', 0}}).
-formaltype -> t_array_list qualident : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
+formaltype -> t_array t_of qualident : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
+formaltype -> simpletype : 'Elixir.T':new({formaltype, str_of('$1'), {'$1', 0}}).
+formaltype -> t_array t_of simpletype : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
 
 t_array_list -> t_array t_of : {t_array_list, str_of('$1'), 1}.
 t_array_list -> t_array_list t_array t_of : {t_array_list, str_of('$1'), value_of('$1') + 1}.
@@ -254,9 +261,21 @@ identdef -> ident t_mul : 'Elixir.T':new({identdef, str_of('$1'), value_of('$1')
 % +VariableDeclaration = IdentList ":" type. 
 variabledeclaration -> identlist t_colon type : 'Elixir.T':new({variabledeclaration, str_of('$1'), {'$1', '$3'}}).
 
+
 % +type = qualident | StrucType.
 type -> qualident : 'Elixir.T':new({type, str_of('$1'), '$1'}).
 type -> structype : 'Elixir.T':new({type, str_of('$1'), '$1'}).
+type -> simpletype : '$1'.
+
+% simpletype
+simpletype -> t_integer : '$1'.
+simpletype -> t_boolean : '$1'.
+simpletype -> t_byte : '$1'.
+simpletype -> t_char : '$1'.
+simpletype -> t_real : '$1'.
+
+% assertdeclaration
+assertdeclaration -> t_assert t_lpar expression t_rpar : '$3'. 
 
 % +ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
 proceduredeclaration -> procedureheading t_semicolon procedurebody ident : 'Elixir.T':new({proceduredeclaration, str_of('$1'), {'$1', '$3', 'Elixir.T':new('$4')}}).
@@ -333,29 +352,32 @@ factor -> t_tilda factor : 'Elixir.T':new({factor, str_of('$1'), {t_tilda, '$2'}
 % поправка
 % designator = qualident {selector}.
 % +selector = "." ident | "[" ExpList "]" | "^" | actualparameters.
-designator -> deslist: 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
+designator -> deslist : 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
 
 % deslist -> qualident : {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'),value_of('$1')})]}.
-deslist -> ident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
 
-deslist2 -> '$empty' : [].
-deslist2 -> deselem1 : '$1'.
-deslist2 -> deselem2 : '$1'.
-deslist2 -> deselem3 : '$1'.
-deslist2 -> deselem4 : '$1'.
-deslist2 -> deslist2 deselem1 : '$1' ++ '$2'.
-deslist2 -> deslist2 deselem2 : '$1' ++ '$2'.
-deslist2 -> deslist2 deselem3 : '$1' ++ '$2'.
-deslist2 -> deslist2 deselem4 : '$1' ++ '$2'.
+deslist -> qualident : '$1'.
 
-deselem1 -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
-deselem2 -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
-% deselem3 -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
-% deselem3 -> t_lpar ident t_rpar : [{pars_qualident, str_of('$1'), '$2'}].
-deselem3 -> actualparameters : ['$1'].
-% тестовая хрень
-% deselem3 -> t_lpar t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), 'nil'}}.
-deselem4 -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
+%deslist -> ident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
+%
+%deslist2 -> '$empty' : [].
+%deslist2 -> deselem1 : '$1'.
+%deslist2 -> deselem2 : '$1'.
+%deslist2 -> deselem3 : '$1'.
+%deslist2 -> deselem4 : '$1'.
+%deslist2 -> deslist2 deselem1 : '$1' ++ '$2'.
+%deslist2 -> deslist2 deselem2 : '$1' ++ '$2'.
+%deslist2 -> deslist2 deselem3 : '$1' ++ '$2'.
+%deslist2 -> deslist2 deselem4 : '$1' ++ '$2'.
+%
+%deselem1 -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
+%deselem2 -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
+%% deselem3 -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
+%% deselem3 -> t_lpar ident t_rpar : [{pars_qualident, str_of('$1'), '$2'}].
+%deselem3 -> actualparameters : ['$1'].
+%% тестовая хрень
+%% deselem3 -> t_lpar t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), 'nil'}}.
+%deselem4 -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
 
 % +set = "{" [element {"," element}] "}".
 set -> t_lbrace t_rbrace : 'Elixir.T':new({set, str_of('$1'), []}).
@@ -384,9 +406,10 @@ statement -> casestatement   : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
 statement -> whilestatement  : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
 statement -> repeatstatement : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
 statement -> forstatement    : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
-
+statement -> assertdeclaration : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
 
 % +assignment = designator ":=" expression.
+% assignment -> designator t_assign expression t_semicolon : 'Elixir.T':new({assignment, str_of('$1'), {'$1', '$3'}}).
 assignment -> designator t_assign expression : 'Elixir.T':new({assignment, str_of('$1'), {'$1', '$3'}}).
 
 % +ProcedureCall = designator [ActualParameters].
@@ -396,9 +419,11 @@ procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, st
 
 % +StatementSequence = statement {";" statement}.
 statementsequence -> sslist : 'Elixir.T':new({statementsequence, str_of('$1'), value_of('$1')}).
+
 sslist -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
-% может быть надо будет включить, если точка с запятой в конце - да. так и есть.
 sslist -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
+
+% может быть надо будет включить, если точка с запятой в конце - да. так и есть.
 sslist -> statement t_semicolon sslist : {sslist, str_of('$1'), [value_of('$1')] ++ value_of('$3')}.
 
 % +IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.

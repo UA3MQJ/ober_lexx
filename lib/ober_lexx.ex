@@ -1,4 +1,7 @@
 defmodule OberLexx do
+  # это модуль вручную написанного токенайзера.
+  # сделан был в самом начале. не использовать!
+
   use Application
   require Logger
 
@@ -12,7 +15,10 @@ defmodule OberLexx do
     Supervisor.start_link(children, strategy: :one_for_one)
   end
 
-  def tokenize(oberon_str) do
+  def tokenize(oberon_str) when is_bitstring(oberon_str) do
+    tokenize(String.to_charlist(oberon_str))
+  end
+  def tokenize(oberon_str) when is_list(oberon_str) do
     state = %{cb_counter: 0,
               comment: false,
               comment_str: "",

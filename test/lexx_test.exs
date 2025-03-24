@@ -376,13 +376,15 @@ defmodule OberLexxTest do
     assert {:ok, [{:t_more, 1, _}], 1}         = :obr_lexer.string(~c" > ")
 
 
-    str =  ~c"MODULE ASCII;\n"
-        ++ ~c"IMPORT Console;\n"
-        ++ ~c"VAR\n"
-        ++ ~c"  n: SHORTINT;\n"
-        ++ ~c"BEGIN\n"
-        ++ ~c"  FOR n := 32-1 TO 127-1 DO Console.WriteCh(CHR(n+1)) END;\n"
-        ++ ~c"END ASCII.\n"
+    str =  ~c"""
+        MODULE ASCII;
+        IMPORT Console;
+        VAR
+          n: SHORTINT;
+        BEGIN
+         FOR n := 32-1 TO 127-1 DO Console.WriteCh(CHR(n+1)) END;
+        END ASCII.
+    """
     res = :obr_lexer.string(str)
     Logger.debug ">>>>>> str=#{str} res=#{inspect res}"
 
