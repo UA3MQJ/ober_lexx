@@ -21,7 +21,7 @@ ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whil
 forstatement forby procedurebody declarationsequence procedurebody_stat_seq procedurebody_ret_exp proceduredeclaration
 declarationsequence_const declarationsequence_type declarationsequence_var const_decl_li type_decl_li var_decl_li proc_decl_li
 module_importlist module_begin
-assertdeclaration
+assertdeclaration selector elsifseq
 .
 
 Terminals 
@@ -32,7 +32,7 @@ string t_nil t_true t_false t_tilda t_lpar t_rpar t_ddot t_lbrace t_rbrace t_arr
 t_array t_of t_end t_record t_colon t_pointer t_to t_var t_procedure t_vline t_case t_if t_then t_elsif t_else
 t_repeat t_until t_while t_do t_for t_by t_begin t_return t_const t_type t_module
 t_integer t_boolean t_byte t_char t_real
-t_assert
+t_assert t_elseif
 .
 
 
@@ -95,11 +95,11 @@ Rootsymbol module.
 % module -> statementsequence : '$1'.
 % module -> declarationsequence : '$1'.
 % module -> procedurecall : '$1'.
-% module -> statementsequence : '$1'.
+% module -> expression : '$1'.
 % module -> ntcase : '$1'.
 % module -> ntcaselist : '$1'.
 % module -> casestatement : '$1'.
-% module -> ifstatement : '$1'.
+module -> ifstatement : '$1'.
 % module -> repeatstatement : '$1'.
 % module -> whilestatement : '$1'.
 % module -> forstatement : '$1'.
@@ -122,7 +122,7 @@ number -> real : 'Elixir.T':new('$1').
 number -> character : 'Elixir.T':new('$1').
 
 % +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
+%%%%%%%%%%%module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
 module_importlist -> '$empty' : nil.
 module_importlist -> importlist : '$1'.
 
@@ -357,9 +357,13 @@ designator -> deslist : 'Elixir.T':new({designator, str_of('$1'), value_of('$1')
 % deslist -> qualident : {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'),value_of('$1')})]}.
 
 deslist -> qualident : '$1'.
+deslist -> qualident selector: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
 
-%deslist -> ident deslist2: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
-%
+selector -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
+selector -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
+selector -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
+selector -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
+
 %deslist2 -> '$empty' : [].
 %deslist2 -> deselem1 : '$1'.
 %deslist2 -> deselem2 : '$1'.
@@ -369,7 +373,7 @@ deslist -> qualident : '$1'.
 %deslist2 -> deslist2 deselem2 : '$1' ++ '$2'.
 %deslist2 -> deslist2 deselem3 : '$1' ++ '$2'.
 %deslist2 -> deslist2 deselem4 : '$1' ++ '$2'.
-%
+
 %deselem1 -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
 %deselem2 -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
 %% deselem3 -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
@@ -418,21 +422,26 @@ procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, st
 
 
 % +StatementSequence = statement {";" statement}.
-statementsequence -> sslist : 'Elixir.T':new({statementsequence, str_of('$1'), value_of('$1')}).
+statementsequence -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
+statementsequence -> statement t_semicolon statementsequence : '$1'.
 
-sslist -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
-sslist -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
-
-% может быть надо будет включить, если точка с запятой в конце - да. так и есть.
-sslist -> statement t_semicolon sslist : {sslist, str_of('$1'), [value_of('$1')] ++ value_of('$3')}.
 
 % +IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
-ifstatement -> t_if expression t_then statementsequence elsifsec ifelse t_end : 'Elixir.T':new({ifstatement, str_of('$1'), ['Elixir.T':new({va_t_if, '$2', '$4'})] ++ '$5' ++ '$6'}).
-elsifsec -> '$empty' : [].
-elsifsec -> t_elsif expression t_then statementsequence : ['Elixir.T':new({va_t_elsif, '$2', '$4'})].
-elsifsec -> elsifsec t_elsif expression t_then statementsequence : '$1' ++ ['Elixir.T':new({va_t_elsif, '$3', '$5'})].
-ifelse -> '$empty' : [].
-ifelse -> t_else statementsequence : ['Elixir.T':new({va_t_else, '$2'})].
+ifstatement -> t_if expression t_then statementsequence t_end : '$1'.
+ifstatement -> t_if expression t_then statementsequence elsifseq t_end : '$1'.
+ifstatement -> t_if expression t_then statementsequence elsifseq ifelse t_end : '$1'.
+
+elsifseq -> t_elsif expression t_then statementsequence : '$1'.
+elsifseq -> t_elsif expression t_then statementsequence elsifseq : '$1'.
+
+ifelse -> t_else statementsequence : '$1'.
+
+%ifstatement -> t_if expression t_then statementsequence elsifsec ifelse t_end : 'Elixir.T':new({ifstatement, str_of('$1'), ['Elixir.T':new({va_t_if, '$2', '$4'})] ++ '$5' ++ '$6'}).
+%elsifsec -> '$empty' : [].
+%elsifsec -> t_elsif expression t_then statementsequence : ['Elixir.T':new({va_t_elsif, '$2', '$4'})].
+%elsifsec -> elsifsec t_elsif expression t_then statementsequence : '$1' ++ ['Elixir.T':new({va_t_elsif, '$3', '$5'})].
+%ifelse -> '$empty' : [].
+%ifelse -> t_else statementsequence : ['Elixir.T':new({va_t_else, '$2'})].
 
 % +CaseStatement = CASE expression OF case {"|" case} END.
 casestatement -> t_case expression t_of ntcaselist t_end : 'Elixir.T':new({casestatement, str_of('$1'), {'$2', value_of('$4')}}).

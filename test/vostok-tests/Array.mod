@@ -1,4 +1,21 @@
-MODULE Array;
+	IF FALSE THEN
+		p(pa)
+	ELSIF 5 * 6 = 11 THEN
+		p(pa)
+	ELSE
+		B(pa)
+	END
+
+
+(* MODULE Array;
+
+	IF FALSE THEN
+		p(pa)
+	ELSIF 5 * 6 = 11 THEN
+		p("11")
+	ELSE
+		B(pa)
+	END
 
 CONST
 	Len = 33;
@@ -179,4 +196,4 @@ BEGIN
 	END
 END Error;
 
-END Array.
+END Array.*)
