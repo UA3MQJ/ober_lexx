@@ -38,7 +38,7 @@ t_assert t_elseif
 Rootsymbol module.
 
 % module -> forstatement : '$1'.
-module -> proceduredeclaration : '$1'.
+%module -> proceduredeclaration : '$1'.
 % module -> selectorarr : '$1'.
 %module -> arraytype : '$1'.
 
@@ -71,7 +71,7 @@ number -> real : 'Elixir.T':new('$1').
 number -> character : 'Elixir.T':new('$1').
 
 % +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-%%%%%%%%%%module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
+module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
 module_importlist -> '$empty' : nil.
 module_importlist -> importlist : '$1'.
 
@@ -358,8 +358,9 @@ assignment -> designator t_assign expression : 'Elixir.T':new({assignment, str_o
 
 
 % +StatementSequence = statement {";" statement}.
-statementsequence -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
 statementsequence -> statement t_semicolon statementsequence : '$1'.
+statementsequence -> statement : {sslist, str_of('$1'), [value_of('$1')]}.
+statementsequence -> statement t_semicolon : {sslist, str_of('$1'), [value_of('$1')]}.
 
 
 % +IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.

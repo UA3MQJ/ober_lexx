@@ -1,17 +1,3 @@
-PROCEDURE A23(pa: ARRAY OF CHAR);
-CONST TYPE VAR
-BEGIN
-	IF FALSE THEN
-		p(pa)
-	ELSIF 5 * 6 = 11 THEN
-		p("11")
-	ELSE
-		B(pa)
-	END
-END A23
-
-(*
-
 PROCEDURE S1(VAR pa: ARRAY OF ARRAY OF INTEGER);
 BEGIN
 	pa[LEN(pa) - 1][LEN(pa[0]) - 1] := 111;
@@ -201,4 +187,3 @@ BEGIN
 END Error;
 
 END Array.
-*)
