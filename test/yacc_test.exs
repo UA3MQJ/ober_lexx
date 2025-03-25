@@ -978,7 +978,7 @@ defmodule OberYaccTest do
     # test_file("./priv/mods/examples/Best40Test.Mod") # TODO CONST
     # test_file("./priv/mods/examples/Kubik.Mod") # TODO {:error, {43, :obr_lexer, {:illegal, '"|'}}, 43}
 
-    # test_file("./test/vostok-tests/Add.mod")
+    test_file("./test/vostok-tests/Add.mod")
     test_file("./test/vostok-tests/Array.mod")
     # test_file("./test/vostok-tests/Bits.mod")
     # test_file("./test/vostok-tests/Bool.mod")
@@ -1028,10 +1028,10 @@ defmodule OberYaccTest do
     charlist = to_charlist(clean_str)
     # IO.inspect(charlist)
     {:ok, tokens, _} = :obr_lexer.string(charlist)
-    IO.inspect(tokens, limit: :infinity)
+    # IO.inspect(tokens, limit: :infinity)
     case :obr_parser.parse(tokens) do
       {:ok, res} ->
-        IO.inspect(res, limit: :infinity)
+        # IO.inspect(res, limit: :infinity)
         Logger.info "#{file} - ok"
       error ->
         Logger.info "#{file} - error"
