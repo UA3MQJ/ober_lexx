@@ -35,6 +35,8 @@ t_integer t_boolean t_byte t_char t_real
 t_assert t_elseif
 .
 
+%Nonassoc 940 actualparameters.
+%Nonassoc 960 selector.
 
 % Nonassoc 950 const_decl_li.
 % Nonassoc 940 type_decl_li.
@@ -65,6 +67,7 @@ Rootsymbol module.
 % module -> number : '$1'.
 % module -> importlist : '$1'.
 % module -> qualident : '$1'.
+% module -> selector : '$1'.
 % module -> identdef : '$1'.
 % module -> factor : '$1'.
 % module -> set : '$1'.
@@ -94,7 +97,7 @@ Rootsymbol module.
 % module -> assignment : '$1'.
 % module -> statement : '$1'.
 % module -> declarationsequence : '$1'.
-module -> procedurecall : '$1'.
+% module -> procedurecall : '$1'.
 % module -> expression : '$1'.
 % module -> explist : '$1'.
 % module -> ntcase : '$1'.
@@ -104,7 +107,7 @@ module -> procedurecall : '$1'.
 % module -> repeatstatement : '$1'.
 % module -> whilestatement : '$1'.
 % module -> forstatement : '$1'.
-% module -> proceduredeclaration : '$1'.
+module -> proceduredeclaration : '$1'.
 
 % то, что уже есть благодаря лексеру
 % +ident = letter {letter | digit}.
@@ -119,16 +122,15 @@ module -> procedurecall : '$1'.
 
 % +ActualParameters = "(" [ExpList] ")" .
 actualparameters -> t_lpar t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), []}).
-actualparameters -> t_lpar explist t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), value_of('$2')}).
+actualparameters -> t_lpar explist t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), [value_of('$2')]}).
 
 % +ProcedureCall = designator [ActualParameters].
-procedurecall -> designator t_lpar : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', nil }}).
+procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', value_of('$1') }}).
 procedurecall -> designator : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', nil }}).
-% procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', value_of('$1') }}).
 
 % +designator = qualident {selector}.
-designator -> qualident : 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
 designator -> qualident selector: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
+designator -> qualident : 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
 
 % +number = integer | real.
 number -> integer : 'Elixir.T':new('$1').
@@ -263,10 +265,8 @@ t_array_list -> t_array t_of : {t_array_list, str_of('$1'), 1}.
 t_array_list -> t_array_list t_array t_of : {t_array_list, str_of('$1'), value_of('$1') + 1}.
 
 % +qualident = [ident "."] ident.
-qualident -> qualident_two : '$1'.
-qualident -> qualident_one : '$1'.
-qualident_two -> ident t_dot ident: 'Elixir.T':new({qualident, str_of('$1'), value_of('$1') ++ "." ++ value_of('$3')}).
-qualident_one -> ident : 'Elixir.T':new({qualident, str_of('$1'), value_of('$1')}).
+qualident -> ident t_dot ident: 'Elixir.T':new({qualident, str_of('$1'), value_of('$1') ++ "." ++ value_of('$3')}).
+qualident -> ident : 'Elixir.T':new({qualident, str_of('$1'), value_of('$1')}).
 
 % +identdef = ident ["*"].
 identdef -> ident       : 'Elixir.T':new({identdef, str_of('$1'), value_of('$1')}).
@@ -362,7 +362,8 @@ factor -> t_tilda factor : 'Elixir.T':new({factor, str_of('$1'), {t_tilda, '$2'}
 selector -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
 selector -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
 selector -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
-selector -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
+% отключен, потому что ломает procedurecall actualparameters
+%selector -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
 
 %deslist2 -> '$empty' : [].
 %deslist2 -> deselem1 : '$1'.

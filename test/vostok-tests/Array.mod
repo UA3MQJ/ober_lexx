@@ -1,6 +1,6 @@
-
-	ppp (
-
+PROCEDURE L11(pa: ARRAY OF INTEGER): INTEGER;
+RETURN LEN(pa)
+END L11
 
 (* MODULE Array;
 
