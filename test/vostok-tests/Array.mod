@@ -1,5 +1,5 @@
 
-	ppp<
+	ppp (
 
 
 (* MODULE Array;
