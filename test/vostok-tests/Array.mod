@@ -1,8 +1,4 @@
-PROCEDURE L11(pa: ARRAY OF INTEGER): INTEGER;
-RETURN LEN(pa)
-END L11
-
-(* MODULE Array;
+MODULE Array;
 
 	IF FALSE THEN
 		p(pa)
@@ -191,4 +187,4 @@ BEGIN
 	END
 END Error;
 
-END Array.*)
+END Array.

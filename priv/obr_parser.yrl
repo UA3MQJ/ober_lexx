@@ -21,7 +21,7 @@ ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whil
 forstatement forby procedurebody declarationsequence procedurebody_stat_seq procedurebody_ret_exp proceduredeclaration
 declarationsequence_const declarationsequence_type declarationsequence_var const_decl_li type_decl_li var_decl_li proc_decl_li
 module_importlist module_begin
-assertdeclaration selector elsifseq
+assertdeclaration selector elsifseq proctype
 .
 
 Terminals 
@@ -107,7 +107,7 @@ Rootsymbol module.
 % module -> repeatstatement : '$1'.
 % module -> whilestatement : '$1'.
 % module -> forstatement : '$1'.
-module -> proceduredeclaration : '$1'.
+% module -> proceduredeclaration : '$1'.
 
 % то, что уже есть благодаря лексеру
 % +ident = letter {letter | digit}.
@@ -138,7 +138,7 @@ number -> real : 'Elixir.T':new('$1').
 number -> character : 'Elixir.T':new('$1').
 
 % +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-%%%%%%%%%%%module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
+module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
 module_importlist -> '$empty' : nil.
 module_importlist -> importlist : '$1'.
 
@@ -240,9 +240,12 @@ proceduretype -> t_procedure : 'Elixir.T':new({proceduretype, str_of('$1'), []})
 proceduretype -> t_procedure formalparameters: 'Elixir.T':new({proceduretype, str_of('$1'), '$2'}).
 
 % +FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
-formalparameters -> t_lpar fpseclist t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$5'}}).
+formalparameters -> t_lpar fpseclist t_rpar t_colon proctype : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$5'}}).
 formalparameters -> t_lpar fpseclist t_rpar : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', []}}).
-formalparameters -> t_lpar t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$4'}}).
+formalparameters -> t_lpar t_rpar t_colon proctype : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$4'}}).
+
+proctype -> qualident : '$1'.
+proctype -> simpletype : '$1'.
 
 fpseclist -> fpsection : ['$1'].
 fpseclist -> fpsection t_semicolon fpseclist : ['$1'] ++ '$3'.
