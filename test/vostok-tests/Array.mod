@@ -1,10 +1,5 @@
-	IF FALSE THEN
-		p(pa)
-	ELSIF 5 * 6 = 11 THEN
-		p(pa)
-	ELSE
-		B(pa)
-	END
+
+	ppp<
 
 
 (* MODULE Array;

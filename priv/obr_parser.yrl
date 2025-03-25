@@ -70,7 +70,7 @@ Rootsymbol module.
 % module -> set : '$1'.
 % module -> term : '$1'.
 % module -> statement : '$1'.
-% module -> expression : '$1'.
+% module -> simpleexpression : '$1'.
 % module -> constantdeclaration : '$1'.
 % module -> explist : '$1'.
 % module -> actualparameters : '$1'.
@@ -92,14 +92,15 @@ Rootsymbol module.
 % module -> labelrange : '$1'.
 % module -> caselabellist : '$1'.
 % module -> assignment : '$1'.
-% module -> statementsequence : '$1'.
+% module -> statement : '$1'.
 % module -> declarationsequence : '$1'.
-% module -> procedurecall : '$1'.
+module -> procedurecall : '$1'.
 % module -> expression : '$1'.
+% module -> explist : '$1'.
 % module -> ntcase : '$1'.
 % module -> ntcaselist : '$1'.
 % module -> casestatement : '$1'.
-module -> ifstatement : '$1'.
+% module -> ifstatement : '$1'.
 % module -> repeatstatement : '$1'.
 % module -> whilestatement : '$1'.
 % module -> forstatement : '$1'.
@@ -115,6 +116,19 @@ module -> ifstatement : '$1'.
 % +hexDigit = digit | "A" | "B" | "C" | "D" | "E" | "F".
 % +string = """ {character} """ | digit {hexDigit} "X".
 % -----------------------------------------------------------------------------------
+
+% +ActualParameters = "(" [ExpList] ")" .
+actualparameters -> t_lpar t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), []}).
+actualparameters -> t_lpar explist t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), value_of('$2')}).
+
+% +ProcedureCall = designator [ActualParameters].
+procedurecall -> designator t_lpar : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', nil }}).
+procedurecall -> designator : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', nil }}).
+% procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', value_of('$1') }}).
+
+% +designator = qualident {selector}.
+designator -> qualident : 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
+designator -> qualident selector: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
 
 % +number = integer | real.
 number -> integer : 'Elixir.T':new('$1').
@@ -306,13 +320,12 @@ relation -> t_in : 'Elixir.T':new('$1').
 relation -> t_is : 'Elixir.T':new('$1').
 
 % +SimpleExpression = ["+" | "-"] term {AddOperator term}.
-simpleexpression -> simpleexpression_list : 'Elixir.T':new({simpleexpression, str_of('$1'), value_of('$1')}).
-simpleexpression_list -> term : {simpleexpression_list, str_of('$1'), ['$1']}.
-simpleexpression_list -> t_plus term : {simpleexpression_list, str_of('$2'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_plus, str_of('$1'), value_of('$1')})]}.
-simpleexpression_list -> t_minus term : {simpleexpression_list, str_of('$2'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_minus, str_of('$1'), value_of('$1')})]}.
-simpleexpression_list -> term addoperator simpleexpression_list : {simpleexpression_list, str_of('$2'), ['$1'] ++ value_of('$3') ++ ['$2']}.
-simpleexpression_list -> t_plus term addoperator simpleexpression_list : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_plus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
-simpleexpression_list -> t_minus term addoperator simpleexpression_list : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_minus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
+simpleexpression -> term : {simpleexpression_list, str_of('$1'), ['$1']}.
+simpleexpression -> t_plus term : {simpleexpression_list, str_of('$2'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_plus, str_of('$1'), value_of('$1')})]}.
+simpleexpression -> t_minus term : {simpleexpression_list, str_of('$2'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_minus, str_of('$1'), value_of('$1')})]}.
+simpleexpression -> term addoperator simpleexpression : {simpleexpression_list, str_of('$2'), ['$1'] ++ value_of('$3') ++ ['$2']}.
+simpleexpression -> t_plus term addoperator simpleexpression : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_plus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
+simpleexpression -> t_minus term addoperator simpleexpression : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_minus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
 
 % +AddOperator = "+" | "-" | OR.
 addoperator -> t_plus : 'Elixir.T':new('$1').
@@ -346,21 +359,8 @@ factor -> designator actualparameters: 'Elixir.T':new({factor, str_of('$1'), {'$
 factor -> t_lpar expression t_rpar : 'Elixir.T':new({factor, str_of('$1'), '$2'}).
 factor -> t_tilda factor : 'Elixir.T':new({factor, str_of('$1'), {t_tilda, '$2'}}).
 
-% +designator = qualident {selector}.
-% +selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
-% designator  =  qualident {"." ident | "[" ExpList "]" | "(" qualident ")" | "^" }. 
-% поправка
-% designator = qualident {selector}.
-% +selector = "." ident | "[" ExpList "]" | "^" | actualparameters.
-designator -> deslist : 'Elixir.T':new({designator, str_of('$1'), value_of('$1')}).
-
-% deslist -> qualident : {deslist, str_of('$1'), ['Elixir.T':new({qualident, str_of('$1'),value_of('$1')})]}.
-
-deslist -> qualident : '$1'.
-deslist -> qualident selector: {deslist, str_of('$1'), ['Elixir.T':new({ident, str_of('$1'), value_of('$1')})]++ '$2'}.
-
-selector -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
 selector -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
+selector -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
 selector -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
 selector -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
 
@@ -398,10 +398,6 @@ explist -> exlist : 'Elixir.T':new({explist, str_of('$1'), value_of('$1')}).
 exlist -> expression : {exlist, str_of('$1'), [('$1')]}.
 exlist -> expression t_comma exlist : {exlist, str_of('$1'),[('$1')] ++ value_of('$3')}.
 
-% +ActualParameters = "(" [ExpList] ")" .
-actualparameters -> t_lpar t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), []}).
-actualparameters -> t_lpar explist t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), value_of('$2')}).
-
 % +statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment      : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
 statement -> procedurecall   : 'Elixir.T':new({statement, str_of('$1'), '$1'}).
@@ -415,10 +411,6 @@ statement -> assertdeclaration : 'Elixir.T':new({statement, str_of('$1'), '$1'})
 % +assignment = designator ":=" expression.
 % assignment -> designator t_assign expression t_semicolon : 'Elixir.T':new({assignment, str_of('$1'), {'$1', '$3'}}).
 assignment -> designator t_assign expression : 'Elixir.T':new({assignment, str_of('$1'), {'$1', '$3'}}).
-
-% +ProcedureCall = designator [ActualParameters].
-procedurecall -> designator : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', nil }}).
-procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', '$2'}}).
 
 
 % +StatementSequence = statement {";" statement}.
