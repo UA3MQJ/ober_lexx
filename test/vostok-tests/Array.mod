@@ -1,5 +1,6 @@
-MODULE Array;
-
+PROCEDURE A(pa: ARRAY OF CHAR);
+CONST TYPE VAR
+BEGIN
 	IF FALSE THEN
 		p(pa)
 	ELSIF 5 * 6 = 11 THEN
@@ -7,6 +8,18 @@ MODULE Array;
 	ELSE
 		B(pa)
 	END
+END A
+
+(*
+
+PROCEDURE S1(VAR pa: ARRAY OF ARRAY OF INTEGER);
+BEGIN
+	pa[LEN(pa) - 1][LEN(pa[0]) - 1] := 111;
+	pa[0][0] := 111;
+	pa[LEN(pa) DIV 2][LEN(pa[0]) DIV 2] := 111;
+END S1;
+
+MODULE Array;
 
 CONST
 	Len = 33;
@@ -188,3 +201,4 @@ BEGIN
 END Error;
 
 END Array.
+*)

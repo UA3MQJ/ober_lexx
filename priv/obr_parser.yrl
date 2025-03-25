@@ -21,7 +21,7 @@ ntcase ntcaselist casestatement ifstatement elsifsec ifelse repeatstatement whil
 forstatement forby procedurebody declarationsequence procedurebody_stat_seq procedurebody_ret_exp proceduredeclaration
 declarationsequence_const declarationsequence_type declarationsequence_var const_decl_li type_decl_li var_decl_li proc_decl_li
 module_importlist module_begin
-assertdeclaration selector elsifseq proctype
+assertdeclaration selector selectorarr elsifseq proctype arraytypelist
 .
 
 Terminals 
@@ -35,79 +35,12 @@ t_integer t_boolean t_byte t_char t_real
 t_assert t_elseif
 .
 
-%Nonassoc 940 actualparameters.
-%Nonassoc 960 selector.
-
-% Nonassoc 950 const_decl_li.
-% Nonassoc 940 type_decl_li.
-% Nonassoc 930 var_decl_li.
-
-% Nonassoc 850 declarationsequence_const.
-% Nonassoc 840 declarationsequence_type.
-% Nonassoc 830 declarationsequence_var.
-% Nonassoc 820 proc_decl_li.
-
-% Nonassoc 650 elsifsec.
-% Nonassoc 640 ifelse.
-% Nonassoc 630 elsifdosec.
-
-% Nonassoc 570 t_dot.
-% % Nonassoc 550 qualident.
-% % % Nonassoc 560 ident.
-% % % Nonassoc 550 qualident_two.
-% % % Nonassoc 540 qualident_one.
-
-
-% % % Nonassoc 300 deslist2.
-% % % Left 550 deselem2.
-% % % Left 540 formalparameters.
-
 Rootsymbol module.
 
-% module -> number : '$1'.
-% module -> importlist : '$1'.
-% module -> qualident : '$1'.
-% module -> selector : '$1'.
-% module -> identdef : '$1'.
-% module -> factor : '$1'.
-% module -> set : '$1'.
-% module -> term : '$1'.
-% module -> statement : '$1'.
-% module -> simpleexpression : '$1'.
-% module -> constantdeclaration : '$1'.
-% module -> explist : '$1'.
-% module -> actualparameters : '$1'.
-% module -> designator : '$1'.
-% module -> identlist : '$1'.
-% module -> fieldlist : '$1'.
-% module -> fieldlistsequence : '$1'.
-% module -> type : '$1'.
-% module -> formaltype : '$1'.
-% module -> fpsection : '$1'.
-% module -> formalparameters : '$1'.
-% module -> type : '$1'.
-% module -> variabledeclaration : '$1'.
-% module -> procedureheading : '$1'.
-% module -> length : '$1'.
-% module -> typedeclaration : '$1'.
-% module -> constantdeclaration : '$1'.
-% module -> label : '$1'.
-% module -> labelrange : '$1'.
-% module -> caselabellist : '$1'.
-% module -> assignment : '$1'.
-% module -> statement : '$1'.
-% module -> declarationsequence : '$1'.
-% module -> procedurecall : '$1'.
-% module -> expression : '$1'.
-% module -> explist : '$1'.
-% module -> ntcase : '$1'.
-% module -> ntcaselist : '$1'.
-% module -> casestatement : '$1'.
-% module -> ifstatement : '$1'.
-% module -> repeatstatement : '$1'.
-% module -> whilestatement : '$1'.
 % module -> forstatement : '$1'.
-% module -> proceduredeclaration : '$1'.
+module -> proceduredeclaration : '$1'.
+% module -> selectorarr : '$1'.
+%module -> arraytype : '$1'.
 
 % то, что уже есть благодаря лексеру
 % +ident = letter {letter | digit}.
@@ -138,7 +71,7 @@ number -> real : 'Elixir.T':new('$1').
 number -> character : 'Elixir.T':new('$1').
 
 % +module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
+%%%%%%%%%%module -> t_module ident t_semicolon module_importlist declarationsequence module_begin t_end ident t_dot : 'Elixir.T':new({module, nil, {'$2', '$4', '$5', '$6', '$8'}}).
 module_importlist -> '$empty' : nil.
 module_importlist -> importlist : '$1'.
 
@@ -200,9 +133,13 @@ structype -> proceduretype : 'Elixir.T':new({structype, str_of('$1'), '$1'}).
 structype -> pointertype : 'Elixir.T':new({structype, str_of('$1'), '$1'}).
 
 % +ArrayType = ARRAY length {"," length} OF type.
-arraytype -> t_array lenlist t_of type : 'Elixir.T':new({arraytype, str_of('$1'), {'$2' ,'$4'}}).
+arraytype -> arraytypelist type : 'Elixir.T':new({arraytype, str_of('$1'), {'$1', '$2'}}).
+lenlist -> '$empty' : dynamic.
 lenlist -> length : ['$1'].
 lenlist -> length t_comma lenlist : ['$1'] ++ '$3'.
+
+arraytypelist -> t_array lenlist t_of arraytypelist : {arraytype, {'$4', ['$2']}}.
+arraytypelist -> t_array lenlist t_of : {arraytype, ['$2']}.
 
 % +length = ConstExpression.
 length -> constexpression : 'Elixir.T':new({length, str_of('$1'), '$1'}).
@@ -259,9 +196,10 @@ idlist2 -> ident t_comma idlist2 : {idlist2, str_of('$1'), ['Elixir.T':new('$1')
 
 % +FormalType = {ARRAY OF} qualident.
 formaltype -> qualident : 'Elixir.T':new({formaltype, str_of('$1'), {'$1', 0}}).
-formaltype -> t_array t_of qualident : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
+%formaltype -> t_array t_of qualident : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
 formaltype -> simpletype : 'Elixir.T':new({formaltype, str_of('$1'), {'$1', 0}}).
-formaltype -> t_array t_of simpletype : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
+%formaltype -> t_array t_of simpletype : 'Elixir.T':new({formaltype, str_of('$1'), {'$2', value_of('$1')}}).
+formaltype -> arraytype : '$1'.
 
 t_array_list -> t_array t_of : {t_array_list, str_of('$1'), 1}.
 t_array_list -> t_array_list t_array t_of : {t_array_list, str_of('$1'), value_of('$1') + 1}.
@@ -361,9 +299,12 @@ factor -> designator actualparameters: 'Elixir.T':new({factor, str_of('$1'), {'$
 factor -> t_lpar expression t_rpar : 'Elixir.T':new({factor, str_of('$1'), '$2'}).
 factor -> t_tilda factor : 'Elixir.T':new({factor, str_of('$1'), {t_tilda, '$2'}}).
 
-selector -> t_dot ident : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')}), 'Elixir.T':new({ident, str_of('$1'), value_of('$2')})].
-selector -> t_lbrack explist t_rbrack : ['Elixir.T':new({explist, str_of('$1'), value_of('$2')})].
+selector -> t_dot ident : '$2'.
+selector -> selectorarr : '$1'.
 selector -> t_arrow : ['Elixir.UNARY_OPERATOR':new({t_arrow, str_of('$1'), value_of('$1')})].
+
+selectorarr -> t_lbrack explist t_rbrack selectorarr: {'$2', '$4'}.
+selectorarr -> t_lbrack explist t_rbrack : '$2'.
 % отключен, потому что ломает procedurecall actualparameters
 %selector -> t_lpar qualident t_rpar : {deselem, str_of('$1'), {pars_qualident, str_of('$1'), '$2'}}.
 
