@@ -240,10 +240,9 @@ proceduretype -> t_procedure : 'Elixir.T':new({proceduretype, str_of('$1'), []})
 proceduretype -> t_procedure formalparameters: 'Elixir.T':new({proceduretype, str_of('$1'), '$2'}).
 
 % +FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
-formalparameters -> t_lpar t_rpar : 'Elixir.T':new({formalparameters, str_of('$1'), {[], nil}}).
-formalparameters -> t_lpar t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {[], '$4'}}).
-formalparameters -> t_lpar fpseclist t_rpar : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', nil}}).
-formalparameters -> t_lpar fpseclist t_rpar t_colon ident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$5'}}).
+formalparameters -> t_lpar fpseclist t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$5'}}).
+formalparameters -> t_lpar fpseclist t_rpar : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', []}}).
+formalparameters -> t_lpar t_rpar t_colon qualident : 'Elixir.T':new({formalparameters, str_of('$1'), {'$2', '$4'}}).
 
 fpseclist -> fpsection : ['$1'].
 fpseclist -> fpsection t_semicolon fpseclist : ['$1'] ++ '$3'.
