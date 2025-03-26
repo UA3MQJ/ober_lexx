@@ -45,10 +45,10 @@ UNTIL      = UNTIL
 
 % ABS        = ABS
 % ASR        = ASR
-ASSERT     = ASSERT
-BOOLEAN    = BOOLEAN
-BYTE       = BYTE
-CHAR       = CHAR
+% ASSERT     = ASSERT
+% BOOLEAN    = BOOLEAN
+% BYTE       = BYTE
+% CHAR       = CHAR
 % CHR        = CHR
 % DEC        = DEC
 % EXCL       = EXCL
@@ -56,14 +56,14 @@ CHAR       = CHAR
 % FLT        = FLT
 % INCL       = INCL
 % INC        = INC
-TINTEGER   = INTEGER
+% TINTEGER   = INTEGER
 % LEN        = LEN
 % LSL        = LSL
 % NEW        = NEW
 % ODD        = ODD
 % ORD        = ORD
 % PACK       = PACK
-TREAL      = REAL
+% TREAL      = REAL
 % ROR        = ROR
 % SET        = SET
 % UNPK       = UNPK
@@ -99,17 +99,19 @@ MORE       = \>
 LETTER     = [A-Za-z]
 DIGIT      = [0-9]
 % _ not in EBNF!
-IDENT      = ({LETTER}|_)({LETTER}|{DIGIT}|_)*
-INTHEXWR   = ([0-9A-F])
-INTHEX     = ([0-9A-F]+H)
+% IDENT      = ({LETTER}|_)({LETTER}|{DIGIT}|_)*
+% INTHEXWR   = ([0-9A-F])
+INTHEX     = ([0-9A-Fa-f]+[H|h])
 INTDEC     = {DIGIT}+
-INT        = {INTHEX}|{INTDEC}
-INT2       = {INTHEXWR}+
+% INT        = {INTHEX}|{INTDEC}
+% INT2       = {INTHEXWR}+
 REAL       = [0-9]+\.([0-9]|)+([E|D][-+]?[0-9]+)?
 STRING1    = "([^"|^\n|^\r])*"
 STRING2    = '([^'|^\n|^\r])*'
 STRING     = {STRING1}|{STRING2}
-CHARACTER  = ([0-9A-F]+X)
+% CHARACTER  = ([0-9A-F]+X)
+INT1        = {INTHEX}
+INT2        = {INTDEC}
 
 
 Rules.
@@ -152,9 +154,9 @@ Rules.
 % {ABS}       : {token, {t_abs, TokenLine, TokenChars}}.
 % {ASR}       : {token, {t_asr, TokenLine, TokenChars}}.
 {ASSERT}    : {token, {t_assert, TokenLine, TokenChars}}.
-{BOOLEAN}   : {token, {t_boolean, TokenLine, TokenChars}}.
-{BYTE}      : {token, {t_byte, TokenLine, TokenChars}}.
-{CHAR}      : {token, {t_char, TokenLine, TokenChars}}.
+% {BOOLEAN}   : {token, {t_boolean, TokenLine, TokenChars}}.
+% {BYTE}      : {token, {t_byte, TokenLine, TokenChars}}.
+% {CHAR}      : {token, {t_char, TokenLine, TokenChars}}.
 % {CHR}       : {token, {t_chr, TokenLine, TokenChars}}.
 % {DEC}       : {token, {t_dec, TokenLine, TokenChars}}.
 % {EXCL}      : {token, {t_excl, TokenLine, TokenChars}}.
@@ -162,7 +164,7 @@ Rules.
 % {FLT}       : {token, {t_flt, TokenLine, TokenChars}}.
 % {INCL}      : {token, {t_incl, TokenLine, TokenChars}}.
 % {INC}       : {token, {t_inc, TokenLine, TokenChars}}.
-{TINTEGER}  : {token, {t_integer, TokenLine, TokenChars}}.
+% {TINTEGER}  : {token, {t_integer, TokenLine, TokenChars}}.
 % {LEN}       : {token, {t_len, TokenLine, TokenChars}}.
 % {LSL}       : {token, {t_lsl, TokenLine, TokenChars}}.
 % {NEW}       : {token, {t_new, TokenLine, TokenChars}}.
@@ -202,12 +204,17 @@ Rules.
 {MORE}      : {token, {t_more, TokenLine, TokenChars}}.
 
 
-{IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
-{INT}       : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
-{INT2}      : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
+% {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
+% {INT}       : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
+% {INT2}      : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
+{INT1}      : {token, {integer_hex, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
+{INT2}      : {token, {integer_dec, TokenLine, int_validate(TokenChars, TokenLine)}}.
 {REAL}      : {token, {real, TokenLine, TokenChars}}.
 {STRING}    : {token, {string, TokenLine, str_validate(TokenChars, TokenLine)}}.
-{CHARACTER} : {token, {character, TokenLine, TokenChars}}.
+% {CHARACTER} : {token, {character, TokenLine, TokenChars}}.
+{LETTER}     : {token, {letter,  TokenLine, id_validate(TokenChars, TokenLine)}}.
+{DIGIT}     : {token, {digit,  TokenLine, id_validate(TokenChars, TokenLine)}}.
+
 
 {WS}        : skip_token.
 
@@ -228,7 +235,7 @@ int_validate_del_zero([$0|Chars]) -> int_validate_del_zero(Chars);
 int_validate_del_zero(Chars) -> Chars.
 
 intwr_validate(Chars, Line) ->
-  io:format("WARNING: A hexadecimal literal hasn't a trailing H. ~w: ~s -> ~s~n", [Line, Chars, Chars ++ "H"]),
-  int_validate(Chars ++ "H", Line).
+  io:format("WARNING: A hexadecimal literal hasn't a trailing H. ~w: ~s -> ~s~n", [Line, Chars, Chars]),
+  int_validate(Chars, Line).
 
 str_validate(Chars, _Line) -> Chars.

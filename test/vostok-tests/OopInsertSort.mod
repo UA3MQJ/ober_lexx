@@ -1,4 +1,6 @@
-MODULE OopInsertSort;
+IDDIVENT
+
+(* MODULE OopInsertSort;
 
 IMPORT Out, CLI;
 
@@ -152,3 +154,4 @@ BEGIN
 END Go;
 
 END OopInsertSort.
+*)

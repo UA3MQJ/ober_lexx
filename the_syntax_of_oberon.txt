@@ -10,20 +10,24 @@ change to CASE as a type guard for RECORD extension.
 
 "character" refers to a member of type CHAR.
 
-ident = letter {letter | digit}.
-letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z".
-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9".
-integer = digit {digit} | digit {hexDigit} "H".
-real = digit {digit} "." {digit} [ScaleFactor].
+-letter = "A" | "B" | ... | "Z" | "a" | "b" | ... | "z".
+-digit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9".
+^^^ - отдает еще лекс
++hexDigit = digit | "A" | "B" | "C" | "D" | "E" | "F".
++integer = digit {digit} | digit {hexDigit} "H".
+состоит из двух
+integer_dec и integer_hex
++ident = letter {letter | digit}.
 ScaleFactor = "E" ["+" | "-"] digit {digit}.
-hexDigit = digit | "A" | "B" | "C" | "D" | "E" | "F".
-string = """ {character} """ | digit {hexDigit} "X".
++real = digit {digit} "." {digit} [ScaleFactor].
++string = """ {character} """ | digit {hexDigit} "X".
++number = integer | real.
+MulOperator = "*" | "/" | DIV | MOD | "&".
+import = ident [":=" ident].
 
-number = integer | real.
 
 module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
 ImportList = IMPORT import {"," import} ";".
-import = ident [":=" ident].
 DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
 ConstDeclaration = identdef "=" ConstExpression.
 ConstExpression = expression.
@@ -53,7 +57,6 @@ relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
 SimpleExpression = ["+" | "-"] term {AddOperator term}.
 AddOperator = "+" | "-" | OR.
 term = factor {MulOperator factor}.
-MulOperator = "*" | "/" | DIV | MOD | "&".
 factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
 designator = qualident {selector}.
 selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
