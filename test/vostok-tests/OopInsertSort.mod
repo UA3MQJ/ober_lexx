@@ -1,4 +1,6 @@
- IMPORT asdf, ddd, eee;
+
+MODULE OopInsertSort;
+END OopInsertSort.
 
 (* MODULE OopInsertSort;
 

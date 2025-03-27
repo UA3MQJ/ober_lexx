@@ -42,6 +42,7 @@ WHILE      = {DELIM}+WHILE+{DELIM}
 THEN       = {DELIM}+THEN+{DELIM}
 UNTIL      = {DELIM}+UNTIL+{DELIM}
 DIV        = {DELIM}+DIV+{DELIM}
+ZALUPA     = {DELIM}+ZALUPA+{DELIM}
 
 
 % ABS        = ABS
@@ -100,7 +101,7 @@ MORE       = \>
 LETTER     = [A-Za-z]
 DIGIT      = [0-9]
 % _ not in EBNF!
-% IDENT      = ({LETTER}|_)({LETTER}|{DIGIT}|_)*
+IDENT      = ({LETTER}|_)({LETTER}|{DIGIT}|_)*
 % INTHEXWR   = ([0-9A-F])
 INTHEX     = ([0-9A-Fa-f]+[H|h])
 INTDEC     = {DIGIT}+
@@ -149,6 +150,7 @@ Rules.
 {WHILE}     : {token, {t_while, TokenLine, TokenChars}}.
 {THEN}      : {token, {t_then, TokenLine, TokenChars}}.
 {UNTIL}     : {token, {t_until, TokenLine, TokenChars}}.
+{ZALUPA}     : {token, {t_zalupa, TokenLine, TokenChars}}.
 
 % {ABS}       : {token, {t_abs, TokenLine, TokenChars}}.
 % {ASR}       : {token, {t_asr, TokenLine, TokenChars}}.
@@ -203,7 +205,7 @@ Rules.
 {MORE}      : {token, {t_more, TokenLine, TokenChars}}.
 
 
-% {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
+{IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 % {INT}       : {token, {integer, TokenLine, int_validate(TokenChars, TokenLine)}}.
 % {INT2}      : {token, {integer, TokenLine, intwr_validate(TokenChars, TokenLine)}}.
 {INT1}      : {token, {integer_hex, TokenLine, intwr_validate(TokenChars, TokenLine)}}.

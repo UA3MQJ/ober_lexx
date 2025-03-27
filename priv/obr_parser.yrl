@@ -11,48 +11,79 @@
 
 
 Nonterminals 
-ident ident_rep number muloperator import addoperator
-qualident basetype label relation labelrange identdef
-caselabellist caselabellist_rep identlist_rep identlist
-importlist_rep importlist
-module
+number mul_operator import add_operator
+qualident basetype label relation label_range identdef
+case_label_list case_label_list_rep ident_list_rep ident_list
+import_list_rep import_list formal_type formal_type_rep
+fpsection fpsection_ type struc_type pointer_type
+const_expression expression length variable_declaration
+field_list const_declaration type_declaration
+assignment procedure_type struct_type array_type record_type
+ntcase field_list_sequence fpsection_ident_rep
+statement simple_expression for_statement base_type
+procedure_heading statement_sequence procedure_declaration
+formal_parameters factor actual_parameters declaration_sequence
+selector designator exp_list procedure_call procedure_body
+if_statement case_statement while_statement repeat_statement
+element set term simple_expression
+module root_def
 .
 
 Terminals
 integer_dec integer_hex letter digit real string
 t_mul t_divide t_div t_mod t_and t_assign
 t_plus t_minus t_or t_dot t_equ t_sharp t_less t_lesseq t_more t_moreeq t_in t_is
-t_ddot t_comma t_import implist t_semicolon
+t_ddot t_comma t_import implist t_semicolon t_array t_of t_colon t_var
+t_for t_to t_by t_do t_end t_record t_rpar t_lpar t_procedure t_module 
+t_tilda t_nil t_true t_false t_begin t_lbrack t_rbrack t_arrow t_pointer
+t_repeat t_until ident t_zalupa
 .
 
-Rootsymbol module .
+Rootsymbol root_def .
 
-module -> importlist : '$1'.
 
-ident -> letter : {ident, str_of('$1'), value_of('$1')}.
-ident -> letter ident_rep : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
-ident_rep -> letter : '$1'.
-ident_rep -> integer_dec : '$1'.
-ident_rep -> integer_hex : '$1'.
-ident_rep -> ident_rep letter : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
-ident_rep -> ident_rep integer_dec : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
-ident_rep -> ident_rep integer_hex : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
+% module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
+module -> t_module ident t_semicolon import_list declaration_sequence t_begin statement_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2', '$4', '$5', '$7', '$9'}}.
+module -> t_module ident t_semicolon declaration_sequence t_begin statement_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2',  nil, '$4', '$6', '$8'}}.
+module -> t_module ident t_semicolon declaration_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2',  nil, '$4',  nil, '$6'}}.
+
+% без DeclarationSequence который может быть пустым вообще
+module -> t_module ident t_semicolon import_list t_begin statement_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2', '$4',  nil, '$6', '$8'}}.
+module -> t_module ident t_semicolon t_begin statement_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2',  nil,  nil, '$5', '$7'}}.
+module -> t_module ident t_semicolon t_end ident t_dot : 
+ {module, str_of('$1'), {'$2',  nil,  nil,  nil, '$5'}}.
+
+
+
+% ident -> letter : {ident, str_of('$1'), value_of('$1')}.
+% ident -> letter ident_rep : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
+% ident_rep -> letter : '$1'.
+% ident_rep -> integer_dec : '$1'.
+% ident_rep -> integer_hex : '$1'.
+% ident_rep -> ident_rep letter : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
+% ident_rep -> ident_rep integer_dec : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
+% ident_rep -> ident_rep integer_hex : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
 
 number -> integer_dec : {number, str_of('$1'), '$1'}.
 number -> integer_hex : {number, str_of('$1'), '$1'}.
 number -> real : {number, str_of('$1'), '$1'}.
 
 % +MulOperator = "*" | "/" | DIV | MOD | "&".
-muloperator -> t_mul : {muloperator, str_of('$1'), '$1'}.
-muloperator -> t_divide : {muloperator, str_of('$1'), '$1'}.
-muloperator -> t_div : {muloperator, str_of('$1'), '$1'}.
-muloperator -> t_mod : {muloperator, str_of('$1'), '$1'}.
-muloperator -> t_and : {muloperator, str_of('$1'), '$1'}.
+mul_operator -> t_mul : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_divide : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_div : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_mod : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_and : {mul_operator, str_of('$1'), '$1'}.
 
 % +AddOperator = "+" | "-" | OR.
-addoperator -> t_plus : {addoperator, str_of('$1'), '$1'}.
-addoperator -> t_minus : {addoperator, str_of('$1'), '$1'}.
-addoperator -> t_or : {addoperator, str_of('$1'), '$1'}.
+add_operator -> t_plus : {add_operator, str_of('$1'), '$1'}.
+add_operator -> t_minus : {add_operator, str_of('$1'), '$1'}.
+add_operator -> t_or : {add_operator, str_of('$1'), '$1'}.
 
 % +import = ident [":=" ident].
 import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$3'}}.
@@ -82,45 +113,181 @@ relation -> t_in : {relation, str_of('$1'), '$1'}.
 relation -> t_is : {relation, str_of('$1'), '$1'}.
 
 % LabelRange = label [".." label].
-labelrange -> label t_ddot label: {labelrange, str_of('$1'), {'$1', '$3'}}.
-labelrange -> label : {labelrange, str_of('$1'), '$1'}.
+label_range -> label t_ddot label: {label_range, str_of('$1'), {'$1', '$3'}}.
+label_range -> label : {label_range, str_of('$1'), '$1'}.
 
 % +identdef = ident ["*"].
 identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
 identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
 
 % +CaseLabelList = LabelRange {"," LabelRange}.
-caselabellist -> caselabellist_rep : '$1'.
-caselabellist_rep -> labelrange : {caselabellist, str_of('$1'), [('$1')]}.
-caselabellist_rep -> labelrange t_comma caselabellist_rep : {caselabellist, str_of('$1'),[('$1')] ++ value_of('$3')}.
+case_label_list -> case_label_list_rep : '$1'.
+case_label_list_rep -> label_range : {case_label_list, str_of('$1'), [('$1')]}.
+case_label_list_rep -> label_range t_comma case_label_list_rep : {case_label_list, str_of('$1'),[('$1')] ++ value_of('$3')}.
 
 % +IdentList = identdef {"," identdef}.
-identlist -> identlist_rep : '$1'.
-identlist_rep -> identdef : {idlist, str_of('$1'), ['$1']}.
-identlist_rep -> identdef t_comma identlist_rep: {idlist, str_of('$1'), ['$1'] ++ value_of('$3')}.
+ident_list -> ident_list_rep : '$1'.
+ident_list_rep -> identdef : {idlist, str_of('$1'), ['$1']}.
+ident_list_rep -> identdef t_comma ident_list_rep: {idlist, str_of('$1'), ['$1'] ++ value_of('$3')}.
 
 % +ImportList = IMPORT import {"," import} ";".
-importlist -> t_import import importlist_rep t_semicolon : {importlist, str_of('$1'), ['$2'] ++ value_of('$3')}.
-importlist -> t_import import t_semicolon : {importlist, str_of('$1'), ['$2']}.
-importlist_rep -> t_comma import : {idlist, str_of('$1'), ['$2']}.
-importlist_rep -> importlist_rep t_comma import  : {idlist, str_of('$1'), value_of('$1') ++ ['$3']}.
+import_list -> t_import import import_list_rep t_semicolon : {import_list, str_of('$1'), ['$2'] ++ value_of('$3')}.
+import_list -> t_import import t_semicolon : {import_list, str_of('$1'), ['$2']}.
+import_list_rep -> t_comma import : {idlist, str_of('$1'), ['$2']}.
+import_list_rep -> import_list_rep t_comma import  : {idlist, str_of('$1'), value_of('$1') ++ ['$3']}.
 
-% ident_rep -> integer_hex : '$1'.
+% +FormalType = {ARRAY OF} qualident.
+formal_type -> formal_type_rep : {formal_type, str_of('$1'), '$1'}.
+formal_type_rep -> qualident : '$1'.
+formal_type_rep -> t_array t_of formal_type_rep : {array_of, str_of('$3'), '$3'}.
 
-% integer_hex -> digit : {integer, str_of('$1'), value_of('$1')}.
-% integer_hex -> digit hex_digit_rep letter : {integer, str_of('$1'), value_of('$1')++'$2'}.
+% +FPSection = [VAR] ident {"," ident} ":" FormalType.
+% +FPSection = [VAR] fpsection_ident_rep ":" FormalType.
+fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$2'), {var, '$2','$4'}}.
+fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
+fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
+fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 
-% hex_digit_rep -> hex_digit : value_of('$1').
-% hex_digit_rep -> hex_digit_rep hex_digit : '$1'++value_of('$2').
+% % +type = qualident | StrucType.
+type -> qualident : {type, str_of('$1'), '$1'}.
+type -> struc_type : {type, str_of('$1'), '$1'}.
 
-% ident -> letter : {ident, str_of('$1'), value_of('$1')}.
-% ident -> ident letter : {ident, str_of('$1'), value_of('$1') ++ value_of('$2')}.
-% ident -> ident digit : {ident, str_of('$1'), value_of('$1') ++ value_of('$2')}.
+% PointerType = POINTER TO type.
+pointer_type -> t_pointer t_to type : {pointer_type, str_of('$1'), '$3'}.
 
+% ConstExpression = expression.
+const_expression -> expression : {pointer_type, str_of('$1'), '$1'}.
 
-% % +ActualParameters = "(" [ExpList] ")" .
-% actualparameters -> t_lpar t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), []}).
-% actualparameters -> t_lpar explist t_rpar : 'Elixir.T':new({actualparameters, str_of('$1'), [value_of('$2')]}).
+% length = ConstExpression.
+length -> const_expression : {length, str_of('$1'), '$1'}.
+
+% VariableDeclaration = IdentList ":" type.
+variable_declaration -> ident_list t_colon type : {variable_declaration, str_of('$1'), {'$1', '$3'}}.
+
+% FieldList = IdentList ":" type.
+field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
+
+% ConstDeclaration = identdef "=" ConstExpression.
+const_declaration -> identdef t_equ const_expression : {fielconst_declarationd_list, str_of('$1'), {'$1', '$3'}}.
+
+% TypeDeclaration = identdef "=" StrucType.
+type_declaration -> identdef t_equ struc_type : {type_declaration, str_of('$1'), {'$1', '$3'}}.
+
+% assignment = designator ":=" expression.
+assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
+
+% ProcedureType = PROCEDURE [FormalParameters].
+procedure_type -> t_procedure : {procedure_type, str_of('$1'), nil}.
+procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), '$2'}
+
+% StrucType = ArrayType | RecordType | PointerType | ProcedureType.
+struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
+
+% element = expression [".." expression].
+element -> expression : {element, str_of('$1'), '$1'}.
+element -> expression t_ddot expression: {element, str_of('$1'), {'$1', '$3'}}.
+
+% ProcedureCall = designator [ActualParameters].
+procedure_call -> designator actual_parameters : {procedure_call, str_of('$1'), '$2'}.
+procedure_call -> designator : {procedure_call, str_of('$1'), nil}.
+
+% TODO! case = [CaseLabelList ":" StatementSequence].
+% ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
+ntcase -> case_label_list t_colon statement_sequence : {procedure_call, str_of('$1'), {'$1', '$3'}}.
+
+% selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
+selector -> t_dot ident : {procedure_call, str_of('$1'), {'$1', '$2'}}.
+selector -> t_lbrack exp_list t_rbrack : {procedure_call, str_of('$1'), {'$1', '$2', '$3'}}.
+selector -> t_arrow : {procedure_call, str_of('$1'), '$1'}.
+selector -> t_lpar exp_list t_rpar : {procedure_call, str_of('$1'), {'$1', '$2', '$3'}}.
+
+% factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
+factor -> number : {factor, str_of('$1'), '$1'}.
+factor -> string : {factor, str_of('$1'), '$1'}.
+factor -> t_nil : {factor, str_of('$1'), '$1'}.
+factor -> t_true : {factor, str_of('$1'), '$1'}.
+factor -> t_false : {factor, str_of('$1'), '$1'}.
+factor -> set : {factor, str_of('$1'), '$1'}.
+factor -> designator : {factor, str_of('$1'), '$1'}.
+factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
+factor -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
+
+% ActualParameters = "(" [ExpList] ")" .
+actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
+actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
+
+% RepeatStatement = REPEAT StatementSequence UNTIL expression.
+repeat_statement -> t_repeat statement_sequence t_until expression : 
+ {repeat_statement, str_of('$1'), {'$2', '$4'}}.
+
+% expression = SimpleExpression [relation SimpleExpression].
+expression -> simple_expression : {expression, str_of('$1'), '$1'}.
+expression -> simple_expression relation simple_expression: {expression, str_of('$1'), {'$1', '$3'}}.
+
+% TODO! statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
+statement -> assignment       : {statement, str_of('$1'), '$1'}.
+statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
+statement -> if_statement     : {statement, str_of('$1'), '$1'}.
+statement -> case_statement   : {statement, str_of('$1'), '$1'}.
+statement -> while_statement  : {statement, str_of('$1'), '$1'}.
+statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
+statement -> for_statement    : {statement, str_of('$1'), '$1'}.
+
+% ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
+for_statement -> t_for ident t_assign expression t_to expression t_by const_expression t_do statement_sequence t_end : 
+  {for_statement, str_of('$1'), {'$2', '$4', '$6', '$8', '$10'}}.
+for_statement -> t_for ident t_assign expression t_to expression t_do statement_sequence t_end : 
+  {for_statement, str_of('$1'), {'$2', '$4', '$6',  nil, '$8'}}.
+
+% ProcedureHeading = PROCEDURE identdef [FormalParameters].
+procedure_heading -> t_procedure identdef : {procedure_heading, str_of('$1'), {'$2', nil}}.
+procedure_heading -> t_procedure identdef formal_parameters : {procedure_heading, str_of('$1'), {'$2', '$3'}}.
+
+% ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
+  {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
+
+% RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
+record_type -> t_record t_lpar base_type t_rpar field_list_sequence t_end : 
+  {procedure_declaration, str_of('$1'), {'$3', '$5'}}.
+record_type -> t_record t_lpar base_type t_rpar t_end : 
+  {procedure_declaration, str_of('$1'), {'$3', nil}}.
+record_type -> t_record field_list_sequence t_end : 
+  {procedure_declaration, str_of('$1'), {nil, '$2'}}.
+record_type -> t_record t_end : 
+  {procedure_declaration, str_of('$1'), {nil, nil}}.
+
+% SimpleExpression = ["+" | "-"] term {AddOperator term}.
+simple_expression -> term : {simple_expression, str_of('$1'), {nil, '$1', nil, nil}}.
+simple_expression -> t_plus term : {simple_expression, str_of('$1'), {t_plus, '$1', nil, nil}}.
+simple_expression -> t_minus term : {simple_expression, str_of('$1'), {t_minus, '$1', nil, nil}}.
+% simple_expression -> term addoperator simpleexpression : {simpleexpression_list, str_of('$2'), ['$1'] ++ value_of('$3') ++ ['$2']}.
+% simple_expression -> t_plus term addoperator simpleexpression : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_plus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
+% simple_expression -> t_minus term addoperator simpleexpression : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_minus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
+
+% term = factor {MulOperator factor}.
+term -> factor : {term, str_of('$1'), '$1'}.
+
+% root_def -> term : '$1'.
+% root_def -> simple_expression : '$1'.
+root_def -> module : '$1'.
+
+declaration_sequence -> t_zalupa : nil.
+field_list_sequence -> t_zalupa : nil.
+formal_parameters -> t_zalupa : nil.
+set -> t_zalupa : nil.
+array_type -> t_zalupa : nil.
+procedure_body -> t_zalupa : nil.
+designator -> t_zalupa : nil.
+exp_list -> t_zalupa : nil.
+statement_sequence -> t_zalupa : nil.
+if_statement -> t_zalupa : nil.
+case_statement -> t_zalupa : nil.
+while_statement -> t_zalupa : nil.
 
 % % +ProcedureCall = designator [ActualParameters].
 % procedurecall -> designator actualparameters : 'Elixir.T':new({procedurecall, str_of('$1'), {'$1', value_of('$1') }}).

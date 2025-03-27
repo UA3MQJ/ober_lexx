@@ -34,47 +34,45 @@ identdef = ident ["*"].
 CaseLabelList = LabelRange {"," LabelRange}.
 IdentList = identdef {"," identdef}.
 ImportList = IMPORT import {"," import} ";".
-
-module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-
-DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
-ConstDeclaration = identdef "=" ConstExpression.
-ConstExpression = expression.
-TypeDeclaration = identdef "=" StrucType.
-StrucType = ArrayType | RecordType | PointerType | ProcedureType.
-ArrayType = ARRAY length {"," length} OF type.
-length = ConstExpression.
-RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
-FieldListSequence = FieldList {";" FieldList}.
-FieldList = IdentList ":" type.
-PointerType = POINTER TO type.
-ProcedureType = PROCEDURE [FormalParameters].
-FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
-FPSection = [VAR] ident {"," ident} ":" FormalType.
 FormalType = {ARRAY OF} qualident.
-VariableDeclaration = IdentList ":" type.
+FPSection = [VAR] ident {"," ident} ":" FormalType.
 type = qualident | StrucType.
-ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
-ProcedureHeading = PROCEDURE identdef [FormalParameters].
-ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+PointerType = POINTER TO type.
+ConstExpression = expression.
+length = ConstExpression.
+VariableDeclaration = IdentList ":" type.
+FieldList = IdentList ":" type.
+ConstDeclaration = identdef "=" ConstExpression.
+TypeDeclaration = identdef "=" StrucType.
+assignment = designator ":=" expression.
+ProcedureType = PROCEDURE [FormalParameters].
+StrucType = ArrayType | RecordType | PointerType | ProcedureType.
+element = expression [".." expression].
+ProcedureCall = designator [ActualParameters].
+case = [CaseLabelList ":" StatementSequence].
+selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
+factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
+ActualParameters = "(" [ExpList] ")" .
+module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
+RepeatStatement = REPEAT StatementSequence UNTIL expression.
 expression = SimpleExpression [relation SimpleExpression].
-relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
+statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
+ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
+ProcedureHeading = PROCEDURE identdef [FormalParameters].
+ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
 SimpleExpression = ["+" | "-"] term {AddOperator term}.
 term = factor {MulOperator factor}.
-factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
-designator = qualident {selector}.
-selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
+
+DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
+FieldListSequence = FieldList {";" FieldList}.
+FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
 set = "{" [element {"," element}] "}".
-element = expression [".." expression].
+ArrayType = ARRAY length {"," length} OF type.
+ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+designator = qualident {selector}.
 ExpList = expression {"," expression}.
-ActualParameters = "(" [ExpList] ")" .
-statement = [assignment | ProcedureCall | IfStatement | CaseStatement |     WhileStatement | RepeatStatement | ForStatement].
-assignment = designator ":=" expression.
-ProcedureCall = designator [ActualParameters].
 StatementSequence = statement {";" statement}.
 IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 CaseStatement = CASE expression OF case {"|" case} END.
-case = [CaseLabelList ":" StatementSequence].
 WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
-RepeatStatement = REPEAT StatementSequence UNTIL expression.
-ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
