@@ -25,8 +25,9 @@ procedure_heading statement_sequence procedure_declaration
 formal_parameters factor actual_parameters declaration_sequence
 selector designator exp_list procedure_call procedure_body
 if_statement case_statement while_statement repeat_statement
-element set term simple_expression
-module root_def
+element set term simple_expression term_rep designator_rep
+exp_list_rep statement_sequence_rep field_list_sequence_rep
+module root_def 
 .
 
 Terminals
@@ -36,6 +37,7 @@ t_plus t_minus t_or t_dot t_equ t_sharp t_less t_lesseq t_more t_moreeq t_in t_i
 t_ddot t_comma t_import implist t_semicolon t_array t_of t_colon t_var
 t_for t_to t_by t_do t_end t_record t_rpar t_lpar t_procedure t_module 
 t_tilda t_nil t_true t_false t_begin t_lbrack t_rbrack t_arrow t_pointer
+t_return
 t_repeat t_until ident t_zalupa
 .
 
@@ -47,16 +49,19 @@ module -> t_module ident t_semicolon import_list declaration_sequence t_begin st
  {module, str_of('$1'), {'$2', '$4', '$5', '$7', '$9'}}.
 module -> t_module ident t_semicolon declaration_sequence t_begin statement_sequence t_end ident t_dot : 
  {module, str_of('$1'), {'$2',  nil, '$4', '$6', '$8'}}.
+module -> t_module ident t_semicolon t_begin statement_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2',  nil,  nil, '$5', '$7'}}.
 module -> t_module ident t_semicolon declaration_sequence t_end ident t_dot : 
  {module, str_of('$1'), {'$2',  nil, '$4',  nil, '$6'}}.
-
+module -> t_module ident t_semicolon import_list t_end ident t_dot : 
+ {module, str_of('$1'), {'$2',  '$4', nil,  nil, '$6'}}.
 % без DeclarationSequence который может быть пустым вообще
 module -> t_module ident t_semicolon import_list t_begin statement_sequence t_end ident t_dot : 
  {module, str_of('$1'), {'$2', '$4',  nil, '$6', '$8'}}.
-module -> t_module ident t_semicolon t_begin statement_sequence t_end ident t_dot : 
- {module, str_of('$1'), {'$2',  nil,  nil, '$5', '$7'}}.
 module -> t_module ident t_semicolon t_end ident t_dot : 
  {module, str_of('$1'), {'$2',  nil,  nil,  nil, '$5'}}.
+module -> t_module ident t_semicolon import_list declaration_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2', '$4', '$5',  nil, '$7'}}.
 
 
 
@@ -261,6 +266,16 @@ record_type -> t_record field_list_sequence t_end :
 record_type -> t_record t_end : 
   {procedure_declaration, str_of('$1'), {nil, nil}}.
 
+% ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+procedure_body -> declaration_sequence t_begin statement_sequence t_return expression t_end :
+    {procedure_body, str_of('$1'), {'$1', '$3', '$5'}}
+procedure_body -> declaration_sequence t_return expression t_end :
+    {procedure_body, str_of('$1'), {'$1',  nil, '$3'}}
+procedure_body -> declaration_sequence t_begin statement_sequence t_end :
+    {procedure_body, str_of('$1'), {'$1', '$3',  nil}}
+procedure_body -> declaration_sequence t_end :
+    {procedure_body, str_of('$1'), {'$1', nil, nil}}
+
 % SimpleExpression = ["+" | "-"] term {AddOperator term}.
 simple_expression -> term : {simple_expression, str_of('$1'), {nil, '$1', nil, nil}}.
 simple_expression -> t_plus term : {simple_expression, str_of('$1'), {t_plus, '$1', nil, nil}}.
@@ -270,21 +285,48 @@ simple_expression -> t_minus term : {simple_expression, str_of('$1'), {t_minus, 
 % simple_expression -> t_minus term addoperator simpleexpression : {simpleexpression_list, str_of('$3'), ['$2', 'Elixir.UNARY_OPERATOR':new({t_minus, str_of('$1'), value_of('$1')})] ++ value_of('$4') ++ ['$3']}.
 
 % term = factor {MulOperator factor}.
-term -> factor : {term, str_of('$1'), '$1'}.
+% term = term_rep.
+term -> term_rep : {term, str_of('$1'), '$1'}.
+
+term_rep -> factor : {term, str_of('$1'), ['$1']}.
+term_rep -> term_rep mul_operator factor: {term, str_of('$1'), value_of('$1') ++ [{'$2','$3'}]}.
+
+% designator = qualident {selector}.
+% designator = designator_rep.
+designator -> designator_rep : {designator, str_of('$1'), '$1'}.
+
+designator_rep -> qualident : {designator, str_of('$1'), ['$1']}.
+designator_rep -> designator_rep selector: {designator, str_of('$1'), value_of('$1') ++ ['$2']}.
+
+% ExpList = expression {"," expression}.
+% ExpList = exp_list_rep.
+exp_list -> designator_rep : {exp_list, str_of('$1'), '$1'}.
+
+exp_list_rep -> expression : {exp_list, str_of('$1'), ['$1']}.
+exp_list_rep -> exp_list_rep t_comma expression: {exp_list, str_of('$1'), value_of('$1') ++ ['$3']}.
+
+% StatementSequence = statement {";" statement}.
+% StatementSequence = statement_sequence_rep.
+statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), '$1'}.
+
+statement_sequence_rep -> statement : {statement_sequence, str_of('$1'), ['$1']}.
+statement_sequence_rep -> statement_sequence_rep t_semicolon statement: {statement_sequence, str_of('$1'), value_of('$1') ++ ['$3']}.
+
+% FieldListSequence = FieldList {";" FieldList}.
+% FieldListSequence = field_list_sequence_rep.
+field_list_sequence -> field_list_sequence_rep : {field_list_sequence, str_of('$1'), '$1'}.
+
+field_list_sequence_rep -> field_list : {field_list_sequence, str_of('$1'), ['$1']}.
+field_list_sequence_rep -> field_list_sequence_rep t_semicolon field_list: {field_list_sequence, str_of('$1'), value_of('$1') ++ ['$3']}.
 
 % root_def -> term : '$1'.
 % root_def -> simple_expression : '$1'.
 root_def -> module : '$1'.
 
 declaration_sequence -> t_zalupa : nil.
-field_list_sequence -> t_zalupa : nil.
 formal_parameters -> t_zalupa : nil.
 set -> t_zalupa : nil.
 array_type -> t_zalupa : nil.
-procedure_body -> t_zalupa : nil.
-designator -> t_zalupa : nil.
-exp_list -> t_zalupa : nil.
-statement_sequence -> t_zalupa : nil.
 if_statement -> t_zalupa : nil.
 case_statement -> t_zalupa : nil.
 while_statement -> t_zalupa : nil.

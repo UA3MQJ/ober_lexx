@@ -61,18 +61,21 @@ ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO S
 ProcedureHeading = PROCEDURE identdef [FormalParameters].
 ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
 RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
+ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+
+{} непроверенное
 SimpleExpression = ["+" | "-"] term {AddOperator term}.
 term = factor {MulOperator factor}.
-
-DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
-FieldListSequence = FieldList {";" FieldList}.
-FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
-set = "{" [element {"," element}] "}".
-ArrayType = ARRAY length {"," length} OF type.
-ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
 designator = qualident {selector}.
 ExpList = expression {"," expression}.
 StatementSequence = statement {";" statement}.
+FieldListSequence = FieldList {";" FieldList}.
+
+
+DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
+FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
+set = "{" [element {"," element}] "}".
+ArrayType = ARRAY length {"," length} OF type.
 IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 CaseStatement = CASE expression OF case {"|" case} END.
 WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
