@@ -1,4 +1,4 @@
-IDDIVENT
+ IMPORT asdf, ddd, eee;
 
 (* MODULE OopInsertSort;
 

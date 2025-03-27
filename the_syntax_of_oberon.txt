@@ -24,10 +24,19 @@ ScaleFactor = "E" ["+" | "-"] digit {digit}.
 +number = integer | real.
 MulOperator = "*" | "/" | DIV | MOD | "&".
 import = ident [":=" ident].
-
+AddOperator = "+" | "-" | OR.
+qualident = [ident "."] ident.
+BaseType = qualident.
+label = integer | string | qualident.
+relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
+LabelRange = label [".." label].
+identdef = ident ["*"].
+CaseLabelList = LabelRange {"," LabelRange}.
+IdentList = identdef {"," identdef}.
+ImportList = IMPORT import {"," import} ";".
 
 module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-ImportList = IMPORT import {"," import} ";".
+
 DeclarationSequence = [CONST {ConstDeclaration ";"}] [TYPE {TypeDeclaration ";"}] [VAR {VariableDeclaration ";"}] {ProcedureDeclaration ";"}.
 ConstDeclaration = identdef "=" ConstExpression.
 ConstExpression = expression.
@@ -36,17 +45,13 @@ StrucType = ArrayType | RecordType | PointerType | ProcedureType.
 ArrayType = ARRAY length {"," length} OF type.
 length = ConstExpression.
 RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
-BaseType = qualident.
 FieldListSequence = FieldList {";" FieldList}.
 FieldList = IdentList ":" type.
-IdentList = identdef {"," identdef}.
 PointerType = POINTER TO type.
 ProcedureType = PROCEDURE [FormalParameters].
 FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
 FPSection = [VAR] ident {"," ident} ":" FormalType.
 FormalType = {ARRAY OF} qualident.
-qualident = [ident "."] ident.
-identdef = ident ["*"].
 VariableDeclaration = IdentList ":" type.
 type = qualident | StrucType.
 ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
@@ -55,7 +60,6 @@ ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression
 expression = SimpleExpression [relation SimpleExpression].
 relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
 SimpleExpression = ["+" | "-"] term {AddOperator term}.
-AddOperator = "+" | "-" | OR.
 term = factor {MulOperator factor}.
 factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
 designator = qualident {selector}.
@@ -71,9 +75,6 @@ StatementSequence = statement {";" statement}.
 IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 CaseStatement = CASE expression OF case {"|" case} END.
 case = [CaseLabelList ":" StatementSequence].
-CaseLabelList = LabelRange {"," LabelRange}.
-LabelRange = label [".." label].
-label = integer | string | qualident.
 WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
 RepeatStatement = REPEAT StatementSequence UNTIL expression.
 ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.

@@ -8,40 +8,41 @@ Definitions.
 DELIM      = [\s\t\n\r]
 WS         = {DELIM}+
 
-ARRAY      = ARRAY
-BEGIN      = BEGIN
-BY         = BY
-CASE       = CASE
-CONST      = CONST
-DIV        = DIV
-DO         = DO
-ELSE       = ELSE
-ELSEIF     = ELSEIF
-ELSIF      = ELSIF
-END        = END
-FALSE      = FALSE
-FOR        = FOR
-IF         = IF
-IMPORT     = IMPORT
-IN         = IN
-IS         = IS
-MODULE     = MODULE
-MOD        = MOD
-NIL        = NIL
-OF         = OF
-OR         = OR
-POINTER    = POINTER
-PROCEDURE  = PROCEDURE
-RECORD     = RECORD
-REPEAT     = REPEAT
-RETURN     = RETURN
-TO         = TO
-TRUE       = TRUE
-TYPE       = TYPE
-VAR        = VAR
-WHILE      = WHILE
-THEN       = THEN
-UNTIL      = UNTIL
+ARRAY      = {DELIM}+ARRAY+{DELIM}
+BEGIN      = {DELIM}+BEGIN+{DELIM}
+BY         = {DELIM}+BY+{DELIM}
+CASE       = {DELIM}+CASE+{DELIM}
+CONST      = {DELIM}+CONST+{DELIM}
+DO         = {DELIM}+DO+{DELIM}
+ELSE       = {DELIM}+ELSE+{DELIM}
+ELSEIF     = {DELIM}+ELSEIF+{DELIM}
+ELSIF      = {DELIM}+ELSIF+{DELIM}
+END        = {DELIM}+END+{DELIM}
+FALSE      = {DELIM}+FALSE+{DELIM}
+FOR        = {DELIM}+FOR+{DELIM}
+IF         = {DELIM}+IF+{DELIM}
+IMPORT     = {DELIM}+IMPORT+{DELIM}
+IN         = {DELIM}+IN+{DELIM}
+IS         = {DELIM}+IS+{DELIM}
+MODULE     = {DELIM}+MODULE+{DELIM}
+MOD        = {DELIM}+MOD+{DELIM}
+NIL        = {DELIM}+NIL+{DELIM}
+OF         = {DELIM}+OF+{DELIM}
+OR         = {DELIM}+OR+{DELIM}
+POINTER    = {DELIM}+POINTER+{DELIM}
+PROCEDURE  = {DELIM}+PROCEDURE+{DELIM}
+RECORD     = {DELIM}+RECORD+{DELIM}
+REPEAT     = {DELIM}+REPEAT+{DELIM}
+RETURN     = {DELIM}+RETURN+{DELIM}
+TO         = {DELIM}+TO+{DELIM}
+TRUE       = {DELIM}+TRUE+{DELIM}
+TYPE       = {DELIM}+TYPE+{DELIM}
+VAR        = {DELIM}+VAR+{DELIM}
+WHILE      = {DELIM}+WHILE+{DELIM}
+THEN       = {DELIM}+THEN+{DELIM}
+UNTIL      = {DELIM}+UNTIL+{DELIM}
+DIV        = {DELIM}+DIV+{DELIM}
+
 
 % ABS        = ABS
 % ASR        = ASR
@@ -113,7 +114,6 @@ STRING     = {STRING1}|{STRING2}
 INT1        = {INTHEX}
 INT2        = {INTDEC}
 
-
 Rules.
 
 {ARRAY}     : {token, {t_array, TokenLine, TokenChars}}.
@@ -121,7 +121,6 @@ Rules.
 {BY}        : {token, {t_by, TokenLine, TokenChars}}.
 {CASE}      : {token, {t_case, TokenLine, TokenChars}}.
 {CONST}     : {token, {t_const, TokenLine, TokenChars}}.
-{DIV}       : {token, {t_div, TokenLine, TokenChars}}.
 {DO}        : {token, {t_do, TokenLine, TokenChars}}.
 {ELSE}      : {token, {t_else, TokenLine, TokenChars}}.
 {ELSEIF}    : {token, {t_elseif, TokenLine, TokenChars}}.
@@ -215,6 +214,7 @@ Rules.
 {LETTER}     : {token, {letter,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 {DIGIT}     : {token, {digit,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 
+{DIV}       : {token, {t_div, TokenLine, TokenChars}}.
 
 {WS}        : skip_token.
 

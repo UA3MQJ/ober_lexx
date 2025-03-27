@@ -11,19 +11,23 @@
 
 
 Nonterminals 
-ident ident_rep number muloperator import
-
+ident ident_rep number muloperator import addoperator
+qualident basetype label relation labelrange identdef
+caselabellist caselabellist_rep identlist_rep identlist
+importlist_rep importlist
 module
 .
 
 Terminals
 integer_dec integer_hex letter digit real string
 t_mul t_divide t_div t_mod t_and t_assign
+t_plus t_minus t_or t_dot t_equ t_sharp t_less t_lesseq t_more t_moreeq t_in t_is
+t_ddot t_comma t_import implist t_semicolon
 .
 
 Rootsymbol module .
 
-module -> import : '$1'.
+module -> importlist : '$1'.
 
 ident -> letter : {ident, str_of('$1'), value_of('$1')}.
 ident -> letter ident_rep : {ident, str_of('$1'), value_of('$1')++value_of('$2')}.
@@ -45,10 +49,61 @@ muloperator -> t_div : {muloperator, str_of('$1'), '$1'}.
 muloperator -> t_mod : {muloperator, str_of('$1'), '$1'}.
 muloperator -> t_and : {muloperator, str_of('$1'), '$1'}.
 
- % +import = ident [":=" ident].
-import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$2'}}.
+% +AddOperator = "+" | "-" | OR.
+addoperator -> t_plus : {addoperator, str_of('$1'), '$1'}.
+addoperator -> t_minus : {addoperator, str_of('$1'), '$1'}.
+addoperator -> t_or : {addoperator, str_of('$1'), '$1'}.
+
+% +import = ident [":=" ident].
+import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$3'}}.
 import -> ident : {import, str_of('$1'), '$1'}.
 
+% qualident = [ident "."] ident.
+qualident -> ident t_dot ident : {qualident, str_of('$1'), {'$1', '$3'}}.
+qualident -> ident : {qualident, str_of('$1'), '$1'}.
+
+% BaseType = qualident.
+basetype -> qualident : {basetype, str_of('$1'), '$1'}.
+
+% label = integer | string | qualident.
+label -> qualident : {label, str_of('$1'), '$1'}.
+label -> string : {label, str_of('$1'), '$1'}.
+label -> integer_dec : {label, str_of('$1'), '$1'}.
+label -> integer_hex : {label, str_of('$1'), '$1'}.
+
+% +relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
+relation -> t_equ : {relation, str_of('$1'), '$1'}.
+relation -> t_sharp : {relation, str_of('$1'), '$1'}.
+relation -> t_less : {relation, str_of('$1'), '$1'}.
+relation -> t_lesseq : {relation, str_of('$1'), '$1'}.
+relation -> t_more : {relation, str_of('$1'), '$1'}.
+relation -> t_moreeq : {relation, str_of('$1'), '$1'}.
+relation -> t_in : {relation, str_of('$1'), '$1'}.
+relation -> t_is : {relation, str_of('$1'), '$1'}.
+
+% LabelRange = label [".." label].
+labelrange -> label t_ddot label: {labelrange, str_of('$1'), {'$1', '$3'}}.
+labelrange -> label : {labelrange, str_of('$1'), '$1'}.
+
+% +identdef = ident ["*"].
+identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
+identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
+
+% +CaseLabelList = LabelRange {"," LabelRange}.
+caselabellist -> caselabellist_rep : '$1'.
+caselabellist_rep -> labelrange : {caselabellist, str_of('$1'), [('$1')]}.
+caselabellist_rep -> labelrange t_comma caselabellist_rep : {caselabellist, str_of('$1'),[('$1')] ++ value_of('$3')}.
+
+% +IdentList = identdef {"," identdef}.
+identlist -> identlist_rep : '$1'.
+identlist_rep -> identdef : {idlist, str_of('$1'), ['$1']}.
+identlist_rep -> identdef t_comma identlist_rep: {idlist, str_of('$1'), ['$1'] ++ value_of('$3')}.
+
+% +ImportList = IMPORT import {"," import} ";".
+importlist -> t_import import importlist_rep t_semicolon : {importlist, str_of('$1'), ['$2'] ++ value_of('$3')}.
+importlist -> t_import import t_semicolon : {importlist, str_of('$1'), ['$2']}.
+importlist_rep -> t_comma import : {idlist, str_of('$1'), ['$2']}.
+importlist_rep -> importlist_rep t_comma import  : {idlist, str_of('$1'), value_of('$1') ++ ['$3']}.
 
 % ident_rep -> integer_hex : '$1'.
 
