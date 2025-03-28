@@ -11,43 +11,44 @@
 
 
 Nonterminals 
-number mul_operator import add_operator
-qualident basetype label relation label_range identdef
+root_def module
+import_list import_list_rep import
+formal_type formal_type_rep
+number mul_operator  add_operator
+qualident label relation label_range identdef
 case_label_list case_label_list_rep ident_list_rep ident_list
-import_list_rep import_list formal_type formal_type_rep
-fpsection fpsection_ type pointer_type
+fpsection type pointer_type
 const_expression expression length variable_declaration
 field_list const_declaration type_declaration
 assignment procedure_type array_type record_type
 ntcase field_list_sequence fpsection_ident_rep
 statement for_statement base_type
 procedure_heading statement_sequence procedure_declaration
-formal_parameters factor actual_parameters declaration_sequence
+formal_parameters formal_parameters_rep factor actual_parameters declaration_sequence
 selector designator exp_list procedure_call procedure_body
 if_statement case_statement while_statement repeat_statement
-element set set_rep set_rep_rep term simple_expression term_rep designator_rep
+element set set_rep term simple_expression term_rep designator_rep
 exp_list_rep statement_sequence_rep field_list_sequence_rep
 case_statement_rep array_type_rep while_statement_rep
-if_statement_rep formal_parameters_rep simple_expression_rep
-const_declaration_rep type_declaration_rep variable_declaration_rep procedure_declaration_rep
+if_statement_rep  simple_expression_rep
 struct_type
 ds_const_declaration ds_const_declaration_rep
 ds_type_declaration ds_type_declaration_rep
 ds_variable_declaration ds_variable_declaration_rep
 ds_procedure_declaration ds_procedure_declaration_rep
-module root_def 
+  
 .
 
 Terminals
 integer_dec integer_hex real string
 t_mul t_divide t_div t_mod t_and t_assign
 t_plus t_minus t_or t_dot t_equ t_sharp t_less t_lesseq t_more t_moreeq t_in t_is
-t_ddot t_comma t_import implist t_semicolon t_array t_of t_colon t_var
+t_ddot t_comma t_import t_semicolon t_array t_of t_colon t_var
 t_for t_to t_by t_do t_end t_record t_rpar t_lpar t_procedure t_module 
 t_tilda t_nil t_true t_false t_begin t_lbrack t_rbrack t_arrow t_pointer
 t_return t_vline t_case t_while t_elseif t_else t_then t_if
 t_lbrace t_rbrace t_const t_type
-t_repeat t_until ident t_zalupa
+t_repeat t_until ident
 .
 
 Rootsymbol root_def .
@@ -152,7 +153,7 @@ ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declarati
 
 
 % ConstDeclaration = identdef "=" ConstExpression.
-const_declaration -> identdef t_equ const_expression : {fielconst_declarationd_list, str_of('$1'), {'$1', '$3'}}.
+const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
 
 
 % ConstExpression = expression.
@@ -188,7 +189,7 @@ record_type -> t_record t_end :
   {procedure_declaration, str_of('$1'), {nil, nil}}.
 
 % BaseType = qualident.
-base_type -> qualident : {basetype, str_of('$1'), '$1'}.
+base_type -> qualident : {base_type, str_of('$1'), '$1'}.
 
 % FieldListSequence = FieldList {";" FieldList}.
 % FieldListSequence = field_list_sequence_rep.
@@ -216,27 +217,24 @@ procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), 
 % formal_parameters = "(" [formal_parameters_rep] ")" [":" qualident].
 % formal_parameters -> t_lpar formal_parameters_rep t_rpar t_colon qualident : 
 %   {formal_parameters, str_of('$1'), {'$2', '$5'}}.
-formal_parameters -> t_lpar formal_parameters_rep t_rpar : 
-  {formal_parameters, str_of('$1'), {'$2',  nil}}.
-formal_parameters -> t_lpar t_rpar t_colon qualident : 
-  {formal_parameters, str_of('$1'), { nil, '$4'}}.
-formal_parameters -> t_lpar t_rpar : 
-  {formal_parameters, str_of('$1'), { nil,  nil}}.
+formal_parameters -> t_lpar formal_parameters_rep t_rpar : {formal_parameters, str_of('$1'), {'$2',  nil}}.
+formal_parameters -> t_lpar t_rpar t_colon qualident : {formal_parameters, str_of('$1'), { nil, '$4'}}.
+formal_parameters -> t_lpar t_rpar : {formal_parameters, str_of('$1'), { nil,  nil}}.
 
-formal_parameters_rep -> fpsection : {formal_parameters_rep, str_of('$1'), ['$1']}.
 formal_parameters_rep -> formal_parameters_rep t_semicolon fpsection : {formal_parameters_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+formal_parameters_rep -> fpsection : {formal_parameters_rep, str_of('$1'), ['$1']}.
 
 % +FPSection = [VAR] ident {"," ident} ":" FormalType.
 % +FPSection = [VAR] fpsection_ident_rep ":" FormalType.
 fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$2'), {var, '$2','$4'}}.
 fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
-fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
 fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
 
 % +FormalType = {ARRAY OF} qualident.
 formal_type -> formal_type_rep : {formal_type, str_of('$1'), '$1'}.
+formal_type_rep -> t_array t_of formal_type_rep : {formal_type, str_of('$3'), '$3'}.
 formal_type_rep -> qualident : '$1'.
-formal_type_rep -> t_array t_of formal_type_rep : {array_of, str_of('$3'), '$3'}.
 
 % qualident = [ident "."] ident.
 qualident -> ident t_dot ident : {qualident, str_of('$1'), {'$1', '$3'}}.
@@ -344,8 +342,8 @@ selector -> t_lpar exp_list t_rpar : {procedure_call, str_of('$1'), {'$1', '$2',
 % set = "{" [set_rep] "}".
 % set set_rep set_rep_rep
 set -> t_lbrace set_rep t_rbrace : {set, str_of('$1'), '$2'}.
-set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
 set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
 
 % element = expression [".." expression].
 element -> expression : {element, str_of('$1'), '$1'}.
@@ -353,7 +351,7 @@ element -> expression t_ddot expression: {element, str_of('$1'), {'$1', '$3'}}.
 
 % ExpList = expression {"," expression}.
 % ExpList = exp_list_rep.
-exp_list -> designator_rep : {exp_list, str_of('$1'), '$1'}.
+exp_list -> exp_list_rep : {exp_list, str_of('$1'), '$1'}.
 
 exp_list_rep -> expression : {exp_list_rep, str_of('$1'), ['$1']}.
 exp_list_rep -> exp_list_rep t_comma expression: {exp_list_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
@@ -387,9 +385,9 @@ statement_sequence_rep -> statement_sequence_rep t_semicolon statement: {stateme
 
 % IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 % if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.
-if_statement -> t_if expression t_then statement_sequence while_statement_rep t_else statement_sequence t_end : 
+if_statement -> t_if expression t_then statement_sequence if_statement_rep t_else statement_sequence t_end : 
   {if_statement, str_of('$1'), {'$2', '$4', '$5', '$7'}}.
-if_statement -> t_if expression t_then statement_sequence while_statement_rep t_end : 
+if_statement -> t_if expression t_then statement_sequence if_statement_rep t_end : 
   {if_statement, str_of('$1'), {'$2', '$4', '$5',  nil}}.
 
 if_statement_rep -> t_elseif expression t_then statement_sequence : {if_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
