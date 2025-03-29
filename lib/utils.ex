@@ -40,13 +40,13 @@ defmodule OberLexx.Utils do
   end
 
   def raw_binary_to_string(raw) do
-    codepoints = String.codepoints(raw)  
-    Enum.reduce(codepoints, fn(w, result) ->  
-                                cond do 
-                                  String.valid?(w) -> 
-                                      result <> w 
+    codepoints = String.codepoints(raw)
+    Enum.reduce(codepoints, fn(w, result) ->
+                                cond do
+                                  String.valid?(w) ->
+                                      result <> w
                                   true ->
-                                      << parsed :: 8>> = w 
+                                      << parsed :: 8>> = w
                                       result <>   << parsed :: utf8 >>
                                 end
                             end)

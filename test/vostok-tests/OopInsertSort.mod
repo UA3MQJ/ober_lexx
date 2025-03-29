@@ -1,5 +1,8 @@
-
 MODULE OopInsertSort;
+BEGIN
+END OopInsertSort.
+
+(* MODULE OopInsertSort;
 
 IMPORT Out, CLI;
 
@@ -153,3 +156,4 @@ BEGIN
 END Go;
 
 END OopInsertSort.
+*)

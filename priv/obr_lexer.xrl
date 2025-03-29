@@ -8,6 +8,8 @@ Definitions.
 DELIM      = [\s\t\n\r]
 WS         = {DELIM}+
 
+MODULE     = MODULE+{DELIM}
+MODULE     = {DELIM}+MODULE+{DELIM}
 ARRAY      = {DELIM}+ARRAY+{DELIM}
 BEGIN      = {DELIM}+BEGIN+{DELIM}
 BY         = {DELIM}+BY+{DELIM}
@@ -24,7 +26,6 @@ IF         = {DELIM}+IF+{DELIM}
 IMPORT     = {DELIM}+IMPORT+{DELIM}
 IN         = {DELIM}+IN+{DELIM}
 IS         = {DELIM}+IS+{DELIM}
-MODULE     = {DELIM}+MODULE+{DELIM}
 MOD        = {DELIM}+MOD+{DELIM}
 NIL        = {DELIM}+NIL+{DELIM}
 OF         = {DELIM}+OF+{DELIM}

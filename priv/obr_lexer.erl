@@ -12,7 +12,7 @@
 -export([format_error/1]).
 
 %% User code. This is placed here to allow extra attributes.
--file("./priv/obr_lexer.xrl", 223).
+-file("./priv/obr_lexer.xrl", 224).
 
 id_validate(Chars, Line) ->
   case length(Chars) > 40 of
@@ -1835,352 +1835,352 @@ yyaction(69, _, _, _, _) ->
 yyaction(_, _, _, _, _) -> error.
 
 -compile({inline,yyaction_0/2}).
--file("./priv/obr_lexer.xrl", 118).
+-file("./priv/obr_lexer.xrl", 119).
 yyaction_0(TokenChars, TokenLine) ->
      { token, { t_array, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_1/2}).
--file("./priv/obr_lexer.xrl", 119).
+-file("./priv/obr_lexer.xrl", 120).
 yyaction_1(TokenChars, TokenLine) ->
      { token, { t_begin, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_2/2}).
--file("./priv/obr_lexer.xrl", 120).
+-file("./priv/obr_lexer.xrl", 121).
 yyaction_2(TokenChars, TokenLine) ->
      { token, { t_by, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_3/2}).
--file("./priv/obr_lexer.xrl", 121).
+-file("./priv/obr_lexer.xrl", 122).
 yyaction_3(TokenChars, TokenLine) ->
      { token, { t_case, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_4/2}).
--file("./priv/obr_lexer.xrl", 122).
+-file("./priv/obr_lexer.xrl", 123).
 yyaction_4(TokenChars, TokenLine) ->
      { token, { t_const, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_5/2}).
--file("./priv/obr_lexer.xrl", 123).
+-file("./priv/obr_lexer.xrl", 124).
 yyaction_5(TokenChars, TokenLine) ->
      { token, { t_do, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_6/2}).
--file("./priv/obr_lexer.xrl", 124).
+-file("./priv/obr_lexer.xrl", 125).
 yyaction_6(TokenChars, TokenLine) ->
      { token, { t_else, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_7/2}).
--file("./priv/obr_lexer.xrl", 125).
+-file("./priv/obr_lexer.xrl", 126).
 yyaction_7(TokenChars, TokenLine) ->
      { token, { t_elseif, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_8/2}).
--file("./priv/obr_lexer.xrl", 126).
+-file("./priv/obr_lexer.xrl", 127).
 yyaction_8(TokenChars, TokenLine) ->
      { token, { t_elsif, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_9/2}).
--file("./priv/obr_lexer.xrl", 127).
+-file("./priv/obr_lexer.xrl", 128).
 yyaction_9(TokenChars, TokenLine) ->
      { token, { t_end, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_10/2}).
--file("./priv/obr_lexer.xrl", 128).
+-file("./priv/obr_lexer.xrl", 129).
 yyaction_10(TokenChars, TokenLine) ->
      { token, { t_false, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_11/2}).
--file("./priv/obr_lexer.xrl", 129).
+-file("./priv/obr_lexer.xrl", 130).
 yyaction_11(TokenChars, TokenLine) ->
      { token, { t_for, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_12/2}).
--file("./priv/obr_lexer.xrl", 130).
+-file("./priv/obr_lexer.xrl", 131).
 yyaction_12(TokenChars, TokenLine) ->
      { token, { t_if, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_13/2}).
--file("./priv/obr_lexer.xrl", 131).
+-file("./priv/obr_lexer.xrl", 132).
 yyaction_13(TokenChars, TokenLine) ->
      { token, { t_import, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_14/2}).
--file("./priv/obr_lexer.xrl", 132).
+-file("./priv/obr_lexer.xrl", 133).
 yyaction_14(TokenChars, TokenLine) ->
      { token, { t_in, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_15/2}).
--file("./priv/obr_lexer.xrl", 133).
+-file("./priv/obr_lexer.xrl", 134).
 yyaction_15(TokenChars, TokenLine) ->
      { token, { t_is, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_16/2}).
--file("./priv/obr_lexer.xrl", 134).
+-file("./priv/obr_lexer.xrl", 135).
 yyaction_16(TokenChars, TokenLine) ->
      { token, { t_module, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_17/2}).
--file("./priv/obr_lexer.xrl", 135).
+-file("./priv/obr_lexer.xrl", 136).
 yyaction_17(TokenChars, TokenLine) ->
      { token, { t_mod, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_18/2}).
--file("./priv/obr_lexer.xrl", 136).
+-file("./priv/obr_lexer.xrl", 137).
 yyaction_18(TokenChars, TokenLine) ->
      { token, { t_nil, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_19/2}).
--file("./priv/obr_lexer.xrl", 137).
+-file("./priv/obr_lexer.xrl", 138).
 yyaction_19(TokenChars, TokenLine) ->
      { token, { t_of, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_20/2}).
--file("./priv/obr_lexer.xrl", 138).
+-file("./priv/obr_lexer.xrl", 139).
 yyaction_20(TokenChars, TokenLine) ->
      { token, { t_or, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_21/2}).
--file("./priv/obr_lexer.xrl", 139).
+-file("./priv/obr_lexer.xrl", 140).
 yyaction_21(TokenChars, TokenLine) ->
      { token, { t_pointer, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_22/2}).
--file("./priv/obr_lexer.xrl", 140).
+-file("./priv/obr_lexer.xrl", 141).
 yyaction_22(TokenChars, TokenLine) ->
      { token, { t_procedure, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_23/2}).
--file("./priv/obr_lexer.xrl", 141).
+-file("./priv/obr_lexer.xrl", 142).
 yyaction_23(TokenChars, TokenLine) ->
      { token, { t_record, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_24/2}).
--file("./priv/obr_lexer.xrl", 142).
+-file("./priv/obr_lexer.xrl", 143).
 yyaction_24(TokenChars, TokenLine) ->
      { token, { t_repeat, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_25/2}).
--file("./priv/obr_lexer.xrl", 143).
+-file("./priv/obr_lexer.xrl", 144).
 yyaction_25(TokenChars, TokenLine) ->
      { token, { t_return, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_26/2}).
--file("./priv/obr_lexer.xrl", 144).
+-file("./priv/obr_lexer.xrl", 145).
 yyaction_26(TokenChars, TokenLine) ->
      { token, { t_to, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_27/2}).
--file("./priv/obr_lexer.xrl", 145).
+-file("./priv/obr_lexer.xrl", 146).
 yyaction_27(TokenChars, TokenLine) ->
      { token, { t_true, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_28/2}).
--file("./priv/obr_lexer.xrl", 146).
+-file("./priv/obr_lexer.xrl", 147).
 yyaction_28(TokenChars, TokenLine) ->
      { token, { t_type, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_29/2}).
--file("./priv/obr_lexer.xrl", 147).
+-file("./priv/obr_lexer.xrl", 148).
 yyaction_29(TokenChars, TokenLine) ->
      { token, { t_var, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_30/2}).
--file("./priv/obr_lexer.xrl", 148).
+-file("./priv/obr_lexer.xrl", 149).
 yyaction_30(TokenChars, TokenLine) ->
      { token, { t_while, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_31/2}).
--file("./priv/obr_lexer.xrl", 149).
+-file("./priv/obr_lexer.xrl", 150).
 yyaction_31(TokenChars, TokenLine) ->
      { token, { t_then, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_32/2}).
--file("./priv/obr_lexer.xrl", 150).
+-file("./priv/obr_lexer.xrl", 151).
 yyaction_32(TokenChars, TokenLine) ->
      { token, { t_until, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_33/2}).
--file("./priv/obr_lexer.xrl", 151).
+-file("./priv/obr_lexer.xrl", 152).
 yyaction_33(TokenChars, TokenLine) ->
      { token, { t_zalupa, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_34/2}).
--file("./priv/obr_lexer.xrl", 155).
+-file("./priv/obr_lexer.xrl", 156).
 yyaction_34(TokenChars, TokenLine) ->
      { token, { t_assert, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_35/2}).
--file("./priv/obr_lexer.xrl", 178).
+-file("./priv/obr_lexer.xrl", 179).
 yyaction_35(TokenChars, TokenLine) ->
      { token, { t_plus, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_36/2}).
--file("./priv/obr_lexer.xrl", 179).
+-file("./priv/obr_lexer.xrl", 180).
 yyaction_36(TokenChars, TokenLine) ->
      { token, { t_minus, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_37/2}).
--file("./priv/obr_lexer.xrl", 180).
+-file("./priv/obr_lexer.xrl", 181).
 yyaction_37(TokenChars, TokenLine) ->
      { token, { t_mul, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_38/2}).
--file("./priv/obr_lexer.xrl", 181).
+-file("./priv/obr_lexer.xrl", 182).
 yyaction_38(TokenChars, TokenLine) ->
      { token, { t_divide, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_39/2}).
--file("./priv/obr_lexer.xrl", 182).
+-file("./priv/obr_lexer.xrl", 183).
 yyaction_39(TokenChars, TokenLine) ->
      { token, { t_tilda, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_40/2}).
--file("./priv/obr_lexer.xrl", 183).
+-file("./priv/obr_lexer.xrl", 184).
 yyaction_40(TokenChars, TokenLine) ->
      { token, { t_and, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_41/2}).
--file("./priv/obr_lexer.xrl", 184).
+-file("./priv/obr_lexer.xrl", 185).
 yyaction_41(TokenChars, TokenLine) ->
      { token, { t_ddot, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_42/2}).
--file("./priv/obr_lexer.xrl", 185).
+-file("./priv/obr_lexer.xrl", 186).
 yyaction_42(TokenChars, TokenLine) ->
      { token, { t_dot, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_43/2}).
--file("./priv/obr_lexer.xrl", 186).
+-file("./priv/obr_lexer.xrl", 187).
 yyaction_43(TokenChars, TokenLine) ->
      { token, { t_comma, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_44/2}).
--file("./priv/obr_lexer.xrl", 187).
+-file("./priv/obr_lexer.xrl", 188).
 yyaction_44(TokenChars, TokenLine) ->
      { token, { t_semicolon, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_45/2}).
--file("./priv/obr_lexer.xrl", 188).
+-file("./priv/obr_lexer.xrl", 189).
 yyaction_45(TokenChars, TokenLine) ->
      { token, { t_vline, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_46/2}).
--file("./priv/obr_lexer.xrl", 189).
+-file("./priv/obr_lexer.xrl", 190).
 yyaction_46(TokenChars, TokenLine) ->
      { token, { t_lpar, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_47/2}).
--file("./priv/obr_lexer.xrl", 190).
+-file("./priv/obr_lexer.xrl", 191).
 yyaction_47(TokenChars, TokenLine) ->
      { token, { t_rpar, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_48/2}).
--file("./priv/obr_lexer.xrl", 191).
+-file("./priv/obr_lexer.xrl", 192).
 yyaction_48(TokenChars, TokenLine) ->
      { token, { t_lbrack, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_49/2}).
--file("./priv/obr_lexer.xrl", 192).
+-file("./priv/obr_lexer.xrl", 193).
 yyaction_49(TokenChars, TokenLine) ->
      { token, { t_rbrack, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_50/2}).
--file("./priv/obr_lexer.xrl", 193).
+-file("./priv/obr_lexer.xrl", 194).
 yyaction_50(TokenChars, TokenLine) ->
      { token, { t_lbrace, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_51/2}).
--file("./priv/obr_lexer.xrl", 194).
+-file("./priv/obr_lexer.xrl", 195).
 yyaction_51(TokenChars, TokenLine) ->
      { token, { t_rbrace, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_52/2}).
--file("./priv/obr_lexer.xrl", 195).
+-file("./priv/obr_lexer.xrl", 196).
 yyaction_52(TokenChars, TokenLine) ->
      { token, { t_assign, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_53/2}).
--file("./priv/obr_lexer.xrl", 196).
+-file("./priv/obr_lexer.xrl", 197).
 yyaction_53(TokenChars, TokenLine) ->
      { token, { t_colon, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_54/2}).
--file("./priv/obr_lexer.xrl", 197).
+-file("./priv/obr_lexer.xrl", 198).
 yyaction_54(TokenChars, TokenLine) ->
      { token, { t_arrow, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_55/2}).
--file("./priv/obr_lexer.xrl", 198).
+-file("./priv/obr_lexer.xrl", 199).
 yyaction_55(TokenChars, TokenLine) ->
      { token, { t_equ, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_56/2}).
--file("./priv/obr_lexer.xrl", 199).
+-file("./priv/obr_lexer.xrl", 200).
 yyaction_56(TokenChars, TokenLine) ->
      { token, { t_sharp, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_57/2}).
--file("./priv/obr_lexer.xrl", 200).
+-file("./priv/obr_lexer.xrl", 201).
 yyaction_57(TokenChars, TokenLine) ->
      { token, { t_lesseq, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_58/2}).
--file("./priv/obr_lexer.xrl", 201).
+-file("./priv/obr_lexer.xrl", 202).
 yyaction_58(TokenChars, TokenLine) ->
      { token, { t_moreeq, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_59/2}).
--file("./priv/obr_lexer.xrl", 202).
+-file("./priv/obr_lexer.xrl", 203).
 yyaction_59(TokenChars, TokenLine) ->
      { token, { t_less, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_60/2}).
--file("./priv/obr_lexer.xrl", 203).
+-file("./priv/obr_lexer.xrl", 204).
 yyaction_60(TokenChars, TokenLine) ->
      { token, { t_more, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_61/2}).
--file("./priv/obr_lexer.xrl", 206).
+-file("./priv/obr_lexer.xrl", 207).
 yyaction_61(TokenChars, TokenLine) ->
      { token, { ident, TokenLine, id_validate (TokenChars, TokenLine) } } .
 
 -compile({inline,yyaction_62/2}).
--file("./priv/obr_lexer.xrl", 209).
+-file("./priv/obr_lexer.xrl", 210).
 yyaction_62(TokenChars, TokenLine) ->
      { token, { integer_hex, TokenLine, intwr_validate (TokenChars, TokenLine) } } .
 
 -compile({inline,yyaction_63/2}).
--file("./priv/obr_lexer.xrl", 210).
+-file("./priv/obr_lexer.xrl", 211).
 yyaction_63(TokenChars, TokenLine) ->
      { token, { integer_dec, TokenLine, int_validate (TokenChars, TokenLine) } } .
 
 -compile({inline,yyaction_64/2}).
--file("./priv/obr_lexer.xrl", 211).
+-file("./priv/obr_lexer.xrl", 212).
 yyaction_64(TokenChars, TokenLine) ->
      { token, { real, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_65/2}).
--file("./priv/obr_lexer.xrl", 212).
+-file("./priv/obr_lexer.xrl", 213).
 yyaction_65(TokenChars, TokenLine) ->
      { token, { string, TokenLine, str_validate (TokenChars, TokenLine) } } .
 
 -compile({inline,yyaction_66/2}).
--file("./priv/obr_lexer.xrl", 214).
+-file("./priv/obr_lexer.xrl", 215).
 yyaction_66(TokenChars, TokenLine) ->
      { token, { letter, TokenLine, id_validate (TokenChars, TokenLine) } } .
 
 -compile({inline,yyaction_67/2}).
--file("./priv/obr_lexer.xrl", 215).
+-file("./priv/obr_lexer.xrl", 216).
 yyaction_67(TokenChars, TokenLine) ->
      { token, { digit, TokenLine, id_validate (TokenChars, TokenLine) } } .
 
 -compile({inline,yyaction_68/2}).
--file("./priv/obr_lexer.xrl", 217).
+-file("./priv/obr_lexer.xrl", 218).
 yyaction_68(TokenChars, TokenLine) ->
      { token, { t_div, TokenLine, TokenChars } } .
 
 -compile({inline,yyaction_69/0}).
--file("./priv/obr_lexer.xrl", 219).
+-file("./priv/obr_lexer.xrl", 220).
 yyaction_69() ->
      skip_token .
 -file("/home/sea/.asdf/installs/erlang/27.2.4/lib/parsetools-2.6/include/leexinc.hrl", 344).
