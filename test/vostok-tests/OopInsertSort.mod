@@ -1,7 +1,4 @@
-MODULE OopInsertSort;
-BEGIN
-END OopInsertSort.
-
+ident.i.j
 (* MODULE OopInsertSort;
 
 IMPORT Out, CLI;
