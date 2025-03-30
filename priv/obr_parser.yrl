@@ -32,12 +32,12 @@ element set set_rep term simple_expression term_rep designator_rep
 exp_list_rep statement_sequence_rep field_list_sequence_rep
 case_statement_rep array_type_rep while_statement_rep
 if_statement_rep simple_expression_pre  simple_expression_rep
-struct_type
+struct_type t_else_statement_sequence
 ds_const_declaration ds_const_declaration_rep
 ds_type_declaration ds_type_declaration_rep
 ds_variable_declaration ds_variable_declaration_rep
 ds_procedure_declaration ds_procedure_declaration_rep
-  
+u_elsif
 .
 
 Terminals
@@ -47,14 +47,14 @@ t_plus t_minus t_or t_dot t_equ t_sharp t_less t_lesseq t_more t_moreeq t_in t_i
 t_ddot t_comma t_import t_semicolon t_array t_of t_colon t_var
 t_for t_to t_by t_do t_end t_record t_rpar t_lpar t_procedure t_module 
 t_tilda t_nil t_true t_false t_begin t_lbrack t_rbrack t_arrow t_pointer
-t_return t_vline t_case t_while t_elseif t_else t_then t_if
+t_return t_vline t_case t_while t_elseif t_elsif t_else t_then t_if
 t_lbrace t_rbrace t_const t_type
 t_repeat t_until ident
 .
 
 Rootsymbol root_def .
 
-root_def -> factor : '$1'.
+root_def -> if_statement : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -295,16 +295,10 @@ relation -> t_in : {relation, str_of('$1'), '$1'}.
 relation -> t_is : {relation, str_of('$1'), '$1'}.
 
 % SimpleExpression = ["+" | "-"] term {AddOperator term}.
-% SimpleExpression = ["+" | "-"] simple_expression_rep.
-% simple_expression -> simple_expression_rep : {simple_expression, str_of('$1'), {nil, '$1'}}.
-% simple_expression -> t_plus simple_expression_rep : {simple_expression, str_of('$1'), {plus, '$1'}}.
-% simple_expression -> t_minus simple_expression_rep : {simple_expression, str_of('$1'), {minus, '$1'}}.
+simple_expression -> simple_expression_pre term simple_expression_rep : {simple_expression, str_of('$2'), {'$1', '$1', '$3'}}.
 
-% simple_expression_rep -> term : {simple_expression_rep, str_of('$1'), ['$1']}.
-% simple_expression_rep -> simple_expression_rep add_operator term : {simple_expression_rep, str_of('$1'), value_of('$1') ++ [{'$2', '$3'}]}.
-
-simple_expression -> simple_expression_pre term simple_expression_rep : {simple_expression, str_of('$2'), {value_of('$1'), '$1', '$3'}}.
-
+simple_expression_rep -> simple_expression_rep add_operator term : {'$1', '$2', '$3'}.
+simple_expression_rep -> add_operator term : {'$1', '$2'}.
 simple_expression_rep -> '$empty' : nil.
 
 simple_expression_pre -> t_plus : plus.
@@ -317,12 +311,12 @@ add_operator -> t_plus : {add_operator, str_of('$1'), '$1'}.
 add_operator -> t_minus : {add_operator, str_of('$1'), '$1'}.
 add_operator -> t_or : {add_operator, str_of('$1'), '$1'}.
 
-% % term = factor {MulOperator factor}.
-% % term = term_rep.
-% term -> term_rep : {term, str_of('$1'), '$1'}.
+% term = factor {MulOperator factor}.
+term_rep -> term_rep mul_operator factor: {term_rep, str_of('$2'), {'$1','$2','$3'}}.
+term_rep -> factor : {term_rep, str_of('$1'), {'$1'}}.
+term_rep -> '$empty' : nil.
+term -> factor term_rep: {term, str_of('$1'), {'$1', '$2'}}.
 
-% term_rep -> factor : {term_rep, str_of('$1'), ['$1']}.
-% term_rep -> term_rep mul_operator factor: {term_rep, str_of('$1'), value_of('$1') ++ [{'$2','$3'}]}.
 
 % +MulOperator = "*" | "/" | DIV | MOD | "&".
 mul_operator -> t_mul : {mul_operator, str_of('$1'), '$1'}.
@@ -337,18 +331,14 @@ factor -> string : {factor, str_of('$1'), '$1'}.
 factor -> t_nil : {factor, str_of('$1'), '$1'}.
 factor -> t_true : {factor, str_of('$1'), '$1'}.
 factor -> t_false : {factor, str_of('$1'), '$1'}.
-% factor -> set : {factor, str_of('$1'), '$1'}.
-factor -> designator : {factor, str_of('$1'), '$1'}.
-% factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
-% factor -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+factor -> set : {factor, str_of('$1'), '$1'}.
+factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
+factor -> designator : {factor, nil, '$1'}.
+factor -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
 
 % designator = qualident {selector}.
-% % designator = designator_rep.
-% designator -> designator_rep : {designator, str_of('$1'), '$1'}.
-% designator_rep -> qualident : {designator_rep, str_of('$1'), ['$1']}.
-% designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 designator_rep -> selector: {designator_rep, str_of('$1'), ['$1']}.
 designator_rep -> '$empty' : nil.
@@ -356,28 +346,25 @@ designator -> qualident designator_rep : {designator, str_of('$1'), {'$1', '$2'}
 
 % selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
 selector -> t_dot ident : {selector, str_of('$1'), {'$1', '$2'}}.
-% selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
-% selector -> t_arrow : {selector, str_of('$1'), '$1'}.
-% selector -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector -> t_arrow : {selector, str_of('$1'), '$1'}.
+selector -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 
-% % set = "{" [ element {"," element} ] "}".
-% % set = "{" [ set_rep ] "}".
-% % set = "{" [set_rep] "}".
-% % set set_rep set_rep_rep
-% set -> t_lbrace set_rep t_rbrace : {set, str_of('$1'), '$2'}.
-% set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
+% set = "{" [ element {"," element} ] "}".
+set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
+set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
+set_rep -> '$empty' : [].
+set -> t_lbrace set_rep t_rbrace : {set_rep, str_of('$1'), '$2'}.
 
 % element = expression [".." expression].
 element -> expression t_ddot expression: {element, str_of('$1'), {'$1', '$3'}}.
 element -> expression : {element, str_of('$1'), '$1'}.
 
-% % ExpList = expression {"," expression}.
-% % ExpList = exp_list_rep.
-% exp_list -> exp_list_rep : {exp_list, str_of('$1'), '$1'}.
-
-% exp_list_rep -> expression : {exp_list_rep, str_of('$1'), ['$1']}.
-% exp_list_rep -> exp_list_rep t_comma expression: {exp_list_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+% ExpList = expression {"," expression}.
+% ExpList = exp_list_rep.
+exp_list -> exp_list_rep : {exp_list, str_of('$1'), '$1'}.
+exp_list_rep -> exp_list_rep t_comma expression: {exp_list_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+exp_list_rep -> expression : {exp_list_rep, str_of('$1'), ['$1']}.
 
 % ActualParameters = "(" [ExpList] ")" .
 actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
@@ -385,40 +372,43 @@ actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
 
 % statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
-statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
-statement -> if_statement     : {statement, str_of('$1'), '$1'}.
-statement -> case_statement   : {statement, str_of('$1'), '$1'}.
-statement -> while_statement  : {statement, str_of('$1'), '$1'}.
-statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
-statement -> for_statement    : {statement, str_of('$1'), '$1'}.
+% statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
+% statement -> if_statement     : {statement, str_of('$1'), '$1'}.
+% statement -> case_statement   : {statement, str_of('$1'), '$1'}.
+% statement -> while_statement  : {statement, str_of('$1'), '$1'}.
+% statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
+% statement -> for_statement    : {statement, str_of('$1'), '$1'}.
 statement -> '$empty' : nil.
 
 % assignment = designator ":=" expression.
-% assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
+assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
 % % ProcedureCall = designator [ActualParameters].
-% procedure_call -> designator actual_parameters : {procedure_call, str_of('$1'), '$2'}.
-% procedure_call -> designator : {procedure_call, str_of('$1'), nil}.
+procedure_call -> designator actual_parameters : {procedure_call, str_of('$1'), '$2'}.
+procedure_call -> designator : {procedure_call, str_of('$1'), nil}.
 
 % % StatementSequence = statement {";" statement}.
 % % StatementSequence = statement_sequence_rep.
-% statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), '$1'}.
-
-% statement_sequence_rep -> statement_sequence_rep t_semicolon statement: {statement_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% statement_sequence_rep -> statement : {statement_sequence_rep, str_of('$1'), ['$1']}.
-% statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), value_of('$1')}.
-statement_sequence -> '$empty' : nil.
+statement_sequence_rep -> statement_sequence_rep t_semicolon statement: {statement_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+statement_sequence_rep -> statement : {statement_sequence_rep, str_of('$1'), ['$1']}.
+statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), value_of('$1')}.
 
 
 % % IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 % % if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.
-% if_statement -> t_if expression t_then statement_sequence if_statement_rep t_else statement_sequence t_end : 
-%   {if_statement, str_of('$1'), {'$2', '$4', '$5', '$7'}}.
-% if_statement -> t_if expression t_then statement_sequence if_statement_rep t_end : 
-%   {if_statement, str_of('$1'), {'$2', '$4', '$5',  nil}}.
+if_statement -> t_if expression t_then statement_sequence if_statement_rep t_else_statement_sequence t_end : 
+  {if_statement, str_of('$1'), {'$2', '$4', '$5', '$6'}}.
 
-% if_statement_rep -> t_elseif expression t_then statement_sequence : {if_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
-% if_statement_rep -> if_statement_rep t_elseif expression t_then statement_sequence : {if_statement_rep, str_of('$1'), value_of('$1') ++ [{'$3', '$5'}]}.
+t_else_statement_sequence -> t_else statement_sequence : '$2'.
+t_else_statement_sequence -> '$empty' : nil.
+if_statement_rep -> if_statement_rep u_elsif expression t_then statement_sequence :
+  {if_statement_rep, str_of('$1'), value_of('$1') ++[{'$3', '$5'}]}.
+if_statement_rep -> u_elsif expression t_then statement_sequence :
+  {if_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
+if_statement_rep -> '$empty' : nil.
+
+u_elsif -> t_elsif : '$1'.
+u_elsif -> t_elseif : '$1'.
 
 % % CaseStatement = CASE expression OF case {"|" case} END.
 % % CaseStatement = CASE expression OF case_statement_rep END.
@@ -427,15 +417,15 @@ statement_sequence -> '$empty' : nil.
 % case_statement_rep -> ntcase : {case_statement_rep, str_of('$1'), ['$1']}.
 % case_statement_rep -> case_statement_rep t_vline ntcase: {case_statement_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 
-% % case = [CaseLabelList ":" StatementSequence].
-% % ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
+% case = [CaseLabelList ":" StatementSequence].
+% ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
 ntcase -> case_label_list t_colon statement_sequence : {procedure_call, str_of('$1'), {'$1', '$3'}}.
 ntcase -> '$empty' : nil.
 
-% % +CaseLabelList = LabelRange {"," LabelRange}.
-% case_label_list -> case_label_list_rep : '$1'.
-% case_label_list_rep -> label_range : {case_label_list, str_of('$1'), [('$1')]}.
-% case_label_list_rep -> label_range t_comma case_label_list_rep : {case_label_list, str_of('$1'),[('$1')] ++ value_of('$3')}.
+% +CaseLabelList = LabelRange {"," LabelRange}.
+case_label_list_rep -> label_range t_comma case_label_list_rep : {case_label_list, str_of('$1'),[('$1')] ++ value_of('$3')}.
+case_label_list_rep -> label_range : {case_label_list, str_of('$1'), [('$1')]}.
+case_label_list -> case_label_list_rep : '$1'.
 
 % LabelRange = label [".." label].
 label_range -> label t_ddot label: {label_range, str_of('$1'), {'$1', '$3'}}.
@@ -458,11 +448,11 @@ label -> integer_hex : {label, str_of('$1'), '$1'}.
 repeat_statement -> t_repeat statement_sequence t_until expression : 
  {repeat_statement, str_of('$1'), {'$2', '$4'}}.
 
-% % ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
-% for_statement -> t_for ident t_assign expression t_to expression t_by const_expression t_do statement_sequence t_end : 
-%   {for_statement, str_of('$1'), {'$2', '$4', '$6', '$8', '$10'}}.
-% for_statement -> t_for ident t_assign expression t_to expression t_do statement_sequence t_end : 
-%   {for_statement, str_of('$1'), {'$2', '$4', '$6',  nil, '$8'}}.
+% ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
+for_statement -> t_for ident t_assign expression t_to expression t_by const_expression t_do statement_sequence t_end : 
+  {for_statement, str_of('$1'), {'$2', '$4', '$6', '$8', '$10'}}.
+for_statement -> t_for ident t_assign expression t_to expression t_do statement_sequence t_end : 
+  {for_statement, str_of('$1'), {'$2', '$4', '$6',  nil, '$8'}}.
 
 Erlang code.
 

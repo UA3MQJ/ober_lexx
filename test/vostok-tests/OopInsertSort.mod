@@ -1,4 +1,4 @@
-ident.i.j
+IF true THEN zzz:=1 ELSIF true THEN c:=1 ELSE zzz:= 2 END
 (* MODULE OopInsertSort;
 
 IMPORT Out, CLI;
