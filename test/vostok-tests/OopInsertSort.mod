@@ -1,4 +1,4 @@
-xxx1, sad, ads : int
+ARRAY 10 OF int
 (* MODULE OopInsertSort;
 
 PROCEDURE blah( ident2, re3 : real)

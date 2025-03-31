@@ -56,7 +56,7 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
-root_def -> field_list : '$1'.
+root_def -> struct_type : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -178,16 +178,15 @@ type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1')
 
 % StrucType = ArrayType | RecordType | PointerType | ProcedureType.
 struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
-struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
-struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
-struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
+% struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
+% struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
+% struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
 
-% % ArrayType = ARRAY length {"," length} OF type.
-% % array_type = ARRAY array_type_rep OF type.
-% array_type -> t_array array_type_rep t_of type  : {array_type, str_of('$1'), {'$2', '$4'}}.
-
-% array_type_rep -> length : {array_type_rep, str_of('$1'), ['$1']}.
-% array_type_rep -> array_type_rep t_comma length : {array_type_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+% ArrayType = ARRAY length {"," length} OF type.
+% array_type = ARRAY array_type_rep OF type.
+array_type -> t_array array_type_rep t_of type  : {array_type, str_of('$1'), {'$2', '$4'}}.
+array_type_rep -> array_type_rep t_comma length : {array_type_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+array_type_rep -> length : {array_type_rep, str_of('$1'), ['$1']}.
 
 % length = ConstExpression.
 length -> const_expression : {length, str_of('$1'), '$1'}.
