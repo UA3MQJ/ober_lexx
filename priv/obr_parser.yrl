@@ -54,7 +54,7 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
-root_def -> if_statement : '$1'.
+root_def -> case_statement : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -168,7 +168,7 @@ import -> ident : {import, str_of('$1'), '$1'}.
 const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
 
 % ConstExpression = expression.
-const_expression -> expression : {pointer_type, str_of('$1'), '$1'}.
+const_expression -> expression : {const_expression, str_of('$1'), '$1'}.
 
 % TypeDeclaration = identdef "=" StrucType.
 type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1'), {'$1', '$3'}}.
@@ -372,12 +372,12 @@ actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
 
 % statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
-% statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
-% statement -> if_statement     : {statement, str_of('$1'), '$1'}.
-% statement -> case_statement   : {statement, str_of('$1'), '$1'}.
-% statement -> while_statement  : {statement, str_of('$1'), '$1'}.
-% statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
-% statement -> for_statement    : {statement, str_of('$1'), '$1'}.
+statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
+statement -> if_statement     : {statement, str_of('$1'), '$1'}.
+statement -> case_statement   : {statement, str_of('$1'), '$1'}.
+statement -> while_statement  : {statement, str_of('$1'), '$1'}.
+statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
+statement -> for_statement    : {statement, str_of('$1'), '$1'}.
 statement -> '$empty' : nil.
 
 % assignment = designator ":=" expression.
@@ -394,8 +394,8 @@ statement_sequence_rep -> statement : {statement_sequence_rep, str_of('$1'), ['$
 statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), value_of('$1')}.
 
 
-% % IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
-% % if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.
+% IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
+% if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.
 if_statement -> t_if expression t_then statement_sequence if_statement_rep t_else_statement_sequence t_end : 
   {if_statement, str_of('$1'), {'$2', '$4', '$5', '$6'}}.
 
@@ -410,16 +410,16 @@ if_statement_rep -> '$empty' : nil.
 u_elsif -> t_elsif : '$1'.
 u_elsif -> t_elseif : '$1'.
 
-% % CaseStatement = CASE expression OF case {"|" case} END.
-% % CaseStatement = CASE expression OF case_statement_rep END.
-% case_statement -> t_case expression t_of case_statement_rep t_end : {case_statement, str_of('$1'), {'$2', '$4'}}.
+% CaseStatement = CASE expression OF case {"|" case} END.
+% CaseStatement = CASE expression OF case_statement_rep END.
+case_statement -> t_case expression t_of case_statement_rep t_end : {case_statement, str_of('$1'), {'$2', '$4'}}.
 
-% case_statement_rep -> ntcase : {case_statement_rep, str_of('$1'), ['$1']}.
-% case_statement_rep -> case_statement_rep t_vline ntcase: {case_statement_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+case_statement_rep -> case_statement_rep t_vline ntcase: {case_statement_rep, str_of('$1'), ['$1'] ++ ['$3']}.
+case_statement_rep -> ntcase : {case_statement_rep, '$1', ['$1']}.
 
 % case = [CaseLabelList ":" StatementSequence].
 % ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
-ntcase -> case_label_list t_colon statement_sequence : {procedure_call, str_of('$1'), {'$1', '$3'}}.
+ntcase -> case_label_list t_colon statement_sequence : {ntcase, '$1', {'$1', '$3'}}.
 ntcase -> '$empty' : nil.
 
 % +CaseLabelList = LabelRange {"," LabelRange}.
@@ -437,12 +437,13 @@ label -> string : {label, str_of('$1'), '$1'}.
 label -> integer_dec : {label, str_of('$1'), '$1'}.
 label -> integer_hex : {label, str_of('$1'), '$1'}.
 
-% % WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
-% % while_statement = WHILE expression DO StatementSequence while_statement_rep END.
-% while_statement -> t_while expression t_do statement_sequence while_statement_rep t_end : {while_statement, str_of('$1'), {'$2', '$3', '$4'}}.
+% WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
+% while_statement = WHILE expression DO StatementSequence while_statement_rep END.
+while_statement -> t_while expression t_do statement_sequence while_statement_rep t_end : {while_statement, str_of('$1'), {'$2', '$3', '$4'}}.
 
-% while_statement_rep -> t_elseif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
-% while_statement_rep -> while_statement_rep t_elseif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), value_of('$1') ++ [{'$3', '$5'}]}.
+while_statement_rep -> while_statement_rep u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), value_of('$1') ++ [{'$3', '$5'}]}.
+while_statement_rep -> u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
+while_statement_rep -> '$empty' : nil.
 
 % RepeatStatement = REPEAT StatementSequence UNTIL expression.
 repeat_statement -> t_repeat statement_sequence t_until expression : 

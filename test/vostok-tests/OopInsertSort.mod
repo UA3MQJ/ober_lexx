@@ -1,4 +1,7 @@
-IF true THEN zzz:=1 ELSIF true THEN c:=1 ELSE zzz:= 2 END
+CASE TRUE OF
+i..2, i..2 : x:=2
+| i..2, i..2 : x:=2
+END
 (* MODULE OopInsertSort;
 
 IMPORT Out, CLI;
