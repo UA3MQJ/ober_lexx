@@ -57,6 +57,10 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
+Left 100 t_procedure.
+Left 90 identdef.
+Left 80 formal_parameters.
+
 root_def -> struct_type : '$1'.
 
 % number = integer | real.
@@ -181,7 +185,7 @@ type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1')
 struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
 struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
 struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
-% struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
 
 % ArrayType = ARRAY length {"," length} OF type.
 % array_type = ARRAY array_type_rep OF type.
@@ -193,14 +197,6 @@ array_type_rep -> length : {array_type_rep, str_of('$1'), ['$1']}.
 length -> const_expression : {length, str_of('$1'), '$1'}.
 
 % RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
-% record_type -> t_record t_lpar base_type t_rpar field_list_sequence t_end : 
-%   {procedure_declaration, str_of('$1'), {'$3', '$5'}}.
-% record_type -> t_record t_lpar base_type t_rpar t_end : 
-%   {procedure_declaration, str_of('$1'), {'$3', nil}}.
-% record_type -> t_record field_list_sequence t_end : 
-%   {procedure_declaration, str_of('$1'), {nil, '$2'}}.
-% record_type -> t_record t_end : 
-%   {procedure_declaration, str_of('$1'), {nil, nil}}.
 record_type -> t_record record_type_part1 record_type_part2 t_end : 
   {record_type, {'$2', '$3'}}.
 
@@ -230,8 +226,8 @@ ident_list_rep -> identdef : {ident_list, str_of('$1'), ['$1']}.
 pointer_type -> t_pointer t_to type : {pointer_type, str_of('$1'), '$3'}.
 
 % ProcedureType = PROCEDURE [FormalParameters].
-procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), '$2'}
-procedure_type -> t_procedure : {procedure_type, str_of('$1'), nil}.
+procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), '$2'}.
+procedure_type -> t_procedure : {procedure_type, nil, nil}.
 
 % FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
 formal_parameters_qual_rep -> t_colon qualident : {formal_parameters, str_of('$1'), '$2'}.

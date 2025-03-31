@@ -1,10 +1,8 @@
-RECORD(basetype)
-  x:int;
-  y:int
-END
+PROCEDURE (v:int)
 (* MODULE OopInsertSort;
 
-PROCEDURE blah( ident2, re3 : real)
+
+PROCEDURE ( ident2, re3 : real)
 
 IMPORT Out, CLI;
 
