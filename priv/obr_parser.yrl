@@ -61,36 +61,24 @@ Left 100 t_procedure.
 Left 90 identdef.
 Left 80 formal_parameters.
 
-root_def -> declaration_sequence : '$1'.
+
+% Nonassoc 50 t_type.
+% Left 40 ds_type_declaration_rep.
+
+% Nonassoc 30 t_var.
+% Left 20 ds_variable_declaration_rep.
+
+
+
+
+root_def -> module : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
 number -> integer_hex : {number, str_of('$1'), '$1'}.
 number -> real : {number, str_of('$1'), '$1'}.
 
-% % module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
-% module -> t_module ident t_semicolon import_list declaration_sequence t_begin statement_sequence t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2', '$4', '$5', '$7', '$9'}}.
-% module -> t_module ident t_semicolon declaration_sequence t_begin statement_sequence t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  nil, '$4', '$6', '$8'}}.
-% module -> t_module ident t_semicolon t_begin statement_sequence t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  nil,  nil, '$5', '$7'}}.
-% module -> t_module ident t_semicolon declaration_sequence t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  nil, '$4',  nil, '$6'}}.
-% % без DeclarationSequence который может быть пустым вообще
-% module -> t_module ident t_semicolon import_list t_begin statement_sequence t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2', '$4',  nil, '$6', '$8'}}.
-% module -> t_module ident t_semicolon import_list declaration_sequence t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2', '$4', '$5',  nil, '$7'}}.
-
-% module -> t_module ident t_semicolon import_list t_begin t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  '$4', nil,  nil, '$7'}}.
-% module -> t_module ident t_semicolon import_list t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  '$4', nil,  nil, '$6'}}.
-% module -> t_module ident t_semicolon t_begin t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  nil,  nil,  nil, '$6'}}.
-% module -> t_module ident t_semicolon t_end ident t_dot : 
-%  {module, str_of('$1'), {'$2',  nil,  nil,  nil, '$5'}}.
+% module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
 
 module -> t_module ident t_semicolon import_list t_begin_statement_sequence t_end ident t_dot : 
  {module, str_of('$1'), {'$2', '$4',  nil,  '$5', '$7'}}.
@@ -109,7 +97,8 @@ import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$3'}}.
 import -> ident : {import, str_of('$1'), '$1'}.
 
 % DeclarationSequence = 
-% [CONST {ConstDeclaration ";"}] 
+% [CONST {ConstDeclaration ";"}]
+% [TYPE {TypeDeclaration ";"}]
 % [VAR {VariableDeclaration ";"}] 
 % {ProcedureDeclaration ";"}.
 
@@ -117,9 +106,9 @@ declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_dec
   {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
 
 % [CONST {ConstDeclaration ";"}] 
-% ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
-% ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
-% ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
+ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
+ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
 ds_const_declaration -> '$empty' : nil.
 
 % [TYPE {TypeDeclaration ";"}] 
@@ -139,14 +128,6 @@ ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declarati
 ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
 ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
 ds_procedure_declaration -> '$empty' : nil.
-
-
-
-
-
-
-
-
 
 % ConstDeclaration = identdef "=" ConstExpression.
 const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
