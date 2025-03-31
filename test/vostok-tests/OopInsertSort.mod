@@ -1,4 +1,4 @@
-ARRAY 10 OF int
+POINTER TO int
 (* MODULE OopInsertSort;
 
 PROCEDURE blah( ident2, re3 : real)

@@ -179,7 +179,7 @@ type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1')
 % StrucType = ArrayType | RecordType | PointerType | ProcedureType.
 struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
 % struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
-% struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
 % struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
 
 % ArrayType = ARRAY length {"," length} OF type.
