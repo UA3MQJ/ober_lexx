@@ -56,7 +56,7 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
-root_def -> procedure_declaration : '$1'.
+root_def -> field_list : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -212,13 +212,13 @@ base_type -> qualident : {base_type, str_of('$1'), '$1'}.
 % field_list_sequence_rep -> field_list : {field_list_sequence_rep, str_of('$1'), ['$1']}.
 % field_list_sequence_rep -> field_list_sequence_rep t_semicolon field_list: {field_list_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 
-% % FieldList = IdentList ":" type.
-% field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
+% FieldList = IdentList ":" type.
+field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
 
-% % +IdentList = identdef {"," identdef}.
-% ident_list -> ident_list_rep : '$1'.
-% ident_list_rep -> identdef : {idlist, str_of('$1'), ['$1']}.
-% ident_list_rep -> identdef t_comma ident_list_rep: {idlist, str_of('$1'), ['$1'] ++ value_of('$3')}.
+% +IdentList = identdef {"," identdef}.
+ident_list -> ident_list_rep : '$1'.
+ident_list_rep -> identdef t_comma ident_list_rep: {ident_list, str_of('$1'), ['$1'] ++ value_of('$3')}.
+ident_list_rep -> identdef : {ident_list, str_of('$1'), ['$1']}.
 
 % PointerType = POINTER TO type.
 pointer_type -> t_pointer t_to type : {pointer_type, str_of('$1'), '$3'}.
@@ -239,7 +239,6 @@ formal_parameters_fps_rep -> t_lpar formal_parameters_fps_rep2 t_rpar : '$2'.
 formal_parameters_fps_rep -> '$empty' : nil.
 
 formal_parameters -> formal_parameters_fps_rep formal_parameters_qual_rep : {formal_parameters, {'$1', '$2'}}.
-
 
 % +FPSection = [VAR] ident {"," ident} ":" FormalType.
 fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$2','$4'}}.
@@ -264,8 +263,8 @@ identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
 variable_declaration -> ident_list t_colon type : {variable_declaration, str_of('$1'), {'$1', '$3'}}.
 
 % +type = qualident | StrucType.
+% type -> struct_type : {type, str_of('$1'), '$1'}.
 type -> qualident : {type, str_of('$1'), '$1'}.
-type -> struct_type : {type, str_of('$1'), '$1'}.
 
 % ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
 procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 

@@ -1,5 +1,4 @@
-PROCEDURE blah(i,b:int;b:re):int;
-END blah
+xxx1, sad, ads : int
 (* MODULE OopInsertSort;
 
 PROCEDURE blah( ident2, re3 : real)
