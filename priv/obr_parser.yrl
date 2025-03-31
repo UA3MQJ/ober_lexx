@@ -37,6 +37,7 @@ ds_const_declaration ds_const_declaration_rep
 ds_type_declaration ds_type_declaration_rep
 ds_variable_declaration ds_variable_declaration_rep
 ds_procedure_declaration ds_procedure_declaration_rep
+formal_parameters_qual_rep formal_parameters_fps_rep formal_parameters_fps_rep2
 u_elsif
 .
 
@@ -54,7 +55,7 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
-root_def -> case_statement : '$1'.
+root_def -> procedure_heading : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -224,28 +225,30 @@ pointer_type -> t_pointer t_to type : {pointer_type, str_of('$1'), '$3'}.
 procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), '$2'}
 procedure_type -> t_procedure : {procedure_type, str_of('$1'), nil}.
 
-% % FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
-% % formal_parameters = "(" [formal_parameters_rep] ")" [":" qualident].
-% % formal_parameters -> t_lpar formal_parameters_rep t_rpar t_colon qualident : 
-% %   {formal_parameters, str_of('$1'), {'$2', '$5'}}.
-% formal_parameters -> t_lpar formal_parameters_rep t_rpar : {formal_parameters, str_of('$1'), {'$2',  nil}}.
-% formal_parameters -> t_lpar t_rpar t_colon qualident : {formal_parameters, str_of('$1'), { nil, '$4'}}.
-% formal_parameters -> t_lpar t_rpar : {formal_parameters, str_of('$1'), { nil,  nil}}.
+% FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
+formal_parameters_qual_rep -> t_colon qualident : {formal_parameters, str_of('$1'), '$2'}.
+formal_parameters_qual_rep -> '$empty' : nil.
 
-% formal_parameters_rep -> formal_parameters_rep t_semicolon fpsection : {formal_parameters_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% formal_parameters_rep -> fpsection : {formal_parameters_rep, str_of('$1'), ['$1']}.
+formal_parameters_fps_rep2 -> formal_parameters_fps_rep2 t_semicolon fpsection: {fpsection, str_of('$1'), value_of('$1') ++ ['$3']}.
+formal_parameters_fps_rep2 -> fpsection : {fpsection, str_of('$1'), ['$1']}.
+formal_parameters_fps_rep2 -> '$empty' : nil.
 
-% % +FPSection = [VAR] ident {"," ident} ":" FormalType.
-% % +FPSection = [VAR] fpsection_ident_rep ":" FormalType.
-% fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$2'), {var, '$2','$4'}}.
-% fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
-% fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
+formal_parameters_fps_rep -> t_lpar formal_parameters_fps_rep2 t_rpar : '$2'.
+formal_parameters_fps_rep -> '$empty' : nil.
 
-% % +FormalType = {ARRAY OF} qualident.
-% formal_type -> formal_type_rep : {formal_type, str_of('$1'), '$1'}.
-% formal_type_rep -> t_array t_of formal_type_rep : {formal_type, str_of('$3'), '$3'}.
-% formal_type_rep -> qualident : '$1'.
+formal_parameters -> formal_parameters_fps_rep formal_parameters_qual_rep : {formal_parameters, {'$1', '$2'}}.
+
+
+% +FPSection = [VAR] ident {"," ident} ":" FormalType.
+fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$2','$4'}}.
+fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
+fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
+
+% +FormalType = {ARRAY OF} qualident.
+formal_type -> formal_type_rep qualident : {formal_type, str_of('$2'), {'$1', '$2'}}.
+formal_type_rep -> t_array t_of formal_type_rep : {array_of, '$3'}.
+formal_type_rep -> '$empty' : nil.
 
 % % qualident = [ident "."] ident.
 qualident -> ident t_dot ident : {qualident, str_of('$1'), {'$1', '$3'}}.
@@ -262,13 +265,12 @@ variable_declaration -> ident_list t_colon type : {variable_declaration, str_of(
 type -> qualident : {type, str_of('$1'), '$1'}.
 type -> struct_type : {type, str_of('$1'), '$1'}.
 
-% % ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+% ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
 % procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
-%   {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
+  % {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
 
-% % ProcedureHeading = PROCEDURE identdef [FormalParameters].
-% procedure_heading -> t_procedure identdef : {procedure_heading, str_of('$1'), {'$2', nil}}.
-% procedure_heading -> t_procedure identdef formal_parameters : {procedure_heading, str_of('$1'), {'$2', '$3'}}.
+% ProcedureHeading = PROCEDURE identdef [FormalParameters].
+procedure_heading -> t_procedure identdef formal_parameters : {procedure_heading, str_of('$1'), {'$2', '$3'}}.
 
 % % ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
 % procedure_body -> declaration_sequence t_begin statement_sequence t_return expression t_end :
@@ -305,7 +307,6 @@ simple_expression_pre -> t_plus : plus.
 simple_expression_pre -> t_minus : minus.
 simple_expression_pre -> '$empty' : nil.
 
-
 % +AddOperator = "+" | "-" | OR.
 add_operator -> t_plus : {add_operator, str_of('$1'), '$1'}.
 add_operator -> t_minus : {add_operator, str_of('$1'), '$1'}.
@@ -316,7 +317,6 @@ term_rep -> term_rep mul_operator factor: {term_rep, str_of('$2'), {'$1','$2','$
 term_rep -> factor : {term_rep, str_of('$1'), {'$1'}}.
 term_rep -> '$empty' : nil.
 term -> factor term_rep: {term, str_of('$1'), {'$1', '$2'}}.
-
 
 % +MulOperator = "*" | "/" | DIV | MOD | "&".
 mul_operator -> t_mul : {mul_operator, str_of('$1'), '$1'}.
@@ -336,7 +336,6 @@ factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
 factor -> designator : {factor, nil, '$1'}.
 factor -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
-
 
 % designator = qualident {selector}.
 designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
@@ -383,16 +382,15 @@ statement -> '$empty' : nil.
 % assignment = designator ":=" expression.
 assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
-% % ProcedureCall = designator [ActualParameters].
+% ProcedureCall = designator [ActualParameters].
 procedure_call -> designator actual_parameters : {procedure_call, str_of('$1'), '$2'}.
 procedure_call -> designator : {procedure_call, str_of('$1'), nil}.
 
-% % StatementSequence = statement {";" statement}.
-% % StatementSequence = statement_sequence_rep.
+% StatementSequence = statement {";" statement}.
+% StatementSequence = statement_sequence_rep.
 statement_sequence_rep -> statement_sequence_rep t_semicolon statement: {statement_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 statement_sequence_rep -> statement : {statement_sequence_rep, str_of('$1'), ['$1']}.
 statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), value_of('$1')}.
-
 
 % IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
 % if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.

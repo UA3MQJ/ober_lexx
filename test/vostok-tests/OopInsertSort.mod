@@ -1,8 +1,7 @@
-CASE TRUE OF
-i..2, i..2 : x:=2
-| i..2, i..2 : x:=2
-END
+PROCEDURE blah(i,b:int;b:re):int
 (* MODULE OopInsertSort;
+
+PROCEDURE blah( ident2, re3 : real)
 
 IMPORT Out, CLI;
 
