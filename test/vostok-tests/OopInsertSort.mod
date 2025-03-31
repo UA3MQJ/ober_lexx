@@ -1,4 +1,4 @@
-PROCEDURE (v:int)
+
 (* MODULE OopInsertSort;
 
 
