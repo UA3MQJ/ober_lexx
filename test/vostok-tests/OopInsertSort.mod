@@ -1,4 +1,7 @@
-POINTER TO int
+RECORD(basetype)
+  x:int;
+  y:int
+END
 (* MODULE OopInsertSort;
 
 PROCEDURE blah( ident2, re3 : real)

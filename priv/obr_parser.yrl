@@ -39,6 +39,7 @@ ds_variable_declaration ds_variable_declaration_rep
 ds_procedure_declaration ds_procedure_declaration_rep
 formal_parameters_qual_rep formal_parameters_fps_rep formal_parameters_fps_rep2
 procedure_body_part1 procedure_body_part2
+record_type record_type_part1 record_type_part2
 u_elsif
 .
 
@@ -178,7 +179,7 @@ type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1')
 
 % StrucType = ArrayType | RecordType | PointerType | ProcedureType.
 struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
-% struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
 struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
 % struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
 
@@ -191,7 +192,7 @@ array_type_rep -> length : {array_type_rep, str_of('$1'), ['$1']}.
 % length = ConstExpression.
 length -> const_expression : {length, str_of('$1'), '$1'}.
 
-% % RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
+% RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
 % record_type -> t_record t_lpar base_type t_rpar field_list_sequence t_end : 
 %   {procedure_declaration, str_of('$1'), {'$3', '$5'}}.
 % record_type -> t_record t_lpar base_type t_rpar t_end : 
@@ -200,16 +201,22 @@ length -> const_expression : {length, str_of('$1'), '$1'}.
 %   {procedure_declaration, str_of('$1'), {nil, '$2'}}.
 % record_type -> t_record t_end : 
 %   {procedure_declaration, str_of('$1'), {nil, nil}}.
+record_type -> t_record record_type_part1 record_type_part2 t_end : 
+  {record_type, {'$2', '$3'}}.
+
+record_type_part1 -> t_lpar base_type t_rpar : '$2'.
+record_type_part1 -> '$empty' : nil.
+record_type_part2 -> field_list_sequence : '$1'.
+record_type_part2 -> '$empty' : nil.
 
 % BaseType = qualident.
 base_type -> qualident : {base_type, str_of('$1'), '$1'}.
 
-% % FieldListSequence = FieldList {";" FieldList}.
-% % FieldListSequence = field_list_sequence_rep.
-% field_list_sequence -> field_list_sequence_rep : {field_list_sequence, str_of('$1'), '$1'}.
-
-% field_list_sequence_rep -> field_list : {field_list_sequence_rep, str_of('$1'), ['$1']}.
-% field_list_sequence_rep -> field_list_sequence_rep t_semicolon field_list: {field_list_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+% FieldListSequence = FieldList {";" FieldList}.
+% FieldListSequence = field_list_sequence_rep.
+field_list_sequence -> field_list_sequence_rep : {field_list_sequence, str_of('$1'), '$1'}.
+field_list_sequence_rep -> field_list_sequence_rep t_semicolon field_list: {field_list_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+field_list_sequence_rep -> field_list : {field_list_sequence_rep, str_of('$1'), ['$1']}.
 
 % FieldList = IdentList ":" type.
 field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
