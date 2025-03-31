@@ -38,6 +38,7 @@ ds_type_declaration ds_type_declaration_rep
 ds_variable_declaration ds_variable_declaration_rep
 ds_procedure_declaration ds_procedure_declaration_rep
 formal_parameters_qual_rep formal_parameters_fps_rep formal_parameters_fps_rep2
+procedure_body_part1 procedure_body_part2
 u_elsif
 .
 
@@ -55,7 +56,7 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
-root_def -> procedure_heading : '$1'.
+root_def -> procedure_declaration : '$1'.
 
 % number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -139,6 +140,7 @@ import -> ident : {import, str_of('$1'), '$1'}.
 %   {declaration_sequence, str_of('$1'), { nil, '$1',  nil,  nil}}.
 % declaration_sequence -> ds_const_declaration                                                             : 
 %   {declaration_sequence, str_of('$1'), {'$1',  nil,  nil, nil}}.
+declaration_sequence -> '$empty' : nil.
 
 % ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
 % ds_const_declaration_rep     -> ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
@@ -266,21 +268,18 @@ type -> qualident : {type, str_of('$1'), '$1'}.
 type -> struct_type : {type, str_of('$1'), '$1'}.
 
 % ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
-% procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
-  % {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
+procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
+  {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
 
 % ProcedureHeading = PROCEDURE identdef [FormalParameters].
 procedure_heading -> t_procedure identdef formal_parameters : {procedure_heading, str_of('$1'), {'$2', '$3'}}.
 
-% % ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
-% procedure_body -> declaration_sequence t_begin statement_sequence t_return expression t_end :
-%     {procedure_body, str_of('$1'), {'$1', '$3', '$5'}}
-% procedure_body -> declaration_sequence t_return expression t_end :
-%     {procedure_body, str_of('$1'), {'$1',  nil, '$3'}}
-% procedure_body -> declaration_sequence t_begin statement_sequence t_end :
-%     {procedure_body, str_of('$1'), {'$1', '$3',  nil}}
-% procedure_body -> declaration_sequence t_end :
-%     {procedure_body, str_of('$1'), {'$1', nil, nil}}
+% ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+procedure_body -> declaration_sequence procedure_body_part1 procedure_body_part2 t_end : {'$1', '$2', '$3'}.
+procedure_body_part1 -> t_begin statement_sequence : '$2'.
+procedure_body_part1 -> '$empty' : nil.
+procedure_body_part2 -> t_return expression : '$2'.
+procedure_body_part2 -> '$empty' : nil.
 
 % expression = SimpleExpression [relation SimpleExpression].
 expression -> simple_expression relation simple_expression: {expression, str_of('$1'), {'$1', '$3'}}.
