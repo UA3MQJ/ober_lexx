@@ -1,8 +1,31 @@
+PROCEDURE sort(VAR arr: ARRAY OF Element; cnt: INTEGER; cmp: Comparator);
+BEGIN
+	FOR i := 1 TO cnt - 1 DO
+		a := arr[i];
+		j := i - 1;
+		WHILE (j >= 0) & (cmp.compare(cmp, a, arr[j]) < 0) DO
+			arr[j + 1] := arr[j];
+			DEC(j)
+		END;
+		arr[j + 1] := a
+	END
+END sort;
+
+PROCEDURE sort(VAR arr: ARRAY OF Element; cnt: INTEGER; cmp: Comparator);
+BEGIN
+	FOR i := 1 TO cnt - 1 DO
+		a := arr[i];
+		j := i - 1;
+		WHILE (j >= 0) & (cmp.compare(cmp, a, arr[j]) < 0) DO
+			arr[j + 1] := arr[j];
+			DEC(j)
+		END;
+		arr[j + 1] := a
+	END
+END sort;
 
 (* MODULE OopInsertSort;
 
-
-PROCEDURE ( ident2, re3 : real)
 
 IMPORT Out, CLI;
 

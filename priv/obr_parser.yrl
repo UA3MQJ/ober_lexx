@@ -108,11 +108,11 @@ import_list -> '$empty' : nil.
 import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$3'}}.
 import -> ident : {import, str_of('$1'), '$1'}.
 
-% % DeclarationSequence = 
-% % [CONST {ConstDeclaration ";"}] 
-% % [TYPE {TypeDeclaration ";"}] 
-% % [VAR {VariableDeclaration ";"}] 
-% % {ProcedureDeclaration ";"}.
+% DeclarationSequence = 
+% [CONST {ConstDeclaration ";"}] 
+% [TYPE {TypeDeclaration ";"}] 
+% [VAR {VariableDeclaration ";"}] 
+% {ProcedureDeclaration ";"}.
 
 % declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
 %   {declaration_sequence, str_of('$1'), {'$1', '$2', '$3', '$4'}}.
@@ -145,7 +145,10 @@ import -> ident : {import, str_of('$1'), '$1'}.
 %   {declaration_sequence, str_of('$1'), { nil, '$1',  nil,  nil}}.
 % declaration_sequence -> ds_const_declaration                                                             : 
 %   {declaration_sequence, str_of('$1'), {'$1',  nil,  nil, nil}}.
-declaration_sequence -> '$empty' : nil.
+
+declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
+  {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
+
 
 % ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
 % ds_const_declaration_rep     -> ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
@@ -162,9 +165,10 @@ ds_type_declaration -> '$empty' : nil.
 % ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 ds_variable_declaration -> '$empty' : nil.
 
-% ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
-% ds_procedure_declaration_rep -> ds_procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
-% ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+% {ProcedureDeclaration ";"}.
+ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
+ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
 ds_procedure_declaration -> '$empty' : nil.
 
 
@@ -462,7 +466,8 @@ Erlang code.
 
 % list_tail({_, List}) -> List.
 str_of(Obj) when is_tuple(Obj) -> tstr_of(Obj);
-str_of(Obj) when is_map(Obj) -> mstr_of(Obj).
+str_of(Obj) when is_map(Obj) -> mstr_of(Obj);
+str_of(_) -> nil.
 
 value_of(Obj) when is_tuple(Obj) -> tvalue_of(Obj);
 value_of(Obj) when is_map(Obj) -> mvalue_of(Obj).
