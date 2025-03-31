@@ -110,59 +110,28 @@ import -> ident : {import, str_of('$1'), '$1'}.
 
 % DeclarationSequence = 
 % [CONST {ConstDeclaration ";"}] 
-% [TYPE {TypeDeclaration ";"}] 
 % [VAR {VariableDeclaration ";"}] 
 % {ProcedureDeclaration ";"}.
-
-% declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), {'$1', '$2', '$3', '$4'}}.
-% declaration_sequence ->                      ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), { nil, '$1', '$2', '$3'}}.
-% declaration_sequence -> ds_const_declaration                     ds_variable_declaration ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), {'$1',  nil, '$2', '$3'}}.
-% declaration_sequence ->                                          ds_variable_declaration ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), { nil,  nil, '$1', '$2'}}.
-% declaration_sequence -> ds_const_declaration ds_type_declaration                         ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), {'$1', '$2',  nil, '$3'}}.
-% declaration_sequence ->                      ds_type_declaration                         ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), { nil, '$1',  nil, '$2'}}.
-% declaration_sequence -> ds_const_declaration                                             ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), {'$1',  nil,  nil, '$2'}}.
-% declaration_sequence ->                                                                  ds_procedure_declaration : 
-%   {declaration_sequence, str_of('$1'), { nil,  nil,  nil, '$1'}}.
-
-% declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration                       : 
-%   {declaration_sequence, str_of('$1'), {'$1', '$2', '$3',  nil}}.
-% declaration_sequence ->                      ds_type_declaration ds_variable_declaration                       : 
-%   {declaration_sequence, str_of('$1'), { nil, '$1', '$2',  nil}}.
-% declaration_sequence -> ds_const_declaration                     ds_variable_declaration                       : 
-%   {declaration_sequence, str_of('$1'), {'$1',  nil, '$2',  nil}}.
-% declaration_sequence ->                                          ds_variable_declaration                       : 
-%   {declaration_sequence, str_of('$1'), { nil,  nil, '$1',  nil}}.
-% declaration_sequence -> ds_const_declaration ds_type_declaration                                            : 
-%   {declaration_sequence, str_of('$1'), {'$1', '$2',  nil,  nil}}.
-% declaration_sequence ->                      ds_type_declaration                                            : 
-%   {declaration_sequence, str_of('$1'), { nil, '$1',  nil,  nil}}.
-% declaration_sequence -> ds_const_declaration                                                             : 
-%   {declaration_sequence, str_of('$1'), {'$1',  nil,  nil, nil}}.
 
 declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
   {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
 
-
-% ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
-% ds_const_declaration_rep     -> ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
+% [CONST {ConstDeclaration ";"}] 
 % ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+% ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
+% ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
 ds_const_declaration -> '$empty' : nil.
 
-% ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
-% ds_type_declaration_rep      -> ds_type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
-% ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+% [TYPE {TypeDeclaration ";"}] 
+ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_type_declaration_rep      -> type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
+ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
 ds_type_declaration -> '$empty' : nil.
 
-% ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
-% ds_variable_declaration_rep  -> ds_variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
-% ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+% [VAR {VariableDeclaration ";"}] 
+ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_variable_declaration_rep  -> variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
+ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
 ds_variable_declaration -> '$empty' : nil.
 
 % {ProcedureDeclaration ";"}.
