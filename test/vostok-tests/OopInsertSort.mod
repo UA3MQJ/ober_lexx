@@ -1,7 +1,4 @@
 MODULE OopInsertSort;
-IMPORT Out, CLI; 
-
-
 BEGIN
 END OopInsertSort.
 

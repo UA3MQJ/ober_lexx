@@ -40,6 +40,7 @@ ds_procedure_declaration ds_procedure_declaration_rep
 formal_parameters_qual_rep formal_parameters_fps_rep formal_parameters_fps_rep2
 procedure_body_part1 procedure_body_part2
 record_type record_type_part1 record_type_part2
+factor_expression
 u_elsif
 .
 
@@ -57,23 +58,95 @@ t_repeat t_until ident
 
 Rootsymbol root_def .
 
-Left 100 t_procedure.
-Left 90 identdef.
-Left 80 formal_parameters.
 
-
-% Nonassoc 50 t_type.
-% Left 40 ds_type_declaration_rep.
-
-% Nonassoc 30 t_var.
-% Left 20 ds_variable_declaration_rep.
-
+Left  1000 module.
+Left  1100 import_list.
+Left  1200 import_list_rep.
+Left  1300 import.
+Left  1400 declaration_sequence.
+Left  1500 ds_const_declaration.
+Left  1600 ds_const_declaration_rep.
+Left  1700 const_declaration.
+Left  1800 ds_type_declaration.
+Left  1900 ds_type_declaration_rep.
+Left  2000 type_declaration.
+Left  2100 ds_variable_declaration.
+Left  2200 ds_variable_declaration_rep.
+Left  2300 variable_declaration.
+Left  2400 ds_procedure_declaration.
+Left  2500 ds_procedure_declaration_rep.
+Left  2600 procedure_declaration.
+Left  2700 const_expression.
+Left  2800 struct_type.
+Left  2900 array_type.
+Left  3000 length.
+Left  3100 record_type.
+Left  3200 base_type.
+Left  3300 field_list_sequence.
+Left  3400 field_list.
+Left  3500 ident_list.
+Left  3600 pointer_type.
+Left  3700 procedure_type.
+Left  3800 formal_parameters.
+Left  3900 formal_parameters_fps_rep.
+Left  4000 formal_parameters_fps_rep2.
+Left  4100 formal_parameters_qual_rep.
+Left  4200 fpsection.
+Left  4300 formal_type.
+Left  4400 formal_type_rep.
+Left  4500 qualident.
+Left  4600 identdef.
+Left  4800 type.
+Left  4900 procedure_heading.
+Left  5000 procedure_body.
+Left  5100 procedure_body_part1.
+Left  5200 procedure_body_part2.
+Left  5300 expression.
+Left  5400 relation.
+Left  5500 simple_expression.
+Left  5600 simple_expression_rep.
+Left  5700 add_operator.
+Left  5800 term.
+Left  5900 term_rep.
+Left  6000 mul_operator.
+Left  6100 factor.
+Left  6200 factor_expression.
+Left  6300 designator.
+Left  6400 designator_rep.
+Left  6500 selector.
+Left  6600 set.
+Left  6700 set_rep.
+Left  6800 element.
+Left  6900 exp_list.
+Left  7000 exp_list_rep.
+Left  7100 actual_parameters.
+Left  7200 statement.
+Left  7300 assignment.
+Left  7400 procedure_call.
+Left  7500 statement_sequence.
+Left  7600 statement_sequence_rep.
+Left  7700 if_statement.
+Left  7800 if_statement_rep.
+Left  7900 t_else_statement_sequence.
+Left  8000 case_statement.
+Left  8100 case_statement_rep.
+Left  8200 ntcase.
+Left  8300 case_label_list.
+Left  8400 case_label_list_rep.
+Left  8500 label_range.
+Left  8600 label.
+Left  8700 while_statement.
+Left  8800 while_statement_rep.
+Left  8900 repeat_statement.
+Left  9000 for_statement.
+Left  9900 t_dot t_arrow t_lbrack t_lpar t_elseif t_elsif t_minus t_or t_plus . 
+Left 10000 ident integer_dec integer_hex real  .
 
 
 
 root_def -> module : '$1'.
 
-% number = integer | real.
+%+ number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
 number -> integer_hex : {number, str_of('$1'), '$1'}.
 number -> real : {number, str_of('$1'), '$1'}.
@@ -86,13 +159,13 @@ module -> t_module ident t_semicolon import_list t_begin_statement_sequence t_en
 t_begin_statement_sequence -> t_begin statement_sequence : '$2'.
 t_begin_statement_sequence -> '$empty' : nil.
 
-% +ImportList = IMPORT import {"," import} ";".
+% ImportList = IMPORT import {"," import} ";".
 import_list_rep -> import_list_rep t_comma import  : {import_list_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 import_list_rep -> import : {import_list_rep, str_of('$1'), ['$1']}.
 import_list -> t_import import_list_rep t_semicolon : {import_list, str_of('$1'), value_of('$2')}.
 import_list -> '$empty' : nil.
 
-% % +import = ident [":=" ident].
+% % import = ident [":=" ident].
 import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$3'}}.
 import -> ident : {import, str_of('$1'), '$1'}.
 
@@ -129,10 +202,10 @@ ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_d
 ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
 ds_procedure_declaration -> '$empty' : nil.
 
-% ConstDeclaration = identdef "=" ConstExpression.
+%+ ConstDeclaration = identdef "=" ConstExpression.
 const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
 
-% ConstExpression = expression.
+%+ ConstExpression = expression.
 const_expression -> expression : {const_expression, str_of('$1'), '$1'}.
 
 % TypeDeclaration = identdef "=" StrucType.
@@ -174,7 +247,7 @@ field_list_sequence_rep -> field_list : {field_list_sequence_rep, str_of('$1'), 
 % FieldList = IdentList ":" type.
 field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
 
-% +IdentList = identdef {"," identdef}.
+% IdentList = identdef {"," identdef}.
 ident_list -> ident_list_rep : '$1'.
 ident_list_rep -> identdef t_comma ident_list_rep: {ident_list, str_of('$1'), ['$1'] ++ value_of('$3')}.
 ident_list_rep -> identdef : {ident_list, str_of('$1'), ['$1']}.
@@ -199,29 +272,29 @@ formal_parameters_fps_rep -> '$empty' : nil.
 
 formal_parameters -> formal_parameters_fps_rep formal_parameters_qual_rep : {formal_parameters, {'$1', '$2'}}.
 
-% +FPSection = [VAR] ident {"," ident} ":" FormalType.
+% FPSection = [VAR] ident {"," ident} ":" FormalType.
 fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$2','$4'}}.
 fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
 fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
 
-% +FormalType = {ARRAY OF} qualident.
+% FormalType = {ARRAY OF} qualident.
 formal_type -> formal_type_rep qualident : {formal_type, str_of('$2'), {'$1', '$2'}}.
 formal_type_rep -> t_array t_of formal_type_rep : {array_of, '$3'}.
 formal_type_rep -> '$empty' : nil.
 
-% % qualident = [ident "."] ident.
+%+ qualident = [ident "."] ident.
 qualident -> ident t_dot ident : {qualident, str_of('$1'), {'$1', '$3'}}.
 qualident -> ident : {qualident, str_of('$1'), '$1'}.
 
-% +identdef = ident ["*"].
+% identdef = ident ["*"].
 identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
 identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
 
 % VariableDeclaration = IdentList ":" type.
 variable_declaration -> ident_list t_colon type : {variable_declaration, str_of('$1'), {'$1', '$3'}}.
 
-% +type = qualident | StrucType.
+% type = qualident | StrucType.
 % type -> struct_type : {type, str_of('$1'), '$1'}.
 type -> qualident : {type, str_of('$1'), '$1'}.
 
@@ -239,11 +312,11 @@ procedure_body_part1 -> '$empty' : nil.
 procedure_body_part2 -> t_return expression : '$2'.
 procedure_body_part2 -> '$empty' : nil.
 
-% expression = SimpleExpression [relation SimpleExpression].
+%+ expression = SimpleExpression [relation SimpleExpression].
 expression -> simple_expression relation simple_expression: {expression, str_of('$1'), {'$1', '$3'}}.
 expression -> simple_expression : {expression, str_of('$1'), '$1'}.
 
-% +relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
+%+ relation = "=" | "#" | "<" | "<=" | ">" | ">=" | IN | IS.
 relation -> t_equ : {relation, str_of('$1'), '$1'}.
 relation -> t_sharp : {relation, str_of('$1'), '$1'}.
 relation -> t_less : {relation, str_of('$1'), '$1'}.
@@ -253,7 +326,7 @@ relation -> t_moreeq : {relation, str_of('$1'), '$1'}.
 relation -> t_in : {relation, str_of('$1'), '$1'}.
 relation -> t_is : {relation, str_of('$1'), '$1'}.
 
-% SimpleExpression = ["+" | "-"] term {AddOperator term}.
+%+ SimpleExpression = ["+" | "-"] term {AddOperator term}.
 simple_expression -> simple_expression_pre term simple_expression_rep : {simple_expression, str_of('$2'), {'$1', '$1', '$3'}}.
 
 simple_expression_rep -> simple_expression_rep add_operator term : {'$1', '$2', '$3'}.
@@ -264,25 +337,25 @@ simple_expression_pre -> t_plus : plus.
 simple_expression_pre -> t_minus : minus.
 simple_expression_pre -> '$empty' : nil.
 
-% +AddOperator = "+" | "-" | OR.
+%+ AddOperator = "+" | "-" | OR.
 add_operator -> t_plus : {add_operator, str_of('$1'), '$1'}.
 add_operator -> t_minus : {add_operator, str_of('$1'), '$1'}.
 add_operator -> t_or : {add_operator, str_of('$1'), '$1'}.
 
-% term = factor {MulOperator factor}.
+%+ term = factor {MulOperator factor}.
 term_rep -> term_rep mul_operator factor: {term_rep, str_of('$2'), {'$1','$2','$3'}}.
 term_rep -> factor : {term_rep, str_of('$1'), {'$1'}}.
 term_rep -> '$empty' : nil.
 term -> factor term_rep: {term, str_of('$1'), {'$1', '$2'}}.
 
-% +MulOperator = "*" | "/" | DIV | MOD | "&".
+%+ MulOperator = "*" | "/" | DIV | MOD | "&".
 mul_operator -> t_mul : {mul_operator, str_of('$1'), '$1'}.
 mul_operator -> t_divide : {mul_operator, str_of('$1'), '$1'}.
 mul_operator -> t_div : {mul_operator, str_of('$1'), '$1'}.
 mul_operator -> t_mod : {mul_operator, str_of('$1'), '$1'}.
 mul_operator -> t_and : {mul_operator, str_of('$1'), '$1'}.
 
-% factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
+%+ factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
 factor -> number : {factor, str_of('$1'), '$1'}.
 factor -> string : {factor, str_of('$1'), '$1'}.
 factor -> t_nil : {factor, str_of('$1'), '$1'}.
@@ -291,28 +364,30 @@ factor -> t_false : {factor, str_of('$1'), '$1'}.
 factor -> set : {factor, str_of('$1'), '$1'}.
 factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
 factor -> designator : {factor, nil, '$1'}.
-factor -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+factor -> factor_expression : '$1'.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
-% designator = qualident {selector}.
+factor_expression -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+
+%+ designator = qualident {selector}.
 designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 designator_rep -> selector: {designator_rep, str_of('$1'), ['$1']}.
 designator_rep -> '$empty' : nil.
 designator -> qualident designator_rep : {designator, str_of('$1'), {'$1', '$2'}}.
 
-% selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
+%+ selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
 selector -> t_dot ident : {selector, str_of('$1'), {'$1', '$2'}}.
 selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector -> t_arrow : {selector, str_of('$1'), '$1'}.
 selector -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 
-% set = "{" [ element {"," element} ] "}".
+%+ set = "{" [ element {"," element} ] "}".
 set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
 set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
 set_rep -> '$empty' : [].
 set -> t_lbrace set_rep t_rbrace : {set_rep, str_of('$1'), '$2'}.
 
-% element = expression [".." expression].
+%+ element = expression [".." expression].
 element -> expression t_ddot expression: {element, str_of('$1'), {'$1', '$3'}}.
 element -> expression : {element, str_of('$1'), '$1'}.
 
