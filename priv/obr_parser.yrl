@@ -81,9 +81,7 @@ Nonassoc 20 ident_t_dot.
 Left 30 selector_t_dot.
 
 Unary 35 t_tilda.
-Nonassoc 40 expression.  
-Nonassoc 42 simple_expression.
-Nonassoc 43 simple_expression_pre.
+
 
 Left 60 mul_operator.
 Left 70 add_operator.
@@ -102,10 +100,18 @@ Left 75 t_lpar t_rpar.
 % поэтому вот такой приоритет. однако, не понятно
 % как будет работать селектор со скобками, когда он
 % действительно будет нужен
+
+Nonassoc 76 assignment.
+Nonassoc 77 expression.  
+Nonassoc 78 simple_expression.
+Nonassoc 79 simple_expression_pre.
+
+Nonassoc 80 procedure_call.
 Nonassoc 81 designator.
 Nonassoc 82 actual_parameters.
-Nonassoc 83 designator_rep.
-Nonassoc 84 qualident.
+Nonassoc 83 exp_list.
+Nonassoc 84 designator_rep.
+Nonassoc 85 qualident.
 
 
 
@@ -128,10 +134,10 @@ Nonassoc  10100 ident t_equ t_sharp
 % Unary 300 '@'.
 
 
-% root_def -> module : '$1'.
+root_def -> module : '$1'.
 % root_def -> procedure_call_parameters : '$1'.
 % root_def -> selector_pars : '$1'.
-root_def -> factor : '$1'.
+% root_def -> statement_sequence : '$1'.
 
 
 %+ number = integer | real.

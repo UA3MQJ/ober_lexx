@@ -1,4 +1,8 @@
-sqrt(s)
+MODULE OopInsertSort;
+BEGIN
+  sqrt();
+  y:=2
+END OopInsertSort.
 
 (* MODULE OopInsertSort; 
 MODULE OopInsertSort;
