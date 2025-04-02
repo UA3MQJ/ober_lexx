@@ -22,6 +22,7 @@ t_begin_statement_sequence
 selector_t_dot ident_t_dot
 qualident_ident selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
+element set set_rep 
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
@@ -35,8 +36,7 @@ exp_list exp_list_rep factor_expression
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep  actual_parameters declaration_sequence
 % procedure_call procedure_body
-% if_statement case_statement while_statement repeat_statement
-% element set set_rep  
+% if_statement case_statement while_statement repeat_statement 
 %  field_list_sequence_rep
 % case_statement_rep array_type_rep while_statement_rep
 % if_statement_rep   
@@ -60,11 +60,12 @@ t_more t_moreeq t_import t_sharp t_less t_lesseq
 t_in t_is t_plus t_minus t_or
 t_mul t_divide t_div t_mod t_and 
 t_arrow t_lpar t_rpar t_lbrack t_rbrack t_tilda
-% t_ddot   t_array t_of t_colon t_var
+t_lbrace t_rbrace t_ddot
+%    t_array t_of t_colon t_var
 % t_for t_to t_by t_do t_record   t_procedure  
 %      t_pointer
 % t_return t_vline t_case t_while t_elseif t_elsif t_else t_then t_if
-% t_lbrace t_rbrace t_const t_type
+%  t_const t_type
 % t_repeat t_until 
 .
 
@@ -90,7 +91,8 @@ Nonassoc  10000 t_begin  t_nil t_true t_false
 
 Nonassoc  10100 ident t_equ t_sharp 
   t_less t_lesseq t_more t_moreeq t_in t_is 
-  t_lpar t_rpar t_lbrack t_rbrack.
+  t_lpar t_rpar t_lbrack t_rbrack 
+  t_lbrace t_rbrace t_ddot.
 
 % Unary 500 'not'.
 % Unary 400 '+'.
@@ -317,7 +319,7 @@ factor -> string : {factor, str_of('$1'), '$1'}.
 factor -> t_nil : {factor, str_of('$1'), '$1'}.
 factor -> t_true : {factor, str_of('$1'), '$1'}.
 factor -> t_false : {factor, str_of('$1'), '$1'}.
-% factor -> set : {factor, str_of('$1'), '$1'}.
+factor -> set : {factor, str_of('$1'), '$1'}.
 % factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
 factor -> designator : {factor, nil, '$1'}.
 factor -> factor_expression : '$1'.
@@ -339,15 +341,15 @@ selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '
 selector -> t_arrow : {selector, str_of('$1'), '$1'}.
 selector -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 
-% %+ set = "{" [ element {"," element} ] "}".
-% set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
-% set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
-% set_rep -> '$empty' : [].
-% set -> t_lbrace set_rep t_rbrace : {set_rep, str_of('$1'), '$2'}.
+% set = "{" [ element {"," element} ] "}".
+set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
+set_rep -> element : {set_rep, str_of('$1'), ['$1']}.
+set_rep -> '$empty' : [].
+set -> t_lbrace set_rep t_rbrace : {set_rep, str_of('$1'), '$2'}.
 
-% %+ element = expression [".." expression].
-% element -> expression t_ddot expression: {element, str_of('$1'), {'$1', '$3'}}.
-% element -> expression : {element, str_of('$1'), '$1'}.
+% element = expression [".." expression].
+element -> expression t_ddot expression: {element, str_of('$1'), {'$1', '$3'}}.
+element -> expression : {element, str_of('$1'), '$1'}.
 
 % ExpList = expression {"," expression}.
 % ExpList = exp_list_rep.

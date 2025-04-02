@@ -1,6 +1,6 @@
 MODULE OopInsertSort;
 BEGIN
-  a.i:=(123+321)
+  a.i:={1}
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 
