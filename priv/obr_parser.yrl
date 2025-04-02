@@ -25,16 +25,17 @@ exp_list exp_list_rep factor_expression
 element set set_rep actual_parameters procedure_call procedure_call_parameters
 selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
+for_statement const_expression
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
 % case_label_list case_label_list_rep ident_list_rep ident_list
 % fpsection type pointer_type
-% const_expression  length variable_declaration
+%   length variable_declaration
 % field_list const_declaration type_declaration
 % procedure_type array_type record_type
 % ntcase field_list_sequence fpsection_ident_rep
-% for_statement base_type
+%  base_type
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep   declaration_sequence
 %  procedure_body
@@ -64,8 +65,9 @@ t_mul t_divide t_div t_mod t_and
 t_arrow t_lpar t_rpar t_lbrack t_rbrack t_tilda
 t_lbrace t_rbrace t_ddot
 t_elseif t_elsif t_else t_then t_if
+t_for t_to t_by t_do
 %    t_array t_of t_colon t_var
-% t_for t_to t_by t_do t_record   t_procedure  
+%  t_record   t_procedure  
 %      t_pointer
 % t_return t_vline t_case t_while
 %  t_const t_type
@@ -129,6 +131,7 @@ Nonassoc  10100 ident t_equ t_sharp
   t_less t_lesseq t_more t_moreeq t_in t_is 
   t_lbrace t_rbrace t_ddot
   t_elseif t_elsif t_else t_then t_if
+  t_for t_to t_by t_do
 .
 
 % Unary 500 'not'.
@@ -202,8 +205,8 @@ import -> ident : {import, str_of('$1'), '$1'}.
 % %+ ConstDeclaration = identdef "=" ConstExpression.
 % const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
 
-% %+ ConstExpression = expression.
-% const_expression -> expression : {const_expression, str_of('$1'), '$1'}.
+% ConstExpression = expression.
+const_expression -> expression : {const_expression, str_of('$1'), '$1'}.
 
 % % TypeDeclaration = identdef "=" StrucType.
 % type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1'), {'$1', '$3'}}.
@@ -412,7 +415,7 @@ statement -> if_statement     : {statement, str_of('$1'), '$1'}.
 % statement -> case_statement   : {statement, str_of('$1'), '$1'}.
 % statement -> while_statement  : {statement, str_of('$1'), '$1'}.
 % statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
-% statement -> for_statement    : {statement, str_of('$1'), '$1'}.
+statement -> for_statement    : {statement, str_of('$1'), '$1'}.
 statement -> '$empty' : nil.
 
 % assignment = designator ":=" expression.
@@ -422,7 +425,6 @@ assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1',
 procedure_call -> designator procedure_call_parameters : {procedure_call, str_of('$1'), {'$1', '$2'}}.
 procedure_call -> designator : {procedure_call, str_of('$1'), {'$1', nil}}.
 procedure_call_parameters -> actual_parameters : {procedure_call_parameters1, '$1'}.
-% procedure_call_parameters -> '$empty' : {procedure_call_parameters2, nil}.
 
 % StatementSequence = statement {";" statement}.
 % StatementSequence = statement_sequence_rep.
@@ -485,11 +487,11 @@ u_elsif -> t_elseif : '$1'.
 % repeat_statement -> t_repeat statement_sequence t_until expression : 
 %  {repeat_statement, str_of('$1'), {'$2', '$4'}}.
 
-% % ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
-% for_statement -> t_for ident t_assign expression t_to expression t_by const_expression t_do statement_sequence t_end : 
-%   {for_statement, str_of('$1'), {'$2', '$4', '$6', '$8', '$10'}}.
-% for_statement -> t_for ident t_assign expression t_to expression t_do statement_sequence t_end : 
-%   {for_statement, str_of('$1'), {'$2', '$4', '$6',  nil, '$8'}}.
+% ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
+for_statement -> t_for ident t_assign expression t_to expression t_by const_expression t_do statement_sequence t_end : 
+  {for_statement, str_of('$1'), {'$2', '$4', '$6', '$8', '$10'}}.
+for_statement -> t_for ident t_assign expression t_to expression t_do statement_sequence t_end : 
+  {for_statement, str_of('$1'), {'$2', '$4', '$6',  nil, '$8'}}.
 
 
 Erlang code.

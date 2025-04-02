@@ -1,14 +1,7 @@
 MODULE OopInsertSort;
 BEGIN
-  IF TRUE THEN
-    x:=1
-  ELSIF TRUE THEN
-    x:=2
-  ELSIF TRUE THEN
-    x:=2
-  ELSE
-	sqrt();
-	y:=2
+  FOR i:=1 TO 2 DO
+    x:=x+i
   END
 END OopInsertSort.
 
