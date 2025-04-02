@@ -26,6 +26,7 @@ element set set_rep actual_parameters procedure_call procedure_call_parameters
 selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
 for_statement const_expression repeat_statement
+while_statement while_statement_rep
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
@@ -39,9 +40,9 @@ for_statement const_expression repeat_statement
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep   declaration_sequence
 %  procedure_body
-%  case_statement while_statement  
+%  case_statement   
 %  field_list_sequence_rep
-% case_statement_rep array_type_rep while_statement_rep
+% case_statement_rep array_type_rep 
 %    
 % struct_type 
 % ds_const_declaration ds_const_declaration_rep
@@ -66,11 +67,11 @@ t_arrow t_lpar t_rpar t_lbrack t_rbrack t_tilda
 t_lbrace t_rbrace t_ddot
 t_elseif t_elsif t_else t_then t_if
 t_for t_to t_by t_do
-t_repeat t_until
+t_repeat t_until t_while
 %    t_array t_of t_colon t_var
 %  t_record   t_procedure  
 %      t_pointer
-% t_return t_vline t_case t_while
+% t_return t_vline t_case 
 %  t_const t_type
 %  
 .
@@ -133,7 +134,7 @@ Nonassoc  10100 ident t_equ t_sharp
   t_lbrace t_rbrace t_ddot
   t_elseif t_elsif t_else t_then t_if
   t_for t_to t_by t_do
-  t_repeat t_until
+  t_repeat t_until t_while
 .
 
 % Unary 500 'not'.
@@ -415,7 +416,7 @@ statement -> assignment       : {statement, str_of('$1'), '$1'}.
 statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
 statement -> if_statement     : {statement, str_of('$1'), '$1'}.
 % statement -> case_statement   : {statement, str_of('$1'), '$1'}.
-% statement -> while_statement  : {statement, str_of('$1'), '$1'}.
+statement -> while_statement  : {statement, str_of('$1'), '$1'}.
 statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
 statement -> for_statement    : {statement, str_of('$1'), '$1'}.
 statement -> '$empty' : nil.
@@ -477,13 +478,13 @@ u_elsif -> t_elseif : '$1'.
 % label -> integer_dec : {label, str_of('$1'), '$1'}.
 % label -> integer_hex : {label, str_of('$1'), '$1'}.
 
-% % WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
-% % while_statement = WHILE expression DO StatementSequence while_statement_rep END.
-% while_statement -> t_while expression t_do statement_sequence while_statement_rep t_end : {while_statement, str_of('$1'), {'$2', '$3', '$4'}}.
+% WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
+% while_statement = WHILE expression DO StatementSequence while_statement_rep END.
+while_statement -> t_while expression t_do statement_sequence while_statement_rep t_end : {while_statement, str_of('$1'), {'$2', '$3', '$4'}}.
 
-% while_statement_rep -> while_statement_rep u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), value_of('$1') ++ [{'$3', '$5'}]}.
-% while_statement_rep -> u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
-% while_statement_rep -> '$empty' : nil.
+while_statement_rep -> while_statement_rep u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), value_of('$1') ++ [{'$3', '$5'}]}.
+while_statement_rep -> u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
+while_statement_rep -> '$empty' : nil.
 
 % RepeatStatement = REPEAT StatementSequence UNTIL expression.
 repeat_statement -> t_repeat statement_sequence t_until expression : 

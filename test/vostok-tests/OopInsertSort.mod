@@ -1,8 +1,10 @@
 MODULE OopInsertSort;
 BEGIN
-  REPEAT
+  WHILE TRUE DO
+    x:=x-1
+  ELSIF FALSE DO
     x:=x+1
-  UNTIL TRUE
+  END
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 
