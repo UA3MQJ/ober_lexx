@@ -27,10 +27,12 @@ selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
 for_statement const_expression repeat_statement
 while_statement while_statement_rep
+case_statement_rep case_statement label label_range ntcase
+case_label_list case_label_list_rep
 % formal_type formal_type_rep
 %    
-%  label label_range identdef
-% case_label_list case_label_list_rep ident_list_rep ident_list
+%   identdef
+%  ident_list_rep ident_list
 % fpsection type pointer_type
 %   length variable_declaration
 % field_list const_declaration type_declaration
@@ -39,10 +41,9 @@ while_statement while_statement_rep
 %  base_type
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep   declaration_sequence
-%  procedure_body
-%  case_statement   
+%  procedure_body   
 %  field_list_sequence_rep
-% case_statement_rep array_type_rep 
+%  array_type_rep 
 %    
 % struct_type 
 % ds_const_declaration ds_const_declaration_rep
@@ -68,10 +69,11 @@ t_lbrace t_rbrace t_ddot
 t_elseif t_elsif t_else t_then t_if
 t_for t_to t_by t_do
 t_repeat t_until t_while
-%    t_array t_of t_colon t_var
+t_case t_of t_colon t_vline
+%    t_array   t_var
 %  t_record   t_procedure  
 %      t_pointer
-% t_return t_vline t_case 
+% t_return   
 %  t_const t_type
 %  
 .
@@ -135,6 +137,7 @@ Nonassoc  10100 ident t_equ t_sharp
   t_elseif t_elsif t_else t_then t_if
   t_for t_to t_by t_do
   t_repeat t_until t_while
+  t_case t_of t_colon t_vline
 .
 
 % Unary 500 'not'.
@@ -415,7 +418,7 @@ actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), 
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
 statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
 statement -> if_statement     : {statement, str_of('$1'), '$1'}.
-% statement -> case_statement   : {statement, str_of('$1'), '$1'}.
+statement -> case_statement   : {statement, str_of('$1'), '$1'}.
 statement -> while_statement  : {statement, str_of('$1'), '$1'}.
 statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
 statement -> for_statement    : {statement, str_of('$1'), '$1'}.
@@ -451,32 +454,32 @@ if_statement_rep -> '$empty' : nil.
 u_elsif -> t_elsif : '$1'.
 u_elsif -> t_elseif : '$1'.
 
-% % CaseStatement = CASE expression OF case {"|" case} END.
-% % CaseStatement = CASE expression OF case_statement_rep END.
-% case_statement -> t_case expression t_of case_statement_rep t_end : {case_statement, str_of('$1'), {'$2', '$4'}}.
+% CaseStatement = CASE expression OF case {"|" case} END.
+% CaseStatement = CASE expression OF case_statement_rep END.
+case_statement -> t_case expression t_of case_statement_rep t_end : {case_statement, str_of('$1'), {'$2', '$4'}}.
 
-% case_statement_rep -> case_statement_rep t_vline ntcase: {case_statement_rep, str_of('$1'), ['$1'] ++ ['$3']}.
-% case_statement_rep -> ntcase : {case_statement_rep, '$1', ['$1']}.
+case_statement_rep -> case_statement_rep t_vline ntcase: {case_statement_rep, str_of('$1'), ['$1'] ++ ['$3']}.
+case_statement_rep -> ntcase : {case_statement_rep, '$1', ['$1']}.
 
-% % case = [CaseLabelList ":" StatementSequence].
-% % ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
-% ntcase -> case_label_list t_colon statement_sequence : {ntcase, '$1', {'$1', '$3'}}.
-% ntcase -> '$empty' : nil.
+% case = [CaseLabelList ":" StatementSequence].
+% ntcase -> '$empty' : 'Elixir.T':new({ntcase, nil, nil}).
+ntcase -> case_label_list t_colon statement_sequence : {ntcase, '$1', {'$1', '$3'}}.
+ntcase -> '$empty' : nil.
 
-% % +CaseLabelList = LabelRange {"," LabelRange}.
-% case_label_list_rep -> label_range t_comma case_label_list_rep : {case_label_list, str_of('$1'),[('$1')] ++ value_of('$3')}.
-% case_label_list_rep -> label_range : {case_label_list, str_of('$1'), [('$1')]}.
-% case_label_list -> case_label_list_rep : '$1'.
+% +CaseLabelList = LabelRange {"," LabelRange}.
+case_label_list_rep -> label_range t_comma case_label_list_rep : {case_label_list, str_of('$1'),[('$1')] ++ value_of('$3')}.
+case_label_list_rep -> label_range : {case_label_list, str_of('$1'), [('$1')]}.
+case_label_list -> case_label_list_rep : '$1'.
 
-% % LabelRange = label [".." label].
-% label_range -> label t_ddot label: {label_range, str_of('$1'), {'$1', '$3'}}.
-% label_range -> label : {label_range, str_of('$1'), '$1'}.
+% LabelRange = label [".." label].
+label_range -> label t_ddot label: {label_range, str_of('$1'), {'$1', '$3'}}.
+label_range -> label : {label_range, str_of('$1'), '$1'}.
 
-% % label = integer | string | qualident.
-% label -> qualident : {label, str_of('$1'), '$1'}.
-% label -> string : {label, str_of('$1'), '$1'}.
-% label -> integer_dec : {label, str_of('$1'), '$1'}.
-% label -> integer_hex : {label, str_of('$1'), '$1'}.
+% label = integer | string | qualident.
+label -> qualident : {label, str_of('$1'), '$1'}.
+label -> string : {label, str_of('$1'), '$1'}.
+label -> integer_dec : {label, str_of('$1'), '$1'}.
+label -> integer_hex : {label, str_of('$1'), '$1'}.
 
 % WhileStatement = WHILE expression DO StatementSequence {ELSIF expression DO StatementSequence} END.
 % while_statement = WHILE expression DO StatementSequence while_statement_rep END.

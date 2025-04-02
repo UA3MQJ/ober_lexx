@@ -1,9 +1,8 @@
 MODULE OopInsertSort;
 BEGIN
-  WHILE TRUE DO
-    x:=x-1
-  ELSIF FALSE DO
-    x:=x+1
+  CASE xx OF 
+    1: x:=x+1 |
+	2: x:=x-1
   END
 END OopInsertSort.
 
