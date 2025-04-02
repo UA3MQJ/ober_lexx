@@ -1,8 +1,8 @@
 MODULE OopInsertSort;
 BEGIN
-  FOR i:=1 TO 2 DO
-    x:=x+i
-  END
+  REPEAT
+    x:=x+1
+  UNTIL TRUE
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 

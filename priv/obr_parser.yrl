@@ -25,7 +25,7 @@ exp_list exp_list_rep factor_expression
 element set set_rep actual_parameters procedure_call procedure_call_parameters
 selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
-for_statement const_expression
+for_statement const_expression repeat_statement
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
@@ -39,7 +39,7 @@ for_statement const_expression
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep   declaration_sequence
 %  procedure_body
-%  case_statement while_statement repeat_statement 
+%  case_statement while_statement  
 %  field_list_sequence_rep
 % case_statement_rep array_type_rep while_statement_rep
 %    
@@ -66,12 +66,13 @@ t_arrow t_lpar t_rpar t_lbrack t_rbrack t_tilda
 t_lbrace t_rbrace t_ddot
 t_elseif t_elsif t_else t_then t_if
 t_for t_to t_by t_do
+t_repeat t_until
 %    t_array t_of t_colon t_var
 %  t_record   t_procedure  
 %      t_pointer
 % t_return t_vline t_case t_while
 %  t_const t_type
-% t_repeat t_until 
+%  
 .
 
 Rootsymbol root_def .
@@ -132,6 +133,7 @@ Nonassoc  10100 ident t_equ t_sharp
   t_lbrace t_rbrace t_ddot
   t_elseif t_elsif t_else t_then t_if
   t_for t_to t_by t_do
+  t_repeat t_until
 .
 
 % Unary 500 'not'.
@@ -414,7 +416,7 @@ statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
 statement -> if_statement     : {statement, str_of('$1'), '$1'}.
 % statement -> case_statement   : {statement, str_of('$1'), '$1'}.
 % statement -> while_statement  : {statement, str_of('$1'), '$1'}.
-% statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
+statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
 statement -> for_statement    : {statement, str_of('$1'), '$1'}.
 statement -> '$empty' : nil.
 
@@ -483,9 +485,9 @@ u_elsif -> t_elseif : '$1'.
 % while_statement_rep -> u_elsif expression t_do statement_sequence : {while_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
 % while_statement_rep -> '$empty' : nil.
 
-% % RepeatStatement = REPEAT StatementSequence UNTIL expression.
-% repeat_statement -> t_repeat statement_sequence t_until expression : 
-%  {repeat_statement, str_of('$1'), {'$2', '$4'}}.
+% RepeatStatement = REPEAT StatementSequence UNTIL expression.
+repeat_statement -> t_repeat statement_sequence t_until expression : 
+ {repeat_statement, str_of('$1'), {'$2', '$4'}}.
 
 % ForStatement = FOR ident ":=" expression TO expression [BY ConstExpression] DO StatementSequence END.
 for_statement -> t_for ident t_assign expression t_to expression t_by const_expression t_do statement_sequence t_end : 
