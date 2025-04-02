@@ -1,6 +1,6 @@
 MODULE OopInsertSort;
 BEGIN
-  a.i:=1+2*3
+  a.i:=x.y.z(xx)
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 

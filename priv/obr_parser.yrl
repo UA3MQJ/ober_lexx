@@ -58,10 +58,10 @@ t_equ t_assign t_nil t_true t_false t_comma
 t_more t_moreeq t_import t_sharp t_less t_lesseq
 t_in t_is t_plus t_minus t_or
 t_mul t_divide t_div t_mod t_and 
-
+t_arrow t_lpar t_rpar
 % t_ddot   t_array t_of t_colon t_var
-% t_for t_to t_by t_do t_record t_rpar t_lpar t_procedure  
-% t_tilda   t_lbrack t_rbrack t_arrow t_pointer
+% t_for t_to t_by t_do t_record   t_procedure  
+% t_tilda   t_lbrack t_rbrack  t_pointer
 % t_return t_vline t_case t_while t_elseif t_elsif t_else t_then t_if
 % t_lbrace t_rbrace t_const t_type
 % t_repeat t_until 
@@ -84,10 +84,11 @@ Left 70 add_operator.
 
 
 Nonassoc  10000 t_begin  t_nil t_true t_false
-  t_module t_semicolon t_end t_comma. 
+  t_module t_semicolon t_end t_comma t_arrow. 
 
 Nonassoc  10100 ident t_equ t_sharp 
-  t_less t_lesseq t_more t_moreeq t_in t_is.
+  t_less t_lesseq t_more t_moreeq t_in t_is 
+  t_lpar t_rpar.
 
 % Unary 500 'not'.
 % Unary 400 '+'.
@@ -333,8 +334,8 @@ selector_t_dot -> t_dot : '$1'.
 selector_ident -> ident : '$1'.
 selector -> selector_t_dot selector_ident : {selector, str_of('$1'), {'$1', '$2'}}.
 % selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
-% selector -> t_arrow : {selector, str_of('$1'), '$1'}.
-% selector -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector -> t_arrow : {selector, str_of('$1'), '$1'}.
+selector -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % %+ set = "{" [ element {"," element} ] "}".
 % set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
