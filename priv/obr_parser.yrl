@@ -22,7 +22,8 @@ t_begin_statement_sequence
 selector_t_dot ident_t_dot
 qualident_ident selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
-element set set_rep actual_parameters
+element set set_rep actual_parameters procedure_call procedure_call_parameters
+selector_pars
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
@@ -35,7 +36,7 @@ element set set_rep actual_parameters
 % for_statement base_type
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep   declaration_sequence
-% procedure_call procedure_body
+%  procedure_body
 % if_statement case_statement while_statement repeat_statement 
 %  field_list_sequence_rep
 % case_statement_rep array_type_rep while_statement_rep
@@ -80,10 +81,37 @@ Nonassoc 20 ident_t_dot.
 Left 30 selector_t_dot.
 
 Unary 35 t_tilda.
-Unary 40 simple_expression_pre.
+Nonassoc 40 expression.  
+Nonassoc 42 simple_expression.
+Nonassoc 43 simple_expression_pre.
 
 Left 60 mul_operator.
 Left 70 add_operator.
+
+Left 75 t_lpar t_rpar.
+
+% ProcedureCall = designator [ActualParameters].
+%                     |              |
+%                     |              +- ActualParameters = "(" [ExpList] ")"
+% 				            |
+% 					          +-- designator = qualident {selector}.
+% 					                     |          |
+% 										           |          +- selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
+% 									          	 |
+%                                +- qualident = [ident "."] ident.	
+% поэтому вот такой приоритет. однако, не понятно
+% как будет работать селектор со скобками, когда он
+% действительно будет нужен
+Nonassoc 81 designator.
+Nonassoc 82 actual_parameters.
+Nonassoc 83 designator_rep.
+Nonassoc 84 qualident.
+
+
+
+
+% Left 170 procedure_call.
+% Left 270 actual_parameters.
 
 
 Nonassoc  10000 t_begin  t_nil t_true t_false
@@ -91,7 +119,7 @@ Nonassoc  10000 t_begin  t_nil t_true t_false
 
 Nonassoc  10100 ident t_equ t_sharp 
   t_less t_lesseq t_more t_moreeq t_in t_is 
-  t_lpar t_rpar t_lbrack t_rbrack 
+    
   t_lbrace t_rbrace t_ddot.
 
 % Unary 500 'not'.
@@ -100,7 +128,11 @@ Nonassoc  10100 ident t_equ t_sharp
 % Unary 300 '@'.
 
 
-root_def -> module : '$1'.
+% root_def -> module : '$1'.
+% root_def -> procedure_call_parameters : '$1'.
+% root_def -> selector_pars : '$1'.
+root_def -> factor : '$1'.
+
 
 %+ number = integer | real.
 number -> integer_dec : {number, str_of('$1'), '$1'}.
@@ -334,12 +366,15 @@ designator_rep -> '$empty' : nil.
 designator -> qualident designator_rep : {designator, str_of('$1'), {'$1', '$2'}}.
 
 % selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
-selector_t_dot -> t_dot : '$1'.
-selector_ident -> ident : '$1'.
 selector -> selector_t_dot selector_ident : {selector, str_of('$1'), {'$1', '$2'}}.
 selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector -> t_arrow : {selector, str_of('$1'), '$1'}.
-selector -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector -> selector_pars : '$1'.
+% selector_pars -> t_lpar t_rpar : {selector, str_of('$1'), {'$1', nil, '$2'}}.
+selector_pars -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector_t_dot -> t_dot : '$1'.
+selector_ident -> ident : '$1'.
+% selector -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % set = "{" [ element {"," element} ] "}".
 set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
@@ -358,12 +393,12 @@ exp_list_rep -> exp_list_rep t_comma expression: {exp_list_rep, str_of('$1'), va
 exp_list_rep -> expression : {exp_list_rep, str_of('$1'), ['$1']}.
 
 % ActualParameters = "(" [ExpList] ")" .
-actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
 actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
+actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
 
-% % statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
+% statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
-% statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
+statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
 % statement -> if_statement     : {statement, str_of('$1'), '$1'}.
 % statement -> case_statement   : {statement, str_of('$1'), '$1'}.
 % statement -> while_statement  : {statement, str_of('$1'), '$1'}.
@@ -374,9 +409,11 @@ statement -> '$empty' : nil.
 % assignment = designator ":=" expression.
 assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
-% % ProcedureCall = designator [ActualParameters].
-% procedure_call -> designator actual_parameters : {procedure_call, str_of('$1'), '$2'}.
-% procedure_call -> designator : {procedure_call, str_of('$1'), nil}.
+% ProcedureCall = designator [ActualParameters].
+procedure_call -> designator procedure_call_parameters : {procedure_call, str_of('$1'), {'$1', '$2'}}.
+procedure_call -> designator : {procedure_call, str_of('$1'), {'$1', nil}}.
+procedure_call_parameters -> actual_parameters : {procedure_call_parameters1, '$1'}.
+% procedure_call_parameters -> '$empty' : {procedure_call_parameters2, nil}.
 
 % StatementSequence = statement {";" statement}.
 % StatementSequence = statement_sequence_rep.

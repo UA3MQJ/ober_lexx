@@ -1,10 +1,11 @@
-MODULE OopInsertSort;
-BEGIN
-  a.i:=sqrt(ind)
-END OopInsertSort.
+sqrt(s)
 
 (* MODULE OopInsertSort; 
-
+MODULE OopInsertSort;
+BEGIN
+  sqrt();
+  y:=2
+END OopInsertSort.
 
 IMPORT Out, CLI;
 
