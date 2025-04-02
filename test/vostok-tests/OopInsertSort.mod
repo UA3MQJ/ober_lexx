@@ -1,5 +1,6 @@
 MODULE OopInsertSort;
 BEGIN
+  a.i:=zzzz.xx.yyy.www
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 
