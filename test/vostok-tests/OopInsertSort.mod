@@ -1,6 +1,6 @@
 MODULE OopInsertSort;
 BEGIN
-  a.i:={1}
+  a.i:=sqrt(ind)
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 

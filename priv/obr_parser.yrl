@@ -22,7 +22,7 @@ t_begin_statement_sequence
 selector_t_dot ident_t_dot
 qualident_ident selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
-element set set_rep 
+element set set_rep actual_parameters
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
@@ -34,7 +34,7 @@ element set set_rep
 % ntcase field_list_sequence fpsection_ident_rep
 % for_statement base_type
 % procedure_heading  procedure_declaration
-% formal_parameters formal_parameters_rep  actual_parameters declaration_sequence
+% formal_parameters formal_parameters_rep   declaration_sequence
 % procedure_call procedure_body
 % if_statement case_statement while_statement repeat_statement 
 %  field_list_sequence_rep
@@ -320,7 +320,7 @@ factor -> t_nil : {factor, str_of('$1'), '$1'}.
 factor -> t_true : {factor, str_of('$1'), '$1'}.
 factor -> t_false : {factor, str_of('$1'), '$1'}.
 factor -> set : {factor, str_of('$1'), '$1'}.
-% factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
+factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
 factor -> designator : {factor, nil, '$1'}.
 factor -> factor_expression : '$1'.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
@@ -357,9 +357,9 @@ exp_list -> exp_list_rep : {exp_list, str_of('$1'), '$1'}.
 exp_list_rep -> exp_list_rep t_comma expression: {exp_list_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
 exp_list_rep -> expression : {exp_list_rep, str_of('$1'), ['$1']}.
 
-% % ActualParameters = "(" [ExpList] ")" .
-% actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
-% actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
+% ActualParameters = "(" [ExpList] ")" .
+actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
+actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
 
 % % statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
