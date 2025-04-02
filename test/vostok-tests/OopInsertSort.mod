@@ -1,6 +1,6 @@
 MODULE OopInsertSort;
 BEGIN
-  a.i:=x.y.z(xx)
+  a.i:=(123+321)
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 
