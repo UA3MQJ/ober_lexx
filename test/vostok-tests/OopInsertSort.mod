@@ -1,7 +1,15 @@
 MODULE OopInsertSort;
 BEGIN
-  sqrt();
-  y:=2
+  IF TRUE THEN
+    x:=1
+  ELSIF TRUE THEN
+    x:=2
+  ELSIF TRUE THEN
+    x:=2
+  ELSE
+	sqrt();
+	y:=2
+  END
 END OopInsertSort.
 
 (* MODULE OopInsertSort; 

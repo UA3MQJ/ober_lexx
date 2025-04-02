@@ -24,6 +24,7 @@ qualident_ident selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
 element set set_rep actual_parameters procedure_call procedure_call_parameters
 selector_pars
+if_statement if_statement_rep u_elsif t_else_statement_sequence
 % formal_type formal_type_rep
 %    
 %  label label_range identdef
@@ -37,11 +38,11 @@ selector_pars
 % procedure_heading  procedure_declaration
 % formal_parameters formal_parameters_rep   declaration_sequence
 %  procedure_body
-% if_statement case_statement while_statement repeat_statement 
+%  case_statement while_statement repeat_statement 
 %  field_list_sequence_rep
 % case_statement_rep array_type_rep while_statement_rep
-% if_statement_rep   
-% struct_type t_else_statement_sequence
+%    
+% struct_type 
 % ds_const_declaration ds_const_declaration_rep
 % ds_type_declaration ds_type_declaration_rep
 % ds_variable_declaration ds_variable_declaration_rep
@@ -50,7 +51,7 @@ selector_pars
 % procedure_body_part1 procedure_body_part2
 % record_type record_type_part1 record_type_part2
 % 
-% u_elsif
+% 
 .
 
 Terminals
@@ -62,10 +63,11 @@ t_in t_is t_plus t_minus t_or
 t_mul t_divide t_div t_mod t_and 
 t_arrow t_lpar t_rpar t_lbrack t_rbrack t_tilda
 t_lbrace t_rbrace t_ddot
+t_elseif t_elsif t_else t_then t_if
 %    t_array t_of t_colon t_var
 % t_for t_to t_by t_do t_record   t_procedure  
 %      t_pointer
-% t_return t_vline t_case t_while t_elseif t_elsif t_else t_then t_if
+% t_return t_vline t_case t_while
 %  t_const t_type
 % t_repeat t_until 
 .
@@ -125,8 +127,9 @@ Nonassoc  10000 t_begin  t_nil t_true t_false
 
 Nonassoc  10100 ident t_equ t_sharp 
   t_less t_lesseq t_more t_moreeq t_in t_is 
-    
-  t_lbrace t_rbrace t_ddot.
+  t_lbrace t_rbrace t_ddot
+  t_elseif t_elsif t_else t_then t_if
+.
 
 % Unary 500 'not'.
 % Unary 400 '+'.
@@ -405,7 +408,7 @@ actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), 
 % statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
 statement -> procedure_call   : {statement, str_of('$1'), '$1'}.
-% statement -> if_statement     : {statement, str_of('$1'), '$1'}.
+statement -> if_statement     : {statement, str_of('$1'), '$1'}.
 % statement -> case_statement   : {statement, str_of('$1'), '$1'}.
 % statement -> while_statement  : {statement, str_of('$1'), '$1'}.
 % statement -> repeat_statement : {statement, str_of('$1'), '$1'}.
@@ -427,21 +430,21 @@ statement_sequence_rep -> statement_sequence_rep t_semicolon statement: {stateme
 statement_sequence_rep -> statement : {statement_sequence_rep, str_of('$1'), ['$1']}.
 statement_sequence -> statement_sequence_rep : {statement_sequence, str_of('$1'), value_of('$1')}.
 
-% % IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
-% % if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.
-% if_statement -> t_if expression t_then statement_sequence if_statement_rep t_else_statement_sequence t_end : 
-%   {if_statement, str_of('$1'), {'$2', '$4', '$5', '$6'}}.
+% IfStatement = IF expression THEN StatementSequence {ELSIF expression THEN StatementSequence} [ELSE StatementSequence] END.
+% if_statement = IF expression THEN StatementSequence if_statement_rep [ELSE StatementSequence] END.
+if_statement -> t_if expression t_then statement_sequence if_statement_rep t_else_statement_sequence t_end : 
+  {if_statement, str_of('$1'), {'$2', '$4', '$5', '$6'}}.
 
-% t_else_statement_sequence -> t_else statement_sequence : '$2'.
-% t_else_statement_sequence -> '$empty' : nil.
-% if_statement_rep -> if_statement_rep u_elsif expression t_then statement_sequence :
-%   {if_statement_rep, str_of('$1'), value_of('$1') ++[{'$3', '$5'}]}.
-% if_statement_rep -> u_elsif expression t_then statement_sequence :
-%   {if_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
-% if_statement_rep -> '$empty' : nil.
+t_else_statement_sequence -> t_else statement_sequence : '$2'.
+t_else_statement_sequence -> '$empty' : nil.
+if_statement_rep -> if_statement_rep u_elsif expression t_then statement_sequence :
+  {if_statement_rep, str_of('$1'), value_of('$1') ++[{'$3', '$5'}]}.
+if_statement_rep -> u_elsif expression t_then statement_sequence :
+  {if_statement_rep, str_of('$1'), [{'$2', '$4'}]}.
+if_statement_rep -> '$empty' : nil.
 
-% u_elsif -> t_elsif : '$1'.
-% u_elsif -> t_elseif : '$1'.
+u_elsif -> t_elsif : '$1'.
+u_elsif -> t_elseif : '$1'.
 
 % % CaseStatement = CASE expression OF case {"|" case} END.
 % % CaseStatement = CASE expression OF case_statement_rep END.
