@@ -20,9 +20,9 @@ import_list import_list_rep import qualident
 selector number 
 t_begin_statement_sequence
 selector_t_dot ident_t_dot
-qualident_ident selector_ident
+qualident_ident selector_ident add_operator mul_operator
 % formal_type formal_type_rep
-%  mul_operator  add_operator
+%    
 %  label label_range identdef
 % case_label_list case_label_list_rep ident_list_rep ident_list
 % fpsection type pointer_type
@@ -56,10 +56,9 @@ integer_dec integer_hex real string ident
 t_module t_semicolon t_begin t_end t_dot 
 t_equ t_assign t_nil t_true t_false t_comma
 t_more t_moreeq t_import t_sharp t_less t_lesseq
- t_in t_is
+t_in t_is t_plus t_minus t_or
+t_mul t_divide t_div t_mod t_and 
 
-% t_mul t_divide t_div t_mod t_and 
-% t_plus t_minus t_or   
 % t_ddot   t_array t_of t_colon t_var
 % t_for t_to t_by t_do t_record t_rpar t_lpar t_procedure  
 % t_tilda   t_lbrack t_rbrack t_arrow t_pointer
@@ -77,6 +76,11 @@ Nonassoc 20 ident_t_dot.
 
 % Для selector (левоассоциативная точка)
 Left 30 selector_t_dot.
+
+Unary 40 simple_expression_pre.
+
+Left 60 mul_operator.
+Left 70 add_operator.
 
 
 Nonassoc  10000 t_begin  t_nil t_true t_false
@@ -278,31 +282,31 @@ relation -> t_is : {relation, str_of('$1'), '$1'}.
 %+ SimpleExpression = ["+" | "-"] term {AddOperator term}.
 simple_expression -> simple_expression_pre term simple_expression_rep : {simple_expression, str_of('$2'), {'$1', '$2', '$3'}}.
 
-% simple_expression_rep -> simple_expression_rep add_operator term : {'$1', '$2', '$3'}.
-% simple_expression_rep -> add_operator term : {'$1', '$2'}.
+simple_expression_rep -> simple_expression_rep add_operator term : {'$1', '$2', '$3'}.
+simple_expression_rep -> add_operator term : {'$1', '$2'}.
 simple_expression_rep -> '$empty' : nil.
 
-% simple_expression_pre -> t_plus : plus.
-% simple_expression_pre -> t_minus : minus.
+simple_expression_pre -> t_plus : plus.
+simple_expression_pre -> t_minus : minus.
 simple_expression_pre -> '$empty' : nil.
 
-% %+ AddOperator = "+" | "-" | OR.
-% add_operator -> t_plus : {add_operator, str_of('$1'), '$1'}.
-% add_operator -> t_minus : {add_operator, str_of('$1'), '$1'}.
-% add_operator -> t_or : {add_operator, str_of('$1'), '$1'}.
+% AddOperator = "+" | "-" | OR.
+add_operator -> t_plus : {add_operator, str_of('$1'), '$1'}.
+add_operator -> t_minus : {add_operator, str_of('$1'), '$1'}.
+add_operator -> t_or : {add_operator, str_of('$1'), '$1'}.
 
-%+ term = factor {MulOperator factor}.
-% term_rep -> term_rep mul_operator factor: {term_rep, str_of('$2'), {'$1','$2','$3'}}.
-% term_rep -> factor : {term_rep, str_of('$1'), {'$1'}}.
+% term = factor {MulOperator factor}.
+term_rep -> term_rep mul_operator factor: {term_rep, str_of('$2'), {'$1','$2','$3'}}.
+term_rep -> factor : {term_rep, str_of('$1'), {'$1'}}.
 term_rep -> '$empty' : nil.
 term -> factor term_rep: {term, str_of('$1'), {'$1', '$2'}}.
 
-% %+ MulOperator = "*" | "/" | DIV | MOD | "&".
-% mul_operator -> t_mul : {mul_operator, str_of('$1'), '$1'}.
-% mul_operator -> t_divide : {mul_operator, str_of('$1'), '$1'}.
-% mul_operator -> t_div : {mul_operator, str_of('$1'), '$1'}.
-% mul_operator -> t_mod : {mul_operator, str_of('$1'), '$1'}.
-% mul_operator -> t_and : {mul_operator, str_of('$1'), '$1'}.
+% MulOperator = "*" | "/" | DIV | MOD | "&".
+mul_operator -> t_mul : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_divide : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_div : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_mod : {mul_operator, str_of('$1'), '$1'}.
+mul_operator -> t_and : {mul_operator, str_of('$1'), '$1'}.
 
 %+ factor = number | string | NIL | TRUE | FALSE | set | designator [ActualParameters] | "(" expression ")" | "~" factor.
 factor -> number : {factor, str_of('$1'), '$1'}.
