@@ -1,4 +1,5 @@
 MODULE OopInsertSort;
+IMPORT a,b,d;
 BEGIN
   CASE xx OF 
     1: x:=x+1 |

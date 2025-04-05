@@ -29,30 +29,31 @@ for_statement const_expression repeat_statement
 while_statement while_statement_rep
 case_statement_rep case_statement label label_range ntcase
 case_label_list case_label_list_rep
-% formal_type formal_type_rep
+declaration_sequence
+ds_const_declaration ds_const_declaration_rep
+ds_type_declaration ds_type_declaration_rep
+ds_variable_declaration ds_variable_declaration_rep
+const_declaration identdef
+ds_procedure_declaration ds_procedure_declaration_rep
+type_declaration variable_declaration
+procedure_declaration type
+formal_type formal_type_rep   
+ ident_list_rep ident_list
+fpsection fpsection_ident_rep
+  pointer_type
+  length 
+field_list  field_list_sequence field_list_sequence_rep
+procedure_type array_type 
+ base_type
+formal_parameters % formal_parameters_rep   
+ array_type_rep 
 %    
-%   identdef
-%  ident_list_rep ident_list
-% fpsection type pointer_type
-%   length variable_declaration
-% field_list const_declaration type_declaration
-% procedure_type array_type record_type
-% ntcase field_list_sequence fpsection_ident_rep
-%  base_type
-% procedure_heading  procedure_declaration
-% formal_parameters formal_parameters_rep   declaration_sequence
-%  procedure_body   
-%  field_list_sequence_rep
-%  array_type_rep 
-%    
-% struct_type 
-% ds_const_declaration ds_const_declaration_rep
-% ds_type_declaration ds_type_declaration_rep
-% ds_variable_declaration ds_variable_declaration_rep
-% ds_procedure_declaration ds_procedure_declaration_rep
-% formal_parameters_qual_rep formal_parameters_fps_rep formal_parameters_fps_rep2
-% procedure_body_part1 procedure_body_part2
-% record_type record_type_part1 record_type_part2
+struct_type 
+formal_parameters_qual_rep formal_parameters_fps_rep formal_parameters_fps_rep2
+procedure_body_part1 procedure_body_part2
+ procedure_body   
+procedure_heading  
+record_type record_type_part1 record_type_part2
 % 
 % 
 .
@@ -69,12 +70,12 @@ t_lbrace t_rbrace t_ddot
 t_elseif t_elsif t_else t_then t_if
 t_for t_to t_by t_do
 t_repeat t_until t_while
-t_case t_of t_colon t_vline
-%    t_array   t_var
-%  t_record   t_procedure  
-%      t_pointer
-% t_return   
-%  t_const t_type
+t_case t_of t_colon t_vline t_const
+t_type    t_array   t_var
+ t_record   t_procedure  
+     t_pointer
+t_return   
+%   
 %  
 .
 
@@ -138,6 +139,11 @@ Nonassoc  10100 ident t_equ t_sharp
   t_for t_to t_by t_do
   t_repeat t_until t_while
   t_case t_of t_colon t_vline
+  t_const t_type t_var
+   t_array 
+ t_record   t_procedure  
+     t_pointer
+t_return   
 .
 
 % Unary 500 'not'.
@@ -175,119 +181,119 @@ import_list -> '$empty' : nil.
 import -> ident t_assign ident: {import, str_of('$1'), {'$1', '$3'}}.
 import -> ident : {import, str_of('$1'), '$1'}.
 
-% % DeclarationSequence = 
-% % [CONST {ConstDeclaration ";"}]
-% % [TYPE {TypeDeclaration ";"}]
-% % [VAR {VariableDeclaration ";"}] 
-% % {ProcedureDeclaration ";"}.
+% DeclarationSequence = 
+% [CONST {ConstDeclaration ";"}]
+% [TYPE {TypeDeclaration ";"}]
+% [VAR {VariableDeclaration ";"}] 
+% {ProcedureDeclaration ";"}.
 
-% declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
+declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
 %   {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
 
-% % [CONST {ConstDeclaration ";"}] 
+% [CONST {ConstDeclaration ";"}] 
 % ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 % ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
 % ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
-% ds_const_declaration -> '$empty' : nil.
+ds_const_declaration -> '$empty' : nil.
 
-% % [TYPE {TypeDeclaration ";"}] 
+% [TYPE {TypeDeclaration ";"}] 
 % ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 % ds_type_declaration_rep      -> type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
 % ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
-% ds_type_declaration -> '$empty' : nil.
+ds_type_declaration -> '$empty' : nil.
 
-% % [VAR {VariableDeclaration ";"}] 
+% [VAR {VariableDeclaration ";"}] 
 % ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 % ds_variable_declaration_rep  -> variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
 % ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
-% ds_variable_declaration -> '$empty' : nil.
+ds_variable_declaration -> '$empty' : nil.
 
-% % {ProcedureDeclaration ";"}.
+% {ProcedureDeclaration ";"}.
 % ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 % ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
 % ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
-% ds_procedure_declaration -> '$empty' : nil.
+ds_procedure_declaration -> '$empty' : nil.
 
-% %+ ConstDeclaration = identdef "=" ConstExpression.
-% const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
+%+ ConstDeclaration = identdef "=" ConstExpression.
+const_declaration -> identdef t_equ const_expression : {const_declaration, str_of('$1'), {'$1', '$3'}}.
 
 % ConstExpression = expression.
 const_expression -> expression : {const_expression, str_of('$1'), '$1'}.
 
-% % TypeDeclaration = identdef "=" StrucType.
-% type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1'), {'$1', '$3'}}.
+% TypeDeclaration = identdef "=" StrucType.
+type_declaration -> identdef t_equ struct_type : {type_declaration, str_of('$1'), {'$1', '$3'}}.
 
-% % StrucType = ArrayType | RecordType | PointerType | ProcedureType.
-% struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
-% struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
-% struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
-% struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
+% StrucType = ArrayType | RecordType | PointerType | ProcedureType.
+struct_type -> array_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> record_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> pointer_type : {struct_type, str_of('$1'), '$1'}.
+struct_type -> procedure_type : {struct_type, str_of('$1'), '$1'}.
 
-% % ArrayType = ARRAY length {"," length} OF type.
-% % array_type = ARRAY array_type_rep OF type.
-% array_type -> t_array array_type_rep t_of type  : {array_type, str_of('$1'), {'$2', '$4'}}.
-% array_type_rep -> array_type_rep t_comma length : {array_type_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% array_type_rep -> length : {array_type_rep, str_of('$1'), ['$1']}.
+% ArrayType = ARRAY length {"," length} OF type.
+% array_type = ARRAY array_type_rep OF type.
+array_type -> t_array array_type_rep t_of type  : {array_type, str_of('$1'), {'$2', '$4'}}.
+array_type_rep -> array_type_rep t_comma length : {array_type_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+array_type_rep -> length : {array_type_rep, str_of('$1'), ['$1']}.
 
-% % length = ConstExpression.
-% length -> const_expression : {length, str_of('$1'), '$1'}.
+% length = ConstExpression.
+length -> const_expression : {length, str_of('$1'), '$1'}.
 
-% % RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
-% record_type -> t_record record_type_part1 record_type_part2 t_end : 
-%   {record_type, {'$2', '$3'}}.
+% RecordType = RECORD ["(" BaseType ")"] [FieldListSequence] END.
+record_type -> t_record record_type_part1 record_type_part2 t_end : 
+  {record_type, {'$2', '$3'}}.
 
-% record_type_part1 -> t_lpar base_type t_rpar : '$2'.
-% record_type_part1 -> '$empty' : nil.
-% record_type_part2 -> field_list_sequence : '$1'.
-% record_type_part2 -> '$empty' : nil.
+record_type_part1 -> t_lpar base_type t_rpar : '$2'.
+record_type_part1 -> '$empty' : nil.
+record_type_part2 -> field_list_sequence : '$1'.
+record_type_part2 -> '$empty' : nil.
 
-% % BaseType = qualident.
-% base_type -> qualident : {base_type, str_of('$1'), '$1'}.
+% BaseType = qualident.
+base_type -> qualident : {base_type, str_of('$1'), '$1'}.
 
-% % FieldListSequence = FieldList {";" FieldList}.
-% % FieldListSequence = field_list_sequence_rep.
-% field_list_sequence -> field_list_sequence_rep : {field_list_sequence, str_of('$1'), '$1'}.
-% field_list_sequence_rep -> field_list_sequence_rep t_semicolon field_list: {field_list_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% field_list_sequence_rep -> field_list : {field_list_sequence_rep, str_of('$1'), ['$1']}.
+% FieldListSequence = FieldList {";" FieldList}.
+% FieldListSequence = field_list_sequence_rep.
+field_list_sequence -> field_list_sequence_rep : {field_list_sequence, str_of('$1'), '$1'}.
+field_list_sequence_rep -> field_list_sequence_rep t_semicolon field_list: {field_list_sequence_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+field_list_sequence_rep -> field_list : {field_list_sequence_rep, str_of('$1'), ['$1']}.
 
-% % FieldList = IdentList ":" type.
-% field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
+% FieldList = IdentList ":" type.
+field_list -> ident_list t_colon type : {field_list, str_of('$1'), {'$1', '$3'}}.
 
-% % IdentList = identdef {"," identdef}.
-% ident_list -> ident_list_rep : '$1'.
-% ident_list_rep -> identdef t_comma ident_list_rep: {ident_list, str_of('$1'), ['$1'] ++ value_of('$3')}.
-% ident_list_rep -> identdef : {ident_list, str_of('$1'), ['$1']}.
+% IdentList = identdef {"," identdef}.
+ident_list -> ident_list_rep : '$1'.
+ident_list_rep -> identdef t_comma ident_list_rep: {ident_list, str_of('$1'), ['$1'] ++ value_of('$3')}.
+ident_list_rep -> identdef : {ident_list, str_of('$1'), ['$1']}.
 
-% % PointerType = POINTER TO type.
-% pointer_type -> t_pointer t_to type : {pointer_type, str_of('$1'), '$3'}.
+% PointerType = POINTER TO type.
+pointer_type -> t_pointer t_to type : {pointer_type, str_of('$1'), '$3'}.
 
-% % ProcedureType = PROCEDURE [FormalParameters].
-% procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), '$2'}.
-% procedure_type -> t_procedure : {procedure_type, nil, nil}.
+% ProcedureType = PROCEDURE [FormalParameters].
+procedure_type -> t_procedure formal_parameters: {procedure_type, str_of('$1'), '$2'}.
+procedure_type -> t_procedure : {procedure_type, nil, nil}.
 
-% % FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
-% formal_parameters_qual_rep -> t_colon qualident : {formal_parameters, str_of('$1'), '$2'}.
-% formal_parameters_qual_rep -> '$empty' : nil.
+% FormalParameters = "(" [FPSection {";" FPSection}] ")" [":" qualident].
+formal_parameters_qual_rep -> t_colon qualident : {formal_parameters, str_of('$1'), '$2'}.
+formal_parameters_qual_rep -> '$empty' : nil.
 
-% formal_parameters_fps_rep2 -> formal_parameters_fps_rep2 t_semicolon fpsection: {fpsection, str_of('$1'), value_of('$1') ++ ['$3']}.
-% formal_parameters_fps_rep2 -> fpsection : {fpsection, str_of('$1'), ['$1']}.
-% formal_parameters_fps_rep2 -> '$empty' : nil.
+formal_parameters_fps_rep2 -> formal_parameters_fps_rep2 t_semicolon fpsection: {fpsection, str_of('$1'), value_of('$1') ++ ['$3']}.
+formal_parameters_fps_rep2 -> fpsection : {fpsection, str_of('$1'), ['$1']}.
+formal_parameters_fps_rep2 -> '$empty' : nil.
 
-% formal_parameters_fps_rep -> t_lpar formal_parameters_fps_rep2 t_rpar : '$2'.
-% formal_parameters_fps_rep -> '$empty' : nil.
+formal_parameters_fps_rep -> t_lpar formal_parameters_fps_rep2 t_rpar : '$2'.
+formal_parameters_fps_rep -> '$empty' : nil.
 
-% formal_parameters -> formal_parameters_fps_rep formal_parameters_qual_rep : {formal_parameters, {'$1', '$2'}}.
+formal_parameters -> formal_parameters_fps_rep formal_parameters_qual_rep : {formal_parameters, {'$1', '$2'}}.
 
-% % FPSection = [VAR] ident {"," ident} ":" FormalType.
-% fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$2','$4'}}.
-% fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
-% fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
-% fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
+% FPSection = [VAR] ident {"," ident} ":" FormalType.
+fpsection -> t_var fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$2','$4'}}.
+fpsection -> fpsection_ident_rep t_colon formal_type : {fpsection, str_of('$1'), {not_var, '$1','$3'}}.
+fpsection_ident_rep -> fpsection_ident_rep t_comma ident : {fpsection_ident_rep, str_of('$1'), value_of('$1') ++ ['$3']}.
+fpsection_ident_rep -> ident : {fpsection_ident_rep, str_of('$1'), ['$1']}.
 
-% % FormalType = {ARRAY OF} qualident.
-% formal_type -> formal_type_rep qualident : {formal_type, str_of('$2'), {'$1', '$2'}}.
-% formal_type_rep -> t_array t_of formal_type_rep : {array_of, '$3'}.
-% formal_type_rep -> '$empty' : nil.
+% FormalType = {ARRAY OF} qualident.
+formal_type -> formal_type_rep qualident : {formal_type, str_of('$2'), {'$1', '$2'}}.
+formal_type_rep -> t_array t_of formal_type_rep : {array_of, '$3'}.
+formal_type_rep -> '$empty' : nil.
 
 % qualident = [ident "."] ident.
 qualident_ident -> ident : '$1'.
@@ -295,30 +301,30 @@ ident_t_dot -> t_dot : '$1'.
 qualident -> qualident_ident ident_t_dot qualident_ident : {qualident, str_of('$1'), {'$1', '$2', '$3'}}.
 qualident -> qualident_ident : {qualident, str_of('$1'), '$1'}.
 
-% % identdef = ident ["*"].
-% identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
-% identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
+% identdef = ident ["*"].
+identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
+identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
 
-% % VariableDeclaration = IdentList ":" type.
-% variable_declaration -> ident_list t_colon type : {variable_declaration, str_of('$1'), {'$1', '$3'}}.
+% VariableDeclaration = IdentList ":" type.
+variable_declaration -> ident_list t_colon type : {variable_declaration, str_of('$1'), {'$1', '$3'}}.
 
-% % type = qualident | StrucType.
-% % type -> struct_type : {type, str_of('$1'), '$1'}.
-% type -> qualident : {type, str_of('$1'), '$1'}.
+% type = qualident | StrucType.
+% type -> struct_type : {type, str_of('$1'), '$1'}.
+type -> qualident : {type, str_of('$1'), '$1'}.
 
-% % ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
-% procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
-%   {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
+% ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
+procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
+  {procedure_declaration, str_of('$1'), {'$1', '$3', '$4'}}.
 
-% % ProcedureHeading = PROCEDURE identdef [FormalParameters].
-% procedure_heading -> t_procedure identdef formal_parameters : {procedure_heading, str_of('$1'), {'$2', '$3'}}.
+% ProcedureHeading = PROCEDURE identdef [FormalParameters].
+procedure_heading -> t_procedure identdef formal_parameters : {procedure_heading, str_of('$1'), {'$2', '$3'}}.
 
-% % ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
-% procedure_body -> declaration_sequence procedure_body_part1 procedure_body_part2 t_end : {'$1', '$2', '$3'}.
-% procedure_body_part1 -> t_begin statement_sequence : '$2'.
-% procedure_body_part1 -> '$empty' : nil.
-% procedure_body_part2 -> t_return expression : '$2'.
-% procedure_body_part2 -> '$empty' : nil.
+% ProcedureBody = DeclarationSequence [BEGIN StatementSequence] [RETURN expression] END.
+procedure_body -> declaration_sequence procedure_body_part1 procedure_body_part2 t_end : {'$1', '$2', '$3'}.
+procedure_body_part1 -> t_begin statement_sequence : '$2'.
+procedure_body_part1 -> '$empty' : nil.
+procedure_body_part2 -> t_return expression : '$2'.
+procedure_body_part2 -> '$empty' : nil.
 
 %+ expression = SimpleExpression [relation SimpleExpression].
 expression -> simple_expression relation simple_expression: {expression, str_of('$1'), {'$1', '$2', '$3'}}.
