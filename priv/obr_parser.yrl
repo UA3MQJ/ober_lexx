@@ -125,10 +125,6 @@ Nonassoc 85 qualident.
 
 
 
-% Left 170 procedure_call.
-% Left 270 actual_parameters.
-
-
 Nonassoc  10000 t_begin  t_nil t_true t_false
   t_module t_semicolon t_end t_comma t_arrow. 
 
@@ -165,8 +161,8 @@ number -> real : {number, str_of('$1'), '$1'}.
 
 % module = MODULE ident ";" [ImportList] DeclarationSequence [BEGIN StatementSequence] END ident "." .
 
-module -> t_module ident t_semicolon import_list t_begin_statement_sequence t_end ident t_dot : 
- {module, str_of('$1'), {'$2', '$4',  nil,  '$5', '$7'}}.
+module -> t_module ident t_semicolon import_list declaration_sequence t_begin_statement_sequence t_end ident t_dot : 
+ {module, str_of('$1'), {'$2', '$4',  '$5',  '$6', '$8'}}.
 
 t_begin_statement_sequence -> t_begin statement_sequence : '$2'.
 t_begin_statement_sequence -> '$empty' : nil.
@@ -188,30 +184,30 @@ import -> ident : {import, str_of('$1'), '$1'}.
 % {ProcedureDeclaration ";"}.
 
 declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_declaration ds_procedure_declaration : 
-%   {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
+  {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
 
 % [CONST {ConstDeclaration ";"}] 
-% ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
-% ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
-% ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
+ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
+ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
 ds_const_declaration -> '$empty' : nil.
 
 % [TYPE {TypeDeclaration ";"}] 
-% ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
-% ds_type_declaration_rep      -> type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
-% ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
+ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_type_declaration_rep      -> type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
+ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
 ds_type_declaration -> '$empty' : nil.
 
 % [VAR {VariableDeclaration ";"}] 
-% ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
-% ds_variable_declaration_rep  -> variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
-% ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
+ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_variable_declaration_rep  -> variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
+ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
 ds_variable_declaration -> '$empty' : nil.
 
 % {ProcedureDeclaration ";"}.
-% ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
-% ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
-% ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
+ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
+ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
 ds_procedure_declaration -> '$empty' : nil.
 
 %+ ConstDeclaration = identdef "=" ConstExpression.
@@ -384,7 +380,7 @@ factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 factor_expression -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % designator = qualident {selector}.
-designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), [value_of('$1')] ++ ['$2']}.
 designator_rep -> selector: {designator_rep, str_of('$1'), ['$1']}.
 designator_rep -> '$empty' : nil.
 designator -> qualident designator_rep : {designator, str_of('$1'), {'$1', '$2'}}.
@@ -516,7 +512,8 @@ str_of(Obj) when is_map(Obj) -> mstr_of(Obj);
 str_of(_) -> nil.
 
 value_of(Obj) when is_tuple(Obj) -> tvalue_of(Obj);
-value_of(Obj) when is_map(Obj) -> mvalue_of(Obj).
+value_of(Obj) when is_map(Obj) -> mvalue_of(Obj);
+value_of(_) -> nil.
 
 tstr_of(Token) ->
     % io:format('str_of ~w~n', [Token]),
