@@ -1,43 +1,24 @@
-MODULE OopInsertSort;
-IMPORT a,b,d;
+c(PointComparator)
 
-CONST smx=1100;
 
-TYPE
-	RElement = RECORD END;
 
-VAR 
-    i:integer;
+(*
 
-PROCEDURE sort(VAR arr: ARRAY OF Element; cnt: INTEGER; cmp: Comparator);
-VAR i, j: INTEGER;
-	a: Element;
-BEGIN
-	FOR i := 1 TO cnt - 1 DO
-		a := arr[i];
-		j := i - 1;
-		WHILE (j >= 0) & (cmp.compare(cmp, a, arr[j]) < 0) DO
-			arr[j + 1] := arr[j];
-			DEC(j)
-		END;
-		arr[j + 1] := a
-	END
-END sort;
+cmp(c(PointComparator), a(IntPoint), b(IntPoint))
+PROCEDURE compare(c: Base; a, b: Element): INTEGER;
+	PROCEDURE cmp(c: PointComparator; a, b: IntPoint): INTEGER;
+	VAR ax, ay, bx, by: INTEGER;
+	BEGIN
+		ax := a.x - c.x;
+		ay := a.y - c.y;
+		bx := b.x - c.x;
+		by := b.y - c.y
+	RETURN ax * ax + ay * ay - bx * bx - by * by
+	END cmp;
+RETURN cmp(c(PointComparator), a(IntPoint), b(IntPoint))
+END compare;
 
-BEGIN
-  CASE xx OF 
-    1: x:=x+1 |
-	2: x:=x-1
-  END
-END OopInsertSort.
-
-(* MODULE OopInsertSort; 
-MODULE OopInsertSort;
-BEGIN
-  sqrt();
-  y:=2
-END OopInsertSort.
-
+ MODULE OopInsertSort;
 IMPORT Out, CLI;
 
 TYPE

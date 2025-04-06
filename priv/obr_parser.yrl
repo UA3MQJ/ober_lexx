@@ -92,8 +92,8 @@ Left 30 selector_t_dot.
 Unary 35 t_tilda.
 
 
-Left 60 mul_operator.
-Left 70 add_operator.
+% Left 60 mul_operator.
+% Left 70 add_operator.
 
 Left 75 t_lpar t_rpar.
 
@@ -110,17 +110,73 @@ Left 75 t_lpar t_rpar.
 % как будет работать селектор со скобками, когда он
 % действительно будет нужен
 
-Nonassoc 76 assignment.
-Nonassoc 77 expression.  
-Nonassoc 78 simple_expression.
-Nonassoc 79 simple_expression_pre.
+% Nonassoc  76 assignment procedure_call if_statement case_statement while_statement repeat_statement for_statement.
 
-Nonassoc 80 procedure_call.
-Nonassoc 81 designator.
-Nonassoc 82 actual_parameters.
-Nonassoc 83 exp_list.
-Nonassoc 84 designator_rep.
-Nonassoc 85 qualident.
+Nonassoc   69 import_list.
+Nonassoc   70 import.
+Nonassoc   71 declaration_sequence.
+Nonassoc   72 const_declaration.
+Nonassoc   73 const_expression.
+Nonassoc   74 type_declaration.
+Nonassoc   75 struct_type.
+Nonassoc   76 array_type.
+Nonassoc   77 length.
+Nonassoc   78 record_type.
+Nonassoc   79 base_type.
+Nonassoc   80 field_list_sequence.
+Nonassoc   81 field_list.
+Nonassoc   82 ident_list.
+Nonassoc   83 pointer_type.
+Nonassoc   84 procedure_type.
+Nonassoc   85 formal_parameters.
+Nonassoc   86 fpsection.
+Nonassoc   87 formal_type.
+Nonassoc   88 qualident.
+Nonassoc   89 identdef.
+Nonassoc   90 variable_declaration.
+Nonassoc  100 type.
+Nonassoc  110 procedure_declaration.
+Nonassoc  120 procedure_heading.
+Nonassoc  130 procedure_body.
+Nonassoc  140 expression.
+Nonassoc  150 relation.
+Nonassoc  160 simple_expression.
+Nonassoc  170 add_operator.
+Nonassoc  180 term.
+Nonassoc  190 mul_operator.
+
+Nonassoc  200 factor.
+Nonassoc  210 designator.
+Nonassoc  220 selector.  
+Nonassoc  230 set .  
+Nonassoc  230 element .  
+Nonassoc  250 exp_list.
+Nonassoc  260 actual_parameters.
+Nonassoc  270 statement.
+Nonassoc  280 assignment.
+Nonassoc  290 procedure_call.
+Nonassoc  300 statement_sequence.
+Nonassoc  310 if_statement.
+Nonassoc  320 case_statement.
+Nonassoc  330 ntcase.
+Nonassoc  340 case_label_list.
+Nonassoc  350 label_range.
+Nonassoc  360 label.
+Nonassoc  370 while_statement.
+Nonassoc  380 repeat_statement.
+Nonassoc  390 for_statement.
+
+
+% Nonassoc 77 expression.  
+% Nonassoc 78 simple_expression.
+% Nonassoc 79 simple_expression_pre.
+
+% % Nonassoc 80 procedure_call.
+% Nonassoc 81 designator.
+% Nonassoc 82 actual_parameters.
+% Nonassoc 83 exp_list.
+% Nonassoc 84 designator_rep.
+% Nonassoc 85 qualident.
 
 
 
@@ -128,7 +184,8 @@ Nonassoc 85 qualident.
 Nonassoc  10000 t_begin  t_nil t_true t_false
   t_module t_semicolon t_end t_comma t_arrow. 
 
-Nonassoc  10100 ident t_equ t_sharp 
+Nonassoc  10100 %ident 
+  t_equ t_sharp 
   t_less t_lesseq t_more t_moreeq t_in t_is 
   t_lbrace t_rbrace t_ddot
   t_elseif t_elsif t_else t_then t_if
@@ -139,7 +196,7 @@ Nonassoc  10100 ident t_equ t_sharp
    t_array 
  t_record   t_procedure  
      t_pointer
-t_return   
+t_return   t_lbrack t_rbrack
 .
 
 % Unary 500 'not'.
@@ -148,10 +205,10 @@ t_return
 % Unary 300 '@'.
 
 
-root_def -> module : '$1'.
+% root_def -> module : '$1'.
 % root_def -> procedure_call_parameters : '$1'.
 % root_def -> selector_pars : '$1'.
-% root_def -> statement_sequence : '$1'.
+root_def -> procedure_call : '$1'.
 
 
 %+ number = integer | real.
@@ -305,8 +362,8 @@ identdef -> ident       : {identdef, str_of('$1'), value_of('$1')}.
 variable_declaration -> ident_list t_colon type : {variable_declaration, str_of('$1'), {'$1', '$3'}}.
 
 % type = qualident | StrucType.
-% type -> struct_type : {type, str_of('$1'), '$1'}.
 type -> qualident : {type, str_of('$1'), '$1'}.
+type -> struct_type : {type, str_of('$1'), '$1'}.
 
 % ProcedureDeclaration = ProcedureHeading ";" ProcedureBody ident.
 procedure_declaration -> procedure_heading t_semicolon procedure_body ident : 
@@ -377,7 +434,10 @@ factor -> designator : {factor, nil, '$1'}.
 factor -> factor_expression : '$1'.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
-factor_expression -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+% "(" expression ")"
+% WARNING! Заменено на ExpList иначе не понять чисто синтаксически
+% factor_expression -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+factor_expression -> t_lpar exp_list t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % designator = qualident {selector}.
 designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), [value_of('$1')] ++ ['$2']}.
