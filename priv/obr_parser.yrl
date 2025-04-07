@@ -20,7 +20,7 @@ import_list import_list_rep import qualident
 selector number 
 t_begin_statement_sequence
 selector_t_dot ident_t_dot
-qualident_ident selector_ident add_operator mul_operator
+qualident_ident qualident_ident2 selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
 element set set_rep actual_parameters procedure_call procedure_call_parameters
 selector_pars
@@ -84,10 +84,10 @@ Rootsymbol root_def .
 Right    10 t_assign.
 
 % Для qualident (неассоциативная точка)
-Nonassoc 20 ident_t_dot.
+% Nonassoc 20 ident_t_dot.
 
 % Для selector (левоассоциативная точка)
-Left 30 selector_t_dot.
+% Left 30 selector_t_dot.
 
 Unary 35 t_tilda.
 
@@ -110,61 +110,69 @@ Left 75 t_lpar t_rpar.
 % как будет работать селектор со скобками, когда он
 % действительно будет нужен
 
-% Nonassoc  76 assignment procedure_call if_statement case_statement while_statement repeat_statement for_statement.
+Nonassoc   80 import_list.
+Nonassoc   90 import.
+Nonassoc  180 statement_sequence.
+Nonassoc  190 statement.
+Nonassoc  200 assignment 
+              procedure_call procedure_call_parameters
+              if_statement if_statement_rep t_else_statement_sequence
+              case_statement case_statement_rep
+              while_statement while_statement_rep 
+              repeat_statement for_statement.
+Nonassoc  300 expression.
+Nonassoc  310 simple_expression.
+Nonassoc  320 add_operator.
+Nonassoc  330 term.
+Nonassoc  340 mul_operator.
+Nonassoc  350 factor.
+Nonassoc  360 set set_rep 
+              designator designator_rep 
+              actual_parameters.
+Nonassoc  365 qualident.
+Right     366 qualident_ident2.
+Right     370 selector.
+Right     370 selector_t_dot selector_ident selector_pars.
+Left      395 qualident_ident ident_t_dot.
+Nonassoc  400 factor_expression.
 
-Nonassoc   69 import_list.
-Nonassoc   70 import.
-Nonassoc   71 declaration_sequence.
-Nonassoc   72 const_declaration.
-Nonassoc   73 const_expression.
-Nonassoc   74 type_declaration.
-Nonassoc   75 struct_type.
-Nonassoc   76 array_type.
-Nonassoc   77 length.
-Nonassoc   78 record_type.
-Nonassoc   79 base_type.
-Nonassoc   80 field_list_sequence.
-Nonassoc   81 field_list.
-Nonassoc   82 ident_list.
-Nonassoc   83 pointer_type.
-Nonassoc   84 procedure_type.
-Nonassoc   85 formal_parameters.
-Nonassoc   86 fpsection.
-Nonassoc   87 formal_type.
-Nonassoc   88 qualident.
-Nonassoc   89 identdef.
-Nonassoc   90 variable_declaration.
-Nonassoc  100 type.
-Nonassoc  110 procedure_declaration.
-Nonassoc  120 procedure_heading.
-Nonassoc  130 procedure_body.
-Nonassoc  140 expression.
-Nonassoc  150 relation.
-Nonassoc  160 simple_expression.
-Nonassoc  170 add_operator.
-Nonassoc  180 term.
-Nonassoc  190 mul_operator.
 
-Nonassoc  200 factor.
-Nonassoc  210 designator.
-Nonassoc  220 selector.  
-Nonassoc  230 set .  
-Nonassoc  230 element .  
-Nonassoc  250 exp_list.
-Nonassoc  260 actual_parameters.
-Nonassoc  270 statement.
-Nonassoc  280 assignment.
-Nonassoc  290 procedure_call.
-Nonassoc  300 statement_sequence.
-Nonassoc  310 if_statement.
-Nonassoc  320 case_statement.
-Nonassoc  330 ntcase.
-Nonassoc  340 case_label_list.
-Nonassoc  350 label_range.
-Nonassoc  360 label.
-Nonassoc  370 while_statement.
-Nonassoc  380 repeat_statement.
-Nonassoc  390 for_statement.
+% Nonassoc   71 declaration_sequence.
+% Nonassoc   72 const_declaration.
+% Nonassoc   73 const_expression.
+% Nonassoc   74 type_declaration.
+% Nonassoc   75 struct_type.
+% Nonassoc   76 array_type.
+% Nonassoc   77 length.
+% Nonassoc   78 record_type.
+% Nonassoc   79 base_type.
+% Nonassoc   80 field_list_sequence.
+% Nonassoc   81 field_list.
+% Nonassoc   82 ident_list.
+% Nonassoc   83 pointer_type.
+% Nonassoc   84 procedure_type.
+% Nonassoc   85 formal_parameters.
+% Nonassoc   86 fpsection.
+% Nonassoc   87 formal_type.
+% Nonassoc   89 identdef.
+% Nonassoc   90 variable_declaration.
+% Nonassoc  100 type.
+% Nonassoc  110 procedure_declaration.
+% Nonassoc  120 procedure_heading.
+% Nonassoc  130 procedure_body.
+% Nonassoc  150 relation.
+% Nonassoc  230 element .  
+% Nonassoc  250 exp_list.
+% Nonassoc  260 actual_parameters.
+% Nonassoc  280 assignment.
+% Nonassoc  290 procedure_call.
+% Nonassoc  330 ntcase.
+% Nonassoc  340 case_label_list.
+% Nonassoc  350 label_range.
+% Nonassoc  360 label.
+% Nonassoc  370 while_statement.
+% Nonassoc  380 repeat_statement.
+% Nonassoc  390 for_statement.
 
 
 % Nonassoc 77 expression.  
@@ -208,7 +216,7 @@ t_return   t_lbrack t_rbrack
 % root_def -> module : '$1'.
 % root_def -> procedure_call_parameters : '$1'.
 % root_def -> selector_pars : '$1'.
-root_def -> procedure_call : '$1'.
+root_def -> statement : '$1'.
 
 
 %+ number = integer | real.
@@ -349,10 +357,11 @@ formal_type_rep -> t_array t_of formal_type_rep : {array_of, '$3'}.
 formal_type_rep -> '$empty' : nil.
 
 % qualident = [ident "."] ident.
-qualident_ident -> ident : '$1'.
+qualident_ident -> ident ident_t_dot : {'$1', '$2'}.
+qualident_ident -> '$empty' : nil.
+qualident_ident2 -> ident : '$1'.
 ident_t_dot -> t_dot : '$1'.
-qualident -> qualident_ident ident_t_dot qualident_ident : {qualident, str_of('$1'), {'$1', '$2', '$3'}}.
-qualident -> qualident_ident : {qualident, str_of('$1'), '$1'}.
+qualident -> qualident_ident qualident_ident2 : {qualident, str_of('$1'), {'$1', '$2'}}.
 
 % identdef = ident ["*"].
 identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
@@ -436,8 +445,8 @@ factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
 % "(" expression ")"
 % WARNING! Заменено на ExpList иначе не понять чисто синтаксически
-% factor_expression -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
-factor_expression -> t_lpar exp_list t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+factor_expression -> t_lpar expression t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
+% factor_expression -> t_lpar exp_list t_rpar : {factor, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % designator = qualident {selector}.
 designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), [value_of('$1')] ++ ['$2']}.

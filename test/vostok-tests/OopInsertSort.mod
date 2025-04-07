@@ -1,8 +1,10 @@
-c(PointComparator)
+IF z.y.z.w > 0 THEN END
 
 
 
 (*
+
+IF a.b(Point) > 0 THEN END
 
 cmp(c(PointComparator), a(IntPoint), b(IntPoint))
 PROCEDURE compare(c: Base; a, b: Element): INTEGER;
