@@ -1,4 +1,4 @@
-IF z.y.z.w > 0 THEN END
+IF z.w^^(ass) > 0 THEN END
 
 
 
