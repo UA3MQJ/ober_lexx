@@ -23,7 +23,7 @@ selector_t_dot ident_t_dot
 qualident_ident qualident_ident2 selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
 element set set_rep 
-% actual_parameters 
+actual_parameters 
 procedure_call procedure_call_parameters
 selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
@@ -94,10 +94,6 @@ Right    10 t_assign.
 Unary 35 t_tilda.
 
 
-% Left 60 mul_operator.
-% Left 70 add_operator.
-
-% Left 75 t_lpar t_rpar.
 
 % ProcedureCall = designator [ActualParameters].
 %                     |              |
@@ -138,7 +134,7 @@ Nonassoc  370 selector.
 Nonassoc  370 selector_t_dot selector_ident.
 Nonassoc  395 qualident_ident ident_t_dot.
 Nonassoc  399 term_rep.
-% Nonassoc  400 actual_parameters.
+Nonassoc  400 actual_parameters.
 Nonassoc  410 factor_expression.
 
 
@@ -256,7 +252,7 @@ length -> const_expression : {length, str_of('$1'), '$1'}.
 record_type -> t_record record_type_part1 record_type_part2 t_end : 
   {record_type, {'$2', '$3'}}.
 
-% record_type_part1 -> t_lpar base_type t_rpar : '$2'.
+record_type_part1 -> t_lpar base_type t_rpar : '$2'.
 record_type_part1 -> '$empty' : nil.
 record_type_part2 -> field_list_sequence : '$1'.
 record_type_part2 -> '$empty' : nil.
@@ -293,7 +289,7 @@ formal_parameters_fps_rep2 -> formal_parameters_fps_rep2 t_semicolon fpsection: 
 formal_parameters_fps_rep2 -> fpsection : {fpsection, str_of('$1'), ['$1']}.
 formal_parameters_fps_rep2 -> '$empty' : nil.
 
-% formal_parameters_fps_rep -> t_lpar formal_parameters_fps_rep2 t_rpar : '$2'.
+formal_parameters_fps_rep -> t_lpar formal_parameters_fps_rep2 t_rpar : '$2'.
 formal_parameters_fps_rep -> '$empty' : nil.
 
 formal_parameters -> formal_parameters_fps_rep formal_parameters_qual_rep : {formal_parameters, {'$1', '$2'}}.
@@ -391,14 +387,14 @@ factor -> t_nil : {factor, str_of('$1'), '$1'}.
 factor -> t_true : {factor, str_of('$1'), '$1'}.
 factor -> t_false : {factor, str_of('$1'), '$1'}.
 factor -> set : {factor, str_of('$1'), '$1'}.
-% factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
+factor -> designator actual_parameters: {factor, str_of('$1'), {'$1', '$2'}}.
 factor -> designator : {factor, nil, '$1'}.
-% factor -> factor_expression : {factor, '$1'}.
+factor -> factor_expression : {factor, '$1'}.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
 % "(" expression ")"
+factor_expression -> t_lpar expression t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 % WARNING! Заменено на ExpList иначе не понять чисто синтаксически
-% factor_expression -> t_lpar expression t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 % factor_expression -> t_lpar exp_list t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % designator = qualident {selector}.
@@ -415,7 +411,6 @@ selector -> selector_pars : '$1'.
 selector_pars -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector_t_dot -> t_dot : '$1'.
 selector_ident -> ident : '$1'.
-% selector -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % set = "{" [ element {"," element} ] "}".
 set_rep -> set_rep t_comma element : {set_rep, str_of('$1'), value_of('$1')++['$3']}.
@@ -434,8 +429,8 @@ exp_list_rep -> exp_list_rep t_comma expression: {exp_list_rep, str_of('$1'), va
 exp_list_rep -> expression : {exp_list_rep, str_of('$1'), ['$1']}.
 
 % ActualParameters = "(" [ExpList] ")" .
-% actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
-% actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
+actual_parameters -> t_lpar exp_list t_rpar : {actual_parameters, str_of('$1'), '$2'}.
+actual_parameters -> t_lpar t_rpar : {actual_parameters, str_of('$1'), nil}.
 
 % statement = [assignment | ProcedureCall | IfStatement | CaseStatement | WhileStatement | RepeatStatement | ForStatement].
 statement -> assignment       : {statement, str_of('$1'), '$1'}.
