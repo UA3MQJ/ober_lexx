@@ -1,4 +1,5 @@
-IF z.w^^(ass).x > 0 THEN END
+IF z.w^^(ass).x > 0 THEN END;
+sin(x)
 
 
 

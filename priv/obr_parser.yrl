@@ -23,7 +23,7 @@ selector_t_dot ident_t_dot
 qualident_ident qualident_ident2 selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
 element set set_rep 
-actual_parameters 
+actual_parameters factor_actual_parameters procedure_actual_parameters
 procedure_call procedure_call_parameters
 selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
@@ -118,6 +118,7 @@ Nonassoc  200 assignment
               case_statement case_statement_rep
               while_statement while_statement_rep 
               repeat_statement for_statement.
+Nonassoc  201 procedure_actual_parameters.
 Nonassoc  300 expression.
 Nonassoc  305 relation.
 Nonassoc  310 simple_expression.
@@ -134,7 +135,7 @@ Nonassoc  370 selector.
 Nonassoc  370 selector_t_dot selector_ident.
 Nonassoc  395 qualident_ident ident_t_dot.
 Nonassoc  399 term_rep.
-Nonassoc  400 actual_parameters.
+Nonassoc  400 factor_actual_parameters actual_parameters.
 Nonassoc  410 factor_expression.
 
 
@@ -165,7 +166,7 @@ t_return   t_lbrack t_rbrack
 % root_def -> module : '$1'.
 % root_def -> procedure_call_parameters : '$1'.
 % root_def -> selector_pars : '$1'.
-root_def -> statement : '$1'.
+root_def -> statement_sequence : '$1'.
 
 
 %+ number = integer | real.
@@ -392,6 +393,8 @@ factor -> designator : {factor, nil, '$1'}.
 factor -> factor_expression : {factor, '$1'}.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
+factor_actual_parameters -> actual_parameters : '$1'.
+
 % "(" expression ")"
 factor_expression -> t_lpar expression t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 % WARNING! Заменено на ExpList иначе не понять чисто синтаксически
@@ -446,9 +449,9 @@ statement -> '$empty' : nil.
 assignment -> designator t_assign expression : {assignment, str_of('$1'), {'$1', '$3'}}.
 
 % ProcedureCall = designator [ActualParameters].
-% procedure_call -> designator procedure_call_parameters : {procedure_call, str_of('$1'), {'$1', '$2'}}.
-procedure_call -> designator : {procedure_call, str_of('$1'), {'$1', nil}}.
-% procedure_call_parameters -> actual_parameters : {procedure_call_parameters1, '$1'}.
+procedure_call -> designator procedure_actual_parameters : {procedure_call, str_of('$1'), {'$1', '$2'}}.
+procedure_actual_parameters -> actual_parameters : '$1'.
+procedure_actual_parameters -> '$empty' : nil.
 
 % StatementSequence = statement {";" statement}.
 % StatementSequence = statement_sequence_rep.
