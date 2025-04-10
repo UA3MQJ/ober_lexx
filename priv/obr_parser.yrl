@@ -142,59 +142,6 @@ Nonassoc  399 term_rep.
 Nonassoc  410 factor_expression.
 
 
-
-% Nonassoc   71 declaration_sequence.
-% Nonassoc   72 const_declaration.
-% Nonassoc   73 const_expression.
-% Nonassoc   74 type_declaration.
-% Nonassoc   75 struct_type.
-% Nonassoc   76 array_type.
-% Nonassoc   77 length.
-% Nonassoc   78 record_type.
-% Nonassoc   79 base_type.
-% Nonassoc   80 field_list_sequence.
-% Nonassoc   81 field_list.
-% Nonassoc   82 ident_list.
-% Nonassoc   83 pointer_type.
-% Nonassoc   84 procedure_type.
-% Nonassoc   85 formal_parameters.
-% Nonassoc   86 fpsection.
-% Nonassoc   87 formal_type.
-% Nonassoc   89 identdef.
-% Nonassoc   90 variable_declaration.
-% Nonassoc  100 type.
-% Nonassoc  110 procedure_declaration.
-% Nonassoc  120 procedure_heading.
-% Nonassoc  130 procedure_body.
-% Nonassoc  150 relation.
-% Nonassoc  230 element .  
-% Nonassoc  250 exp_list.
-% Nonassoc  260 actual_parameters.
-% Nonassoc  280 assignment.
-% Nonassoc  290 procedure_call.
-% Nonassoc  330 ntcase.
-% Nonassoc  340 case_label_list.
-% Nonassoc  350 label_range.
-% Nonassoc  360 label.
-% Nonassoc  370 while_statement.
-% Nonassoc  380 repeat_statement.
-% Nonassoc  390 for_statement.
-
-
-% Nonassoc 77 expression.  
-% Nonassoc 78 simple_expression.
-% Nonassoc 79 simple_expression_pre.
-
-% % Nonassoc 80 procedure_call.
-% Nonassoc 81 designator.
-% Nonassoc 82 actual_parameters.
-% Nonassoc 83 exp_list.
-% Nonassoc 84 designator_rep.
-% Nonassoc 85 qualident.
-
-
-
-
 Nonassoc  10000 t_begin  t_nil t_true t_false
   t_module t_semicolon t_end t_comma t_arrow. 
 
@@ -209,7 +156,7 @@ Nonassoc  10100 %ident
   t_const t_type t_var
    t_array 
  t_record   t_procedure  
-     t_pointer
+     t_pointer t_lpar t_rpar
 t_return   t_lbrack t_rbrack
 .
 
@@ -455,10 +402,10 @@ factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 % factor_expression -> t_lpar exp_list t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % designator = qualident {selector}.
-designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), [value_of('$1')] ++ ['$2']}.
+designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 designator_rep -> selector: {designator_rep, str_of('$1'), ['$1']}.
-designator_rep -> '$empty' : nil.
-designator -> qualident designator_rep : {designator, str_of('$1'), {'$1', '$2'}}.
+designator_rep -> '$empty' : [].
+designator -> qualident designator_rep : {designator, str_of('$1'), {'$1', value_of('$2')}}.
 
 % selector = "." ident | "[" ExpList "]" | "^" | "(" qualident ")".
 selector -> selector_t_dot selector_ident : {selector, str_of('$1'), {'$1', '$2'}}.
