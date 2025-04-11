@@ -1,5 +1,5 @@
 IF z.w^^(ass).x > 0 THEN END;
-sin(x)
+sin(x, y, z)
 
 
 

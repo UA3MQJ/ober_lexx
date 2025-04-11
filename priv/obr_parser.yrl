@@ -394,11 +394,8 @@ factor -> factor_expression : {factor, '$1'}.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
 factor_actual_parameters -> actual_parameters : '$1'.
-
 % "(" expression ")"
 factor_expression -> t_lpar expression t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
-% WARNING! Заменено на ExpList иначе не понять чисто синтаксически
-% factor_expression -> t_lpar exp_list t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 
 % designator = qualident {selector}.
 designator_rep -> designator_rep selector: {designator_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
@@ -411,7 +408,11 @@ selector -> selector_t_dot selector_ident : {selector, str_of('$1'), {'$1', '$2'
 selector -> t_lbrack exp_list t_rbrack : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector -> t_arrow : {selector, str_of('$1'), '$1'}.
 selector -> selector_pars : '$1'.
-selector_pars -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+% WARNING! Заменено на ExpList иначе не понять чисто синтаксически
+% IF z.w^^(ass).x > 0 THEN END;
+% x.sin(x, y, z)
+% selector_pars -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector_pars -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector_t_dot -> t_dot : '$1'.
 selector_ident -> ident : '$1'.
 
