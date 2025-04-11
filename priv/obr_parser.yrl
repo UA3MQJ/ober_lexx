@@ -525,6 +525,16 @@ Erlang code.
 
 -define(MType, '__struct__').
 
+-export([init_types_table/0]).
+
+init_types_table() ->
+    Table = ets:new(types_table, [named_table, public]),
+    ets:insert(Table, {"Derived", record}),
+    ets:insert(Table, {"Point", record}),
+    ets:insert(Table, {"sin", procedure}),
+    ets:insert(Table, {"cos", procedure}),
+    Table.
+
 % list_tail({_, List}) -> List.
 str_of(Obj) when is_tuple(Obj) -> tstr_of(Obj);
 str_of(Obj) when is_map(Obj) -> mstr_of(Obj);

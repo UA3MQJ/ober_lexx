@@ -1029,6 +1029,7 @@ defmodule OberYaccTest do
     # IO.inspect(charlist)
     {:ok, tokens, _} = :obr_lexer.string(charlist)
     IO.inspect(tokens, limit: :infinity)
+    :obr_parser.init_types_table()
     case :obr_parser.parse(tokens) do
       {:ok, res} ->
         IO.inspect(res, limit: :infinity)
