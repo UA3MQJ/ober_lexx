@@ -1028,11 +1028,11 @@ defmodule OberYaccTest do
     charlist = to_charlist(clean_str)
     # IO.inspect(charlist)
     {:ok, tokens, _} = :obr_lexer.string(charlist)
-    IO.inspect(tokens, limit: :infinity)
+    # IO.inspect(tokens, limit: :infinity)
     :obr_parser.init_types_table()
     case :obr_parser.parse(tokens) do
       {:ok, res} ->
-        IO.inspect(res, limit: :infinity)
+        # IO.inspect(res, limit: :infinity)
         Logger.info "#{file} - ok"
       error ->
         Logger.info "#{file} - error"

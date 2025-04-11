@@ -163,10 +163,10 @@ t_return   t_lbrack t_rbrack
 % Unary 300 '@'.
 
 
-% root_def -> module : '$1'.
+root_def -> module : '$1'.
 % root_def -> procedure_call_parameters : '$1'.
 % root_def -> selector_pars : '$1'.
-root_def -> statement_sequence : '$1'.
+% root_def -> statement_sequence : '$1'.
 
 
 %+ number = integer | real.
@@ -411,6 +411,9 @@ selector -> selector_pars : '$1'.
 % WARNING! Заменено на ExpList иначе не понять чисто синтаксически
 % IF z.w^^(ass).x > 0 THEN END;
 % x.sin(x, y, z)
+% если написать .sin(XRec) с одним параметром в скобках
+% не ясно, это приведение к типу(селектор) или actual_parameters с одним параметром
+% понять можно только имея контекст с типами.
 % selector_pars -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector_pars -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector_t_dot -> t_dot : '$1'.

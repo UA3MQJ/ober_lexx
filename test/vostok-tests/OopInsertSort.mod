@@ -1,27 +1,4 @@
-IF z.w^^(ass).x > 0 THEN END;
-sin(x, y, z)
-
-
-
-(*
-
-IF a.b(Point) > 0 THEN END
-
-cmp(c(PointComparator), a(IntPoint), b(IntPoint))
-PROCEDURE compare(c: Base; a, b: Element): INTEGER;
-	PROCEDURE cmp(c: PointComparator; a, b: IntPoint): INTEGER;
-	VAR ax, ay, bx, by: INTEGER;
-	BEGIN
-		ax := a.x - c.x;
-		ay := a.y - c.y;
-		bx := b.x - c.x;
-		by := b.y - c.y
-	RETURN ax * ax + ay * ay - bx * bx - by * by
-	END cmp;
-RETURN cmp(c(PointComparator), a(IntPoint), b(IntPoint))
-END compare;
-
- MODULE OopInsertSort;
+MODULE OopInsertSort;
 IMPORT Out, CLI;
 
 TYPE
@@ -174,4 +151,3 @@ BEGIN
 END Go;
 
 END OopInsertSort.
-*)
