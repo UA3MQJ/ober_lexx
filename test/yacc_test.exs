@@ -996,22 +996,22 @@ defmodule OberYaccTest do
     test_file("./test/vostok-tests/MathTest.mod")
     test_file("./test/vostok-tests/Mult.mod")
     test_file("./test/vostok-tests/OopInsertSort.mod") # !
-    # test_file("./test/vostok-tests/Pointers.mod") # !
-    # test_file("./test/vostok-tests/ProcType.mod")
-    # test_file("./test/vostok-tests/PtrLoop.mod")
-    # test_file("./test/vostok-tests/Queens.mod") # !
-    # test_file("./test/vostok-tests/QuickSort.mod")
-    # test_file("./test/vostok-tests/Rand.mod")
-    # test_file("./test/vostok-tests/Real.mod")
-    # test_file("./test/vostok-tests/RecordExt.mod") # !
-    # test_file("./test/vostok-tests/Record.mod")
-    # test_file("./test/vostok-tests/Repeat.mod")
-    # test_file("./test/vostok-tests/Return.mod")
-    # test_file("./test/vostok-tests/Set.mod")
-    # test_file("./test/vostok-tests/String.mod")
-    # test_file("./test/vostok-tests/Test.mod") # !
-    # test_file("./test/vostok-tests/WeakLink.mod") # !
-    # test_file("./test/vostok-tests/While.mod")
+    test_file("./test/vostok-tests/Pointers.mod") # !
+    test_file("./test/vostok-tests/ProcType.mod")
+    test_file("./test/vostok-tests/PtrLoop.mod")
+    test_file("./test/vostok-tests/Queens.mod") # !
+    test_file("./test/vostok-tests/QuickSort.mod")
+    test_file("./test/vostok-tests/Rand.mod")
+    test_file("./test/vostok-tests/Real.mod")
+    test_file("./test/vostok-tests/RecordExt.mod") # !
+    test_file("./test/vostok-tests/Record.mod")
+    test_file("./test/vostok-tests/Repeat.mod")
+    test_file("./test/vostok-tests/Return.mod")
+    test_file("./test/vostok-tests/Set.mod")
+    test_file("./test/vostok-tests/String.mod")
+    test_file("./test/vostok-tests/Test.mod") # !
+    test_file("./test/vostok-tests/WeakLink.mod") # !
+    test_file("./test/vostok-tests/While.mod")
 
   end
 
@@ -1029,7 +1029,7 @@ defmodule OberYaccTest do
     # IO.inspect(charlist)
     {:ok, tokens, _} = :obr_lexer.string(charlist)
     # IO.inspect(tokens, limit: :infinity)
-    :obr_parser.init_types_table()
+    # :obr_parser.init_types_table()
     case :obr_parser.parse(tokens) do
       {:ok, res} ->
         # IO.inspect(res, limit: :infinity)
