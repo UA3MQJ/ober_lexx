@@ -112,6 +112,22 @@ Unary 35 t_tilda.
 
 Nonassoc   80 import_list.
 Nonassoc   90 import.
+
+Nonassoc  100 declaration_sequence.
+Nonassoc  110 ds_const_declaration.
+Nonassoc  115 ds_const_declaration_rep.
+Nonassoc  120 ds_type_declaration.
+Nonassoc  125 ds_type_declaration_rep.
+Nonassoc  130 ds_variable_declaration.
+Nonassoc  135 ds_variable_declaration_rep.
+Nonassoc  140 ds_procedure_declaration.
+Nonassoc  145 ds_procedure_declaration_rep.
+
+Nonassoc  150 const_declaration.
+Nonassoc  151 type_declaration.
+Nonassoc  152 variable_declaration.
+
+
 Nonassoc  180 statement_sequence.
 Nonassoc  190 statement.
 Nonassoc  200 assignment 
@@ -206,7 +222,7 @@ declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_dec
   {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
 
 % [CONST {ConstDeclaration ";"}] 
-ds_const_declaration_rep     -> ds_const_declaration_rep const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_const_declaration_rep     -> ds_const_declaration_rep const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), {'$1', '$2'}}.
 ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
 ds_const_declaration_rep     -> '$empty' : nil.
 ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.

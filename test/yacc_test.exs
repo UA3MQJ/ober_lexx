@@ -991,7 +991,7 @@ defmodule OberYaccTest do
     # test_file("./test/vostok-tests/Copy.mod")
     # test_file("./test/vostok-tests/Div.mod")
     # test_file("./test/vostok-tests/For.mod")
-    # test_file("./test/vostok-tests/Integers.mod")
+    test_file("./test/vostok-tests/Integers.mod")
     # test_file("./test/vostok-tests/LinkedList.mod")
     # test_file("./test/vostok-tests/MathTest.mod")
     # test_file("./test/vostok-tests/Mult.mod")
@@ -1006,7 +1006,7 @@ defmodule OberYaccTest do
     # test_file("./test/vostok-tests/RecordExt.mod")
     # test_file("./test/vostok-tests/Record.mod")
     # test_file("./test/vostok-tests/Repeat.mod")
-    test_file("./test/vostok-tests/Return.mod")
+    # test_file("./test/vostok-tests/Return.mod")
     # test_file("./test/vostok-tests/Set.mod")
     # test_file("./test/vostok-tests/String.mod")
     # test_file("./test/vostok-tests/Test.mod")
@@ -1028,11 +1028,11 @@ defmodule OberYaccTest do
     charlist = to_charlist(clean_str)
     # IO.inspect(charlist)
     {:ok, tokens, _} = :obr_lexer.string(charlist)
-    IO.inspect(tokens, limit: :infinity)
+    # IO.inspect(tokens, limit: :infinity)
     # :obr_parser.init_types_table()
     case :obr_parser.parse(tokens) do
       {:ok, res} ->
-        IO.inspect(res, limit: :infinity)
+        # IO.inspect(res, limit: :infinity)
         Logger.info "#{file} - ok"
       error ->
         Logger.info "#{file} - error"
