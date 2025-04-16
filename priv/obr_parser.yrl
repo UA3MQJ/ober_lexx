@@ -229,21 +229,21 @@ ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, s
 ds_const_declaration -> '$empty' : nil.
 
 % [TYPE {TypeDeclaration ";"}] 
-ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), {'$1', '$2'}}.
 ds_type_declaration_rep      -> type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
 ds_type_declaration_rep     -> '$empty' : nil.
 ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
 ds_type_declaration -> '$empty' : nil.
 
 % [VAR {VariableDeclaration ";"}] 
-ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), {'$1', '$2'}}.
 ds_variable_declaration_rep  -> variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
 ds_variable_declaration_rep  -> '$empty' : nil.
 ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
 ds_variable_declaration -> '$empty' : nil.
 
 % {ProcedureDeclaration ";"}.
-ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_procedure_declaration_rep -> ds_procedure_declaration_rep procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), {'$1', '$2'}}.
 ds_procedure_declaration_rep -> procedure_declaration t_semicolon : {procedure_declaration_rep, str_of('$1'), ['$1']}.
 ds_procedure_declaration -> ds_procedure_declaration_rep : {variable_declaration, str_of('$1'), '$1'}.
 ds_procedure_declaration -> '$empty' : nil.
@@ -330,11 +330,15 @@ formal_type_rep -> t_array t_of formal_type_rep : {array_of, '$3'}.
 formal_type_rep -> '$empty' : nil.
 
 % qualident = [ident "."] ident.
-qualident_ident -> ident ident_t_dot : {'$1', '$2'}.
-qualident_ident -> '$empty' : nil.
+% qualident_ident -> ident ident_t_dot : {'$1', '$2'}.
+% qualident_ident -> '$empty' : nil.
+% qualident_ident2 -> ident : '$1'.
+% ident_t_dot -> t_dot : '$1'.
+% qualident -> qualident_ident qualident_ident2 : {qualident, str_of('$1'), {'$1', '$2'}}.
 qualident_ident2 -> ident : '$1'.
 ident_t_dot -> t_dot : '$1'.
-qualident -> qualident_ident qualident_ident2 : {qualident, str_of('$1'), {'$1', '$2'}}.
+qualident -> qualident_ident2 ident_t_dot qualident_ident2 : {qualident, str_of('$1'), {'$1', '$3'}}.
+qualident -> qualident_ident2 : {qualident, str_of('$1'), '$1'}.
 
 % identdef = ident ["*"].
 identdef -> ident t_mul : {identdef, str_of('$1'), value_of('$1')++"*"}.
