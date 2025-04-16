@@ -168,7 +168,7 @@ t_return   t_lbrack t_rbrack
 
 
 root_def -> module : '$1'.
-% root_def -> ds_const_declaration : '$1'.
+% root_def -> statement_sequence : '$1'.
 % root_def -> selector_pars : '$1'.
 % root_def -> statement_sequence : '$1'.
 
@@ -423,6 +423,7 @@ selector -> selector_pars : '$1'.
 % понять можно только имея контекст с типами.
 % selector_pars -> t_lpar qualident t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
 selector_pars -> t_lpar exp_list t_rpar : {selector, str_of('$1'), {'$1', '$2', '$3'}}.
+selector_pars -> t_lpar t_rpar : {selector, str_of('$1'), {'$1', nil, '$2'}}.
 selector_t_dot -> t_dot : '$1'.
 selector_ident -> ident : '$1'.
 
