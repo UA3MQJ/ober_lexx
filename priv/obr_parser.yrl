@@ -23,8 +23,10 @@ selector_t_dot ident_t_dot
 qualident_ident qualident_ident2 selector_ident add_operator mul_operator
 exp_list exp_list_rep factor_expression
 element set set_rep 
-actual_parameters factor_actual_parameters procedure_actual_parameters
-procedure_call procedure_call_parameters
+actual_parameters  procedure_actual_parameters
+procedure_call 
+% factor_actual_parameters
+% procedure_call_parameters
 selector_pars
 if_statement if_statement_rep u_elsif t_else_statement_sequence
 for_statement const_expression repeat_statement
@@ -113,7 +115,8 @@ Nonassoc   90 import.
 Nonassoc  180 statement_sequence.
 Nonassoc  190 statement.
 Nonassoc  200 assignment 
-              procedure_call procedure_call_parameters
+              procedure_call 
+              % procedure_call_parameters
               if_statement if_statement_rep t_else_statement_sequence
               case_statement case_statement_rep
               while_statement while_statement_rep 
@@ -135,7 +138,7 @@ Nonassoc  370 selector.
 Nonassoc  370 selector_t_dot selector_ident.
 Nonassoc  395 qualident_ident ident_t_dot.
 Nonassoc  399 term_rep.
-Nonassoc  400 factor_actual_parameters actual_parameters.
+% Nonassoc  400 factor_actual_parameters actual_parameters.
 Nonassoc  410 factor_expression.
 
 
@@ -164,7 +167,7 @@ t_return   t_lbrack t_rbrack
 
 
 root_def -> module : '$1'.
-% root_def -> procedure_call_parameters : '$1'.
+% root_def -> procedure_declaration : '$1'.
 % root_def -> selector_pars : '$1'.
 % root_def -> statement_sequence : '$1'.
 
@@ -204,18 +207,21 @@ declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_dec
 % [CONST {ConstDeclaration ";"}] 
 ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
+ds_const_declaration_rep     -> '$empty' : nil.
 ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
 ds_const_declaration -> '$empty' : nil.
 
 % [TYPE {TypeDeclaration ";"}] 
 ds_type_declaration_rep      -> ds_type_declaration_rep type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 ds_type_declaration_rep      -> type_declaration t_semicolon : {type_declaration_rep, str_of('$1'), ['$1']}.
+ds_type_declaration_rep     -> '$empty' : nil.
 ds_type_declaration -> t_type ds_type_declaration_rep : {type_declaration, str_of('$1'), '$2'}.
 ds_type_declaration -> '$empty' : nil.
 
 % [VAR {VariableDeclaration ";"}] 
 ds_variable_declaration_rep  -> ds_variable_declaration_rep variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 ds_variable_declaration_rep  -> variable_declaration t_semicolon : {variable_declaration_rep, str_of('$1'), ['$1']}.
+ds_variable_declaration_rep  -> '$empty' : nil.
 ds_variable_declaration -> t_var ds_variable_declaration_rep : {variable_declaration, str_of('$1'), '$2'}.
 ds_variable_declaration -> '$empty' : nil.
 
@@ -393,7 +399,7 @@ factor -> designator : {factor, nil, '$1'}.
 factor -> factor_expression : {factor, '$1'}.
 factor -> t_tilda factor : {factor, str_of('$1'), {'$1', '$2'}}.
 
-factor_actual_parameters -> actual_parameters : '$1'.
+% factor_actual_parameters -> actual_parameters : '$1'.
 % "(" expression ")"
 factor_expression -> t_lpar expression t_rpar : {factor_expression, str_of('$1'), {'$1', '$2', '$3'}}.
 

@@ -204,6 +204,7 @@ Rules.
 {MOREEQ}    : {token, {t_moreeq, TokenLine, TokenChars}}.
 {LESS}      : {token, {t_less, TokenLine, TokenChars}}.
 {MORE}      : {token, {t_more, TokenLine, TokenChars}}.
+{DIV}       : {token, {t_div, TokenLine, TokenChars}}.
 
 
 {IDENT}     : {token, {ident,  TokenLine, id_validate(TokenChars, TokenLine)}}.
@@ -217,7 +218,6 @@ Rules.
 {LETTER}     : {token, {letter,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 {DIGIT}     : {token, {digit,  TokenLine, id_validate(TokenChars, TokenLine)}}.
 
-{DIV}       : {token, {t_div, TokenLine, TokenChars}}.
 
 {WS}        : skip_token.
 
