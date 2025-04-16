@@ -78,7 +78,7 @@ t_case t_of t_colon t_vline t_const
 t_type    t_array   t_var
  t_record   t_procedure  
      t_pointer
-t_return   
+t_return
 %   
 %  
 .
@@ -129,6 +129,7 @@ Nonassoc  320 add_operator.
 Nonassoc  330 term.
 Nonassoc  340 mul_operator.
 Nonassoc  350 factor.
+Nonassoc  352 string.
 Nonassoc  360 set set_rep 
               designator designator_rep.
 Nonassoc  364 selector_pars.
@@ -167,7 +168,7 @@ t_return   t_lbrack t_rbrack
 
 
 root_def -> module : '$1'.
-% root_def -> procedure_declaration : '$1'.
+% root_def -> ds_const_declaration : '$1'.
 % root_def -> selector_pars : '$1'.
 % root_def -> statement_sequence : '$1'.
 
@@ -205,7 +206,7 @@ declaration_sequence -> ds_const_declaration ds_type_declaration ds_variable_dec
   {declaration_sequence, {'$1', '$2', '$3', '$4'}}.
 
 % [CONST {ConstDeclaration ";"}] 
-ds_const_declaration_rep     -> ds_const_declaration_rep ds_const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
+ds_const_declaration_rep     -> ds_const_declaration_rep const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), value_of('$1') ++ ['$2']}.
 ds_const_declaration_rep     -> const_declaration t_semicolon : {const_declaration_rep, str_of('$1'), ['$1']}.
 ds_const_declaration_rep     -> '$empty' : nil.
 ds_const_declaration -> t_const ds_const_declaration_rep : {const_declaration, str_of('$1'), '$2'}.
